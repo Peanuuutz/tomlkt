@@ -194,7 +194,7 @@ It will be successfully parsed, but if you define after that:
 [x]
 ```
 
-It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the reading process of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/dev/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into the whole [Tree](https://github.com/Peanuuutz/tomlkt/tree/dev/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined. :face_with_head_bandage:
+It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the reading process of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into the whole [Tree](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined. :face_with_head_bandage:
 
 ### Extra features
 
@@ -203,7 +203,7 @@ The working process of tomlkt:
 * Serialization: Model / TomlElement → File(String)
 * Deserialization: File(String) → TomlElement → Model
 
-As you see, if you already have a TOML file, you can have no model class, but still gain access to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/dev/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
+As you see, if you already have a TOML file, you can have no model class, but still gain access to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
 
 *Note: Due to no context of values in TomlTable(see TomlElement.kt), all of those are encoded as inline(meaning you can't get the same serialized structure between model class and TomlTable).*
 
