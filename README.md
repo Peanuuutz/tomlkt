@@ -5,7 +5,7 @@
 
 Lightweight and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML](https://toml.io/) serialization and deserialization.
 
-*This project is in alpha state. If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt). :wink:*
+*This project is in alpha state. If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt/issues). :wink:*
 
 ## Setup
 
@@ -50,6 +50,55 @@ dependencies {
 </details>
 
 *Note: If your project is Kotlin Multiplatform, you can simply add this into commonMain dependencies.*
+
+## Quick Start
+
+Write some config:
+
+```toml
+name = "Peanuuutz"
+
+[account]
+username = "Peanuuutz"
+password = "123456"
+```
+
+Write some code:
+
+```kotlin
+@Serializable
+data class User(
+    val name: String,
+    val account: Account?
+)
+
+@Serializable
+data class Account(
+    val username: String,
+    val password: String
+)
+
+fun main() {
+    // Here we use JVM
+    val tomlString = Paths.get("...").readText()
+    // Either are OK, but to explicitly pass a serializer is faster
+    val user = Toml.decodeFromString(User.serializer(), tomlString)
+    val user = Toml.decodeFromString<User>(tomlString)
+    // That's it!
+
+    // By the way if you need some configuration
+    Toml {
+        ignoreUnknownKeys = true
+    }
+
+    // Serialization
+    val anotherUser = User("Anonymous", null)
+    // Again, better to explicitly pass a serializer
+    val config = Toml.encodeToString(User.serializer(), anotherUser)
+    Paths.get("...").writeText(config)
+    // Done
+}
+```
 
 ## Features
 
