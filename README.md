@@ -208,4 +208,4 @@ As you see, if you already have a TOML file, you can have no model class, but st
 
 *Note: Due to no context of values in TomlTable(see TomlElement.kt), all of those are encoded as inline(meaning you can't get the same serialized structure between model class and TomlTable).*
 
-_**API document now under construction.**_ :construction:
+For other information, view [API docs](https://peanuuutz.github.io/tomlkt/).
