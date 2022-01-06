@@ -1,8 +1,13 @@
+import java.net.URL
+
 plugins {
     idea
     val kotlinVersion: String by System.getProperties()
     kotlin("multiplatform") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
+
+    val dokkaVersion: String by System.getProperties()
+    id("org.jetbrains.dokka") version dokkaVersion
 
     id("maven-publish")
 }
@@ -66,7 +71,6 @@ kotlin {
 
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
                 implementation(kotlin("test-junit5"))
                 implementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
@@ -76,6 +80,22 @@ kotlin {
         val jsTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
+            }
+        }
+    }
+}
+
+tasks.dokkaHtml.configure {
+    outputDirectory.set(projectDir.resolve("docs"))
+
+    suppressObviousFunctions.set(false)
+
+    dokkaSourceSets {
+        "commonMain" {
+            sourceLink {
+                localDirectory.set(file("src/commonMain/kotlin"))
+                remoteUrl.set(URL("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin"))
+                remoteLineSuffix.set("#L")
             }
         }
     }

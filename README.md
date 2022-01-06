@@ -5,7 +5,7 @@
 
 Lightweight and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML](https://toml.io/) serialization and deserialization.
 
-*This project is in alpha state. If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt/issues). :wink:*
+*This project is in alpha state. If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt/issues).* :wink:
 
 ## Setup
 
@@ -81,7 +81,7 @@ data class Account(
 fun main() {
     // Here we use JVM
     val tomlString = Paths.get("...").readText()
-    // Either are OK, but to explicitly pass a serializer is faster
+    // Either is OK, but to explicitly pass a serializer is faster
     val user = Toml.decodeFromString(User.serializer(), tomlString)
     val user = Toml.decodeFromString<User>(tomlString)
     // That's it!
@@ -112,7 +112,7 @@ fun main() {
 |Boolean|:heavy_check_mark:|:heavy_check_mark:|
 |[Date Time](#Date-Time)|:x:|:x:|
 |Array|:heavy_check_mark:|:heavy_check_mark:|
-|[Table](#Table)|:heavy_check_mark:|:heavy_check_mark::grey_question:|
+|[Table](#Table)|:heavy_check_mark::grey_question:|:heavy_check_mark::grey_question:|
 |Inline Table|:heavy_check_mark:|:heavy_check_mark:|
 |Array of Tables|:heavy_check_mark:|:heavy_check_mark:|
 
@@ -122,10 +122,9 @@ Implemented as an annotation `@Comment` on **properties**:
 
 ```kotlin
 class IntData(
-    @Comment("An integer,", "but is deserialized into Long originally")
+    @Comment("An integer,", "but is decoded into Long originally")
     val int: Int
 )
-
 IntData(10086)
 ```
 
@@ -133,7 +132,7 @@ The code above will be encoded into:
 
 ```toml
 # An integer,
-# but is deserialized into Long originally
+# but is decoded into Long originally
 int = 10086
 ```
 
@@ -146,17 +145,15 @@ class MultilineStringData(
     @Multiline
     val multilineString: String
 )
-
-class LiteralStringData(
-    @Literal
-    val literalString: String
-)
-
 MultilineStringData("""
     Do, a deer, a female deer.
     Re, a drop of golden sun.
 """.trimIndent())
 
+class LiteralStringData(
+    @Literal
+    val literalString: String
+)
 LiteralStringData("C:\\Users\\<User>\\.m2\\repositories")
 ```
 
@@ -180,6 +177,10 @@ _**Because Kotlin Multiplatform doesn't support this without [additional library
 
 ### Table
 
+:gray-question:: **Currently PolymorphicKinds are NOT supported.**
+
+<font color = 'gray'>*(Anyway, to flatten it is better because TOML is actually not for serialization but for configuration)*</font>
+
 :grey_question:: There's an internal issue. When you define super-table **before** the sub-table:
 
 ```toml
@@ -200,8 +201,8 @@ It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the
 
 The working process of tomlkt:
 
-* Serialization: Model / TomlElement → File(String)
-* Deserialization: File(String) → TomlElement → Model
+* Serialization: Model / TomlElement → (TomlFileEncoder) → File(String)
+* Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model
 
 As you see, if you already have a TOML file, you can have no model class, but still gain access to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
 

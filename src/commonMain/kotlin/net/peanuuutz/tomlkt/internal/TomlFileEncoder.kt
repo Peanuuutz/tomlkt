@@ -3,11 +3,23 @@ package net.peanuuutz.tomlkt.internal
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind.*
+import kotlinx.serialization.descriptors.StructureKind.CLASS
+import kotlinx.serialization.descriptors.StructureKind.LIST
+import kotlinx.serialization.descriptors.StructureKind.MAP
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.*
+import net.peanuuutz.tomlkt.TomlConfig
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlNull
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.toTomlKey
+import net.peanuuutz.tomlkt.Comment
+import net.peanuuutz.tomlkt.Fold
+import net.peanuuutz.tomlkt.Multiline
+import net.peanuuutz.tomlkt.Literal
 
 internal class TomlFileEncoder(
     private val config: TomlConfig,
@@ -23,8 +35,14 @@ internal class TomlFileEncoder(
     override fun encodeDouble(value: Double) { builder.append(value.toString()) }
     override fun encodeChar(value: Char) { builder.append(value.escape().doubleQuoted) }
     override fun encodeString(value: String) { builder.append(value.escape().doubleQuoted) }
-    override fun encodeRawString(value: String) { builder.append(value) } // Internal
-    override fun encodeNull() { builder.append(TomlNull.toString()) }
+    override fun encodeNull() { encodeTomlElement(TomlNull) }
+    override fun encodeTomlElement(value: TomlElement) { // Internal
+        when (value) {
+            TomlNull, is TomlLiteral -> builder.append(value.toString())
+            is TomlArray -> TomlArraySerializer.serialize(this, value)
+            is TomlTable -> TomlTableSerializer.serialize(this, value)
+        }
+    }
 
     override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = encodeString(enumDescriptor.getElementName(index))
     override fun encodeInline(inlineDescriptor: SerialDescriptor): Encoder = this
@@ -37,12 +55,13 @@ internal class TomlFileEncoder(
     ): CompositeEncoder = if (descriptor.kind == CLASS) {
         if (forceFold)
             FlowClassEncoder()
-        else
+        else {
             ClassEncoder(
                 structuredIndex = calculateStructuredIndex(descriptor),
                 structured = true,
                 path = ""
             )
+        }
     } else throw UnsupportedSerialKindException(descriptor.kind)
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = beginCollection(descriptor, collectionSize, false)
@@ -107,7 +126,13 @@ internal class TomlFileEncoder(
         final override fun encodeChar(value: Char) = this@TomlFileEncoder.encodeChar(value)
         final override fun encodeString(value: String) = this@TomlFileEncoder.encodeString(value)
         final override fun encodeNull() = this@TomlFileEncoder.encodeNull()
-        final override fun encodeRawString(value: String) = this@TomlFileEncoder.encodeRawString(value) // Internal
+        final override fun encodeTomlElement(value: TomlElement) { // Internal
+            when (value) {
+                TomlNull, is TomlLiteral -> builder.append(value.toString())
+                is TomlArray -> TomlArraySerializer.serialize(this, value)
+                is TomlTable -> TomlTableSerializer.serialize(this, value)
+            }
+        }
         private fun encodeMultilineString(value: String) { builder.append("\"\"\"\n").append(value.escape(true)).append("\"\"\"") }
         private fun encodeLiteralString(value: String) {
             require('\'' !in value && '\n' !in value) { "Cannot have '\\'' or '\\n' in literal string" }
@@ -209,9 +234,7 @@ internal class TomlFileEncoder(
             builder.appendLine()
         }
 
-        override fun endStructure(descriptor: SerialDescriptor) {
-            builder.append(']')
-        }
+        override fun endStructure(descriptor: SerialDescriptor) { builder.append(']') }
     }
 
     internal abstract inner class FlowEncoder : AbstractEncoder() {
@@ -293,27 +316,25 @@ internal class TomlFileEncoder(
         override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = if (descriptor.kind == CLASS) {
             if (foldChild)
                 FlowClassEncoder()
-            else
+            else {
                 ClassEncoder(
                     structuredIndex = calculateStructuredIndex(descriptor),
                     structured = structuredChild,
                     path = currentChildPath
                 )
+            }
         } else throw UnsupportedSerialKindException(descriptor.kind)
 
         override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = when (descriptor.kind) {
             LIST -> {
-                if (foldChild || collectionSize == 0)
+                if (foldChild || collectionSize == 0) {
                     FlowArrayEncoder(collectionSize)
-                else {
-                    if (structuredChild && descriptor.isArrayOfTable)
-                        ArrayOfTableEncoder(
-                            collectionSize = collectionSize,
-                            path = currentChildPath
-                        )
-                    else
-                        BlockArrayEncoder(collectionSize)
-                }
+                } else if (structuredChild && descriptor.isArrayOfTable) {
+                    ArrayOfTableEncoder(
+                        collectionSize = collectionSize,
+                        path = currentChildPath
+                    )
+                } else BlockArrayEncoder(collectionSize)
             }
             MAP -> {
                 val valueDescriptor = descriptor.getElementDescriptor(1)

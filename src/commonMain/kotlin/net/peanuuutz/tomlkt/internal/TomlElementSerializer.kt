@@ -2,33 +2,33 @@
 
 package net.peanuuutz.tomlkt.internal
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.SerialKind
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.peanuuutz.tomlkt.*
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlNull
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.toTomlNull
+import net.peanuuutz.tomlkt.toTomlLiteral
+import net.peanuuutz.tomlkt.toTomlArray
+import net.peanuuutz.tomlkt.toTomlTable
 
 internal object TomlElementSerializer : KSerializer<TomlElement> {
-    override val descriptor: SerialDescriptor = buildSerialDescriptor("net.peanuuutz.tomlkt.TomlElement", PolymorphicKind.SEALED) {
-        element("TomlNull", lazyInitializeDescriptor { TomlNullSerializer.descriptor })
-        element("TomlLiteral", lazyInitializeDescriptor { TomlLiteralSerializer.descriptor })
-        element("TomlArray", lazyInitializeDescriptor { TomlArraySerializer.descriptor })
-        element("TomlTable", lazyInitializeDescriptor { TomlTableSerializer.descriptor })
-    }
+    override val descriptor: SerialDescriptor = buildSerialDescriptor("net.peanuuutz.tomlkt.TomlElement", SerialKind.CONTEXTUAL)
 
     override fun serialize(encoder: Encoder, value: TomlElement) {
-        encoder.asTomlEncoder()
-        when (value) {
-            TomlNull -> encoder.encodeSerializableValue(TomlNullSerializer, TomlNull)
-            is TomlLiteral -> encoder.encodeSerializableValue(TomlLiteralSerializer, value)
-            is TomlArray -> encoder.encodeSerializableValue(TomlArraySerializer, value)
-            is TomlTable -> encoder.encodeSerializableValue(TomlTableSerializer, value)
-        }
+        encoder.asTomlEncoder().encodeTomlElement(value)
     }
 
     override fun deserialize(decoder: Decoder): TomlElement = decoder.asTomlDecoder().decodeTomlElement()
@@ -38,7 +38,7 @@ internal object TomlNullSerializer : KSerializer<TomlNull> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor("net.peanuuutz.tomlkt.TomlNull", SerialKind.CONTEXTUAL)
 
     override fun serialize(encoder: Encoder, value: TomlNull) {
-        encoder.asTomlEncoder().encodeNull()
+        encoder.asTomlEncoder().encodeTomlElement(TomlNull)
     }
 
     override fun deserialize(decoder: Decoder): TomlNull = decoder.asTomlDecoder().decodeTomlElement().toTomlNull()
@@ -48,7 +48,7 @@ internal object TomlLiteralSerializer : KSerializer<TomlLiteral> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("net.peanuuutz.tomlkt.TomlLiteral", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: TomlLiteral) {
-        encoder.asTomlEncoder().encodeRawString(value.toString())
+        encoder.asTomlEncoder().encodeTomlElement(value)
     }
 
     override fun deserialize(decoder: Decoder): TomlLiteral = decoder.asTomlDecoder().decodeTomlElement().toTomlLiteral()
@@ -87,18 +87,3 @@ private fun Encoder.asTomlEncoder(): TomlEncoder = this as? TomlEncoder
 
 private fun Decoder.asTomlDecoder(): TomlDecoder = this as? TomlDecoder
     ?: throw IllegalStateException("Expect TomlDecoderAddon, but found ${this::class.simpleName}")
-
-@OptIn(ExperimentalSerializationApi::class)
-private fun lazyInitializeDescriptor(provider: () -> SerialDescriptor): SerialDescriptor = object : SerialDescriptor {
-    private val original: SerialDescriptor by lazy(provider)
-
-    override val elementsCount: Int get() = original.elementsCount
-    override val kind: SerialKind get() = original.kind
-    override val serialName: String get() = original.serialName
-
-    override fun getElementAnnotations(index: Int): List<Annotation> = original.getElementAnnotations(index)
-    override fun getElementDescriptor(index: Int): SerialDescriptor = original.getElementDescriptor(index)
-    override fun getElementIndex(name: String): Int = original.getElementIndex(name)
-    override fun getElementName(index: Int): String = original.getElementName(index)
-    override fun isElementOptional(index: Int): Boolean = original.isElementOptional(index)
-}

@@ -7,7 +7,23 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.*
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlNull
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.toTomlLiteral
+import net.peanuuutz.tomlkt.toTomlArray
+import net.peanuuutz.tomlkt.toTomlTable
+import net.peanuuutz.tomlkt.toBoolean
+import net.peanuuutz.tomlkt.toByte
+import net.peanuuutz.tomlkt.toShort
+import net.peanuuutz.tomlkt.toInt
+import net.peanuuutz.tomlkt.toLong
+import net.peanuuutz.tomlkt.toFloat
+import net.peanuuutz.tomlkt.toDouble
+import net.peanuuutz.tomlkt.toChar
+import net.peanuuutz.tomlkt.toTomlNull
 import net.peanuuutz.tomlkt.TomlConfig
 
 internal class TomlElementDecoder(

@@ -1,11 +1,21 @@
-@file:OptIn(ExperimentalContracts::class)
-
 package net.peanuuutz.tomlkt.internal.parser
 
-import net.peanuuutz.tomlkt.*
-import net.peanuuutz.tomlkt.internal.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlNull
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.internal.IncompleteException
+import net.peanuuutz.tomlkt.internal.UnexpectedTokenException
+import net.peanuuutz.tomlkt.internal.S
+import net.peanuuutz.tomlkt.internal.BARE_KEY_REGEX
+import net.peanuuutz.tomlkt.internal.contains
+import net.peanuuutz.tomlkt.internal.RADIX
+import net.peanuuutz.tomlkt.internal.DEC_RANGE
+import net.peanuuutz.tomlkt.internal.toNumber
+import net.peanuuutz.tomlkt.internal.unescape
 
 internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
     private val source: String = source.replace("\r\n", "\n")
@@ -24,6 +34,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
         return getChar(-1) in previous && beforeFinal() && getChar(1) in next
     }
 
+    @OptIn(ExperimentalContracts::class)
     private fun incompleteOn(predicate: Boolean) {
         contract { returns() implies !predicate }
         if (predicate)
@@ -32,6 +43,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
 
     private fun unexpectedToken(token: Char): Nothing = throw UnexpectedTokenException(token, line)
 
+    @OptIn(ExperimentalContracts::class)
     private fun Char.unexpectedOn(predicate: Boolean) {
         contract { returns() implies !predicate }
         if (predicate)
