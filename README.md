@@ -177,7 +177,7 @@ _**Because Kotlin Multiplatform doesn't support this without [additional library
 
 ### Table
 
-:grey-question:: **Currently PolymorphicKinds are NOT supported.**
+:grey_question:: **Currently PolymorphicKinds are NOT supported.**
 
 <font color = 'gray'>*(Anyway, to flatten it is better because TOML is actually not for serialization but for configuration)*</font>
 
