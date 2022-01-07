@@ -9,7 +9,8 @@ plugins {
     val dokkaVersion: String by System.getProperties()
     id("org.jetbrains.dokka") version dokkaVersion
 
-    id("maven-publish")
+    `maven-publish`
+    signing
 }
 
 val archivesName: String by project
@@ -17,12 +18,6 @@ base.archivesBaseName = archivesName
 
 repositories {
     mavenCentral()
-}
-
-idea {
-    module {
-        isDownloadSources = true
-    }
 }
 
 kotlin {
@@ -85,18 +80,86 @@ kotlin {
     }
 }
 
-tasks.dokkaHtml.configure {
-    outputDirectory.set(projectDir.resolve("docs"))
+val docsDir = projectDir.resolve("docs")
 
-    suppressObviousFunctions.set(false)
+tasks {
+    dokkaHtml {
+        outputDirectory.set(docsDir)
 
-    dokkaSourceSets {
-        "commonMain" {
-            sourceLink {
-                localDirectory.set(file("src/commonMain/kotlin"))
-                remoteUrl.set(URL("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin"))
-                remoteLineSuffix.set("#L")
+        dokkaSourceSets {
+            "commonMain" {
+                sourceLink {
+                    localDirectory.set(file("src/commonMain/kotlin"))
+                    remoteUrl.set(URL("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin"))
+                    remoteLineSuffix.set("#L")
+                }
             }
         }
     }
+
+    create<Delete>("deleteOldDocs") {
+        group = "documentation"
+        delete(docsDir)
+    }
+
+    create<Jar>("createJavadocByDokka") {
+        group = "documentation"
+        dependsOn("deleteOldDocs", dokkaHtml)
+        archiveClassifier.set("javadoc")
+        from(docsDir)
+    }
+}
+
+afterEvaluate {
+    configure<PublishingExtension> {
+        publications.all {
+            (this as? MavenPublication)?.artifactId = project.name +
+                    "-$name".takeUnless { "kotlinMultiplatform" in it }.orEmpty()
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+            credentials {
+                username = System.getProperty("credentials.username")
+                password = System.getProperty("credentials.password")
+            }
+        }
+    }
+    publications {
+        withType<MavenPublication> {
+            artifact(tasks["createJavadocByDokka"])
+            pom {
+                name.set("tomlkt")
+                description.set("TOML support for kotlinx.serialization")
+                url.set("https://github.com/Peanuuutz/tomlkt")
+                licenses {
+                    license {
+                        name.set("Apache-2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                    }
+                }
+                issueManagement {
+                    system.set("Github")
+                    url.set("https://github.com/Peanuuutz/tomlkt/issues")
+                }
+                scm {
+                    connection.set("https://github.com/Peanuuutz/tomlkt.git")
+                    url.set("https://github.com/Peanuuutz/tomlkt")
+                }
+                developers {
+                    developer {
+                        name.set("Peanuuutz")
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications)
 }
