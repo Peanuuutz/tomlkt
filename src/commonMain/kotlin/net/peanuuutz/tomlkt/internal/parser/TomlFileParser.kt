@@ -1,3 +1,19 @@
+/*
+    Copyright 2022 Peanuuutz
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ */
+
 package net.peanuuutz.tomlkt.internal.parser
 
 import kotlin.contracts.ExperimentalContracts
@@ -69,16 +85,16 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
             when (val c = getChar()) {
                 ' ', '\t' -> continue
                 '\n' -> line++
-                in BARE_KEY_REGEX, S.DOUBLE_QUOTE, S.SINGLE_QUOTE -> {
+                in BARE_KEY_REGEX, '"', '\'' -> {
                     currentPosition--
                     val actualPath = tablePath?.plus(parsePath()) ?: parsePath()
-                    expectNext("${S.EQUAL}")
+                    expectNext("${S.KEY_VALUE_DELIMITER}")
                     tree.addByPath(actualPath, ValueNode(actualPath.last(), parseValue(false)), arrayOfTableIndices)
                 }
-                S.SHARP -> parseComment()
-                S.OPEN_BRACKET -> {
+                S.COMMENT -> parseComment()
+                S.START_ARRAY -> {
                     incompleteOn(!beforeFinal())
-                    val isArrayOfTable = getChar(1) == S.OPEN_BRACKET
+                    val isArrayOfTable = getChar(1) == S.START_ARRAY
                     if (isArrayOfTable)
                         currentPosition++
                     tablePath = parseTableHead(isArrayOfTable).also { path ->
@@ -107,9 +123,9 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
             when (val c = getChar()) {
                 ' ', '\t' -> continue
                 '\n' -> incompleteOn(true)
-                S.CLOSE_BRACKET -> {
+                S.END_ARRAY -> {
                     if (isArrayOfTable) {
-                        incompleteOn(!beforeFinal() || getChar(1) != S.CLOSE_BRACKET)
+                        incompleteOn(!beforeFinal() || getChar(1) != S.END_ARRAY)
                         currentPosition++
                     }
                     justEnded = true
@@ -139,21 +155,21 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                     path.add(parseBareKey())
                     expectKey = false
                 }
-                S.DOUBLE_QUOTE -> {
+                '"' -> {
                     c.unexpectedOn(!expectKey)
                     path.add(parseStringKey())
                     expectKey = false
                 }
-                S.SINGLE_QUOTE -> {
+                '\'' -> {
                     c.unexpectedOn(!expectKey)
                     path.add(parseLiteralStringKey())
                     expectKey = false
                 }
-                S.DOT -> {
+                S.PATH_DELIMITER -> {
                     c.unexpectedOn(expectKey)
                     expectKey = true
                 }
-                S.EQUAL, S.CLOSE_BRACKET -> {
+                S.KEY_VALUE_DELIMITER, S.END_ARRAY -> {
                     c.unexpectedOn(expectKey)
                     break
                 }
@@ -170,7 +186,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
         val builder = StringBuilder().append(getChar())
         while (++currentPosition < source.length) {
             when (val c = getChar()) {
-                ' ', '\t', S.EQUAL, S.DOT, S.CLOSE_BRACKET -> break
+                ' ', '\t', S.KEY_VALUE_DELIMITER, S.PATH_DELIMITER, S.END_ARRAY -> break
                 '\n' -> incompleteOn(true)
                 else -> builder.append(c)
             }
@@ -198,8 +214,8 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                     incompleteOn(element == null)
                     break
                 }
-                S.SHARP -> parseComment()
-                S.COMMA, S.CLOSE_BRACKET, S.CLOSE_BRACE -> {
+                S.COMMENT -> parseComment()
+                S.ITEM_DELIMITER, S.END_ARRAY, S.END_TABLE -> {
                     c.unexpectedOn(!inStructure)
                     break
                 }
@@ -217,18 +233,18 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                                 else -> unexpectedToken(getChar(1))
                             }
                         }
-                        S.POSITIVE, S.NEGATIVE -> {
+                        '+', '-' -> {
                             incompleteOn(!beforeFinal())
                             when (source[++currentPosition]) {
-                                in DEC_RANGE -> parseNumberValue(c == S.POSITIVE)
-                                'i', 'n' -> parseNonNumberValue(c == S.POSITIVE)
+                                in DEC_RANGE -> parseNumberValue(c == '+')
+                                'i', 'n' -> parseNonNumberValue(c == '+')
                                 else -> unexpectedToken(getChar())
                             }
                         }
-                        S.DOUBLE_QUOTE -> parseStringValue()
-                        S.SINGLE_QUOTE -> parseLiteralStringValue()
-                        S.OPEN_BRACKET -> parseArrayValue()
-                        S.OPEN_BRACE -> parseInlineTableValue()
+                        '"' -> parseStringValue()
+                        '\'' -> parseLiteralStringValue()
+                        S.START_ARRAY -> parseArrayValue()
+                        S.START_TABLE -> parseInlineTableValue()
                         else -> unexpectedToken(c)
                     }
                 }
@@ -284,7 +300,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
         var isExponent = false
         while (++currentPosition < source.length) {
             when (val c = getChar()) {
-                ' ', '\t', '\n', S.SHARP, S.COMMA, S.CLOSE_BRACKET, S.CLOSE_BRACE -> break
+                ' ', '\t', '\n', S.COMMENT, S.ITEM_DELIMITER, S.END_ARRAY, S.END_TABLE -> break
                 '0', '1' -> builder.append(c)
                 '2', '3', '4', '5', '6', '7' -> {
                     c.unexpectedOn(radix == 2)
@@ -294,7 +310,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                     c.unexpectedOn(radix <= 8)
                     builder.append(c)
                 }
-                S.DOT -> {
+                S.PATH_DELIMITER -> {
                     c.unexpectedOn(isExponent || isDouble || radix != 10 || !surroundedBy(DEC_RANGE, DEC_RANGE))
                     builder.append(c)
                     isDouble = true
@@ -311,9 +327,9 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                     c.unexpectedOn(radix <= 10)
                     builder.append(c)
                 }
-                S.UNDERSCORE -> c.unexpectedOn(!surroundedBy(DEC_RANGE, DEC_RANGE))
-                S.POSITIVE -> c.unexpectedOn(getChar(-1) != 'e' && getChar(-1) != 'E')
-                S.NEGATIVE -> {
+                '_' -> c.unexpectedOn(!surroundedBy(DEC_RANGE, DEC_RANGE))
+                '+' -> c.unexpectedOn(getChar(-1) != 'e' && getChar(-1) != 'E')
+                '-' -> {
                     c.unexpectedOn(getChar(-1) != 'e' && getChar(-1) != 'E')
                     isDouble = true
                     builder.append(c)
@@ -328,18 +344,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
     // Start right on the first '"', end on the last '"'
     private fun parseStringValue(): TomlLiteral {
         incompleteOn(!beforeFinal())
-        val multiline = if (getChar(1) != S.DOUBLE_QUOTE) {
-            false
-        } else if (beforeFinal(1) && getChar(2) == S.DOUBLE_QUOTE) {
-            currentPosition += 2
-            incompleteOn(!beforeFinal())
-            if (getChar(1) == '\n')
-                currentPosition++
-            true
-        } else {
-            currentPosition++
-            return TomlLiteral("")
-        }
+        val multiline = checkIsMultiline('"') { return TomlLiteral("") }
         val builder = StringBuilder()
         var trim = false
         var justEnded = false
@@ -352,16 +357,16 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                         builder.append(c)
                     line++
                 }
-                S.DOUBLE_QUOTE -> {
+                '"' -> {
                     if (!multiline) {
-                        if (getChar(-1) != S.BACK_SLASH) {
+                        if (getChar(-1) != '\\') {
                             justEnded = true
                             break
                         }
                         builder.append(c)
                     } else {
                         incompleteOn(!beforeFinal(1))
-                        if (getChar(1) == S.DOUBLE_QUOTE && getChar(2) == S.DOUBLE_QUOTE) {
+                        if (getChar(1) == '"' && getChar(2) == '"') {
                             currentPosition += 2
                             justEnded = true
                             break
@@ -369,14 +374,14 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                         builder.append(c)
                     }
                 }
-                S.BACK_SLASH -> {
+                '\\' -> {
                     incompleteOn(!beforeFinal())
                     when (val nextC = getChar(1)) {
                         ' ', '\t', '\n' -> {
                             c.unexpectedOn(!multiline)
                             trim = true
                         }
-                        'u', 'b', 't', 'n', 'f', 'r', S.DOUBLE_QUOTE, S.BACK_SLASH -> {
+                        'u', 'b', 't', 'n', 'f', 'r', '"', '\\' -> {
                             builder.append(c).append(nextC)
                             currentPosition++
                         }
@@ -396,18 +401,7 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
     // Start right on '\'', end on the last '\''
     private fun parseLiteralStringValue(): TomlLiteral {
         incompleteOn(!beforeFinal())
-        val multiline = if (getChar(1) != S.SINGLE_QUOTE) {
-            false
-        } else if (beforeFinal(1) && getChar(2) == S.SINGLE_QUOTE) {
-            currentPosition += 2
-            incompleteOn(!beforeFinal())
-            if (getChar(1) == '\n')
-                currentPosition++
-            true
-        } else {
-            currentPosition++
-            return TomlLiteral("")
-        }
+        val multiline = checkIsMultiline('\'') { return TomlLiteral("") }
         val builder = StringBuilder()
         var justEnded = false
         while (++currentPosition < source.length) {
@@ -418,13 +412,13 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                     builder.append(c)
                     line++
                 }
-                S.SINGLE_QUOTE -> {
+                '\'' -> {
                     if (!multiline) {
                         justEnded = true
                         break
                     }
                     incompleteOn(!beforeFinal(1))
-                    if (getChar(1) == S.SINGLE_QUOTE && getChar(2) == S.SINGLE_QUOTE) {
+                    if (getChar(1) == '\'' && getChar(2) == '\'') {
                         currentPosition += 2
                         justEnded = true
                         break
@@ -438,6 +432,22 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
         return TomlLiteral(builder.toString())
     }
 
+    private inline fun checkIsMultiline(quote: Char, whenEmpty: () -> Unit): Boolean {
+        return if (getChar(1) != quote) {
+            false
+        } else if (beforeFinal(1) && getChar(2) == quote) {
+            currentPosition += 2
+            incompleteOn(!beforeFinal())
+            if (getChar(1) == '\n')
+                currentPosition++
+            true
+        } else {
+            currentPosition++
+            whenEmpty() // Should always return in place
+            false
+        }
+    }
+
     // Start right on '[', end on ']'
     private fun parseArrayValue(): TomlArray {
         val builder = mutableListOf<TomlElement>()
@@ -447,15 +457,15 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
             when (val c = getChar()) {
                 ' ', '\t' -> continue
                 '\n' -> line++
-                S.CLOSE_BRACKET -> {
+                S.END_ARRAY -> {
                     justEnded = true
                     break
                 }
-                S.COMMA -> {
+                S.ITEM_DELIMITER -> {
                     c.unexpectedOn(expectValue)
                     expectValue = true
                 }
-                S.SHARP -> parseComment()
+                S.COMMENT -> parseComment()
                 else -> {
                     currentPosition--
                     builder.add(parseValue(true))
@@ -477,20 +487,20 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
             when (val c = getChar()) {
                 ' ', '\t' -> continue
                 '\n' -> incompleteOn(true)
-                S.CLOSE_BRACE -> {
+                S.END_TABLE -> {
                     c.unexpectedOn(expectEntry && !justStarted)
                     justEnded = true
                     break
                 }
-                S.COMMA -> {
+                S.ITEM_DELIMITER -> {
                     c.unexpectedOn(expectEntry)
                     expectEntry = true
                 }
-                S.SHARP -> unexpectedToken(c)
+                S.COMMENT -> unexpectedToken(c)
                 else -> {
                     currentPosition--
                     val path = parsePath()
-                    expectNext("${S.EQUAL}")
+                    expectNext("${S.KEY_VALUE_DELIMITER}")
                     builder.addByPath(path, ValueNode(path.last(), parseValue(true)), null)
                     expectEntry = false
                     justStarted = false

@@ -1,14 +1,11 @@
 import java.net.URL
 
 plugins {
+    kotlin("multiplatform")
+    id("org.jetbrains.dokka")
+    kotlin("plugin.serialization")
+
     idea
-    val kotlinVersion: String by System.getProperties()
-    kotlin("multiplatform") version kotlinVersion
-    kotlin("plugin.serialization") version kotlinVersion
-
-    val dokkaVersion: String by System.getProperties()
-    id("org.jetbrains.dokka") version dokkaVersion
-
     `maven-publish`
     signing
 }
