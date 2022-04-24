@@ -87,9 +87,10 @@ fun main() {
     // That's it!
 
     // By the way if you need some configuration
-    Toml {
+    val toml = Toml {
         ignoreUnknownKeys = true
     }
+    // Use toml instead of Toml.Default to apply the change
 
     // Serialization
     val anotherUser = User("Anonymous", null)
