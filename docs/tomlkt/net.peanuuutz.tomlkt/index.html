@@ -2,24 +2,28 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>net.peanuuutz.tomlkt</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script><script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../styles/style.css" rel="Stylesheet"><link href="../../styles/logo-styles.css" rel="Stylesheet"><link href="../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../scripts/main.js" async="async"></script>  </head>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
+const savedDarkMode = storage ? JSON.parse(storage) : false
+if(savedDarkMode === true){
+    document.getElementsByTagName("html")[0].classList.add("theme-dark")
+}</script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../styles/style.css" rel="Stylesheet"><link href="../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../styles/main.css" rel="Stylesheet"><link href="../../styles/prism.css" rel="Stylesheet"><link href="../../styles/logo-styles.css" rel="Stylesheet"><script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../scripts/main.js" defer="defer"></script><script type="text/javascript" src="../../scripts/prism.js" async="async"></script>  </head>
   <body>
+    <div class="navigation-wrapper" id="navigation-wrapper">
+      <div id="leftToggler"><span class="icon-toggler"></span></div>
+      <div class="library-name"><a href="../../index.html">tomlkt</a></div>
+      <div>0.1.0</div>
+      <div class="pull-right d-flex"><button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+      </div>
+    </div>
     <div id="container">
-      <div id="leftColumn"><a href="../../index.html">
-          <div id="logo"></div>
-        </a>
-        <div id="paneSearch"></div>
+      <div id="leftColumn">
         <div id="sideMenu"></div>
       </div>
       <div id="main">
-        <div id="leftToggler"><span class="icon-toggler"></span></div>
-<script type="text/javascript" src="../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="tomlkt::net.peanuuutz.tomlkt////PointingToDeclaration//788909594">
-          <div class="navigation-wrapper" id="navigation-wrapper">
-            <div class="breadcrumbs"><a href="../../index.html">tomlkt</a>/<a href="index.html">net.peanuuutz.tomlkt</a></div>
-            <div class="pull-right d-flex">
-              <div id="searchBar"></div>
-            </div>
-          </div>
+        <div class="main-content" id="content" pageIds="tomlkt::net.peanuuutz.tomlkt////PointingToDeclaration//788909594">
+          <div class="breadcrumbs"><a href="../../index.html">tomlkt</a>/<a href="index.html">net.peanuuutz.tomlkt</a></div>
           <div class="cover ">
             <h1 class="cover"><span><span>Package</span></span> <span>net.</span><wbr></wbr><span>peanuuutz.</span><wbr></wbr><span>tomlkt</span></h1>
           </div>
@@ -30,187 +34,195 @@
               <div class="table" data-togglable="Types"><a data-name="-456986216%2FClasslikes%2F788909594" anchor-label="Comment" id="-456986216%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-comment/index.html"><span><span>Comment</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-456986216%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-comment/index.html"><span><span>Comment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-456986216%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html">Target</a>(<span>allowedTargets = [<span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr>]</span><wbr></wbr>)</div></div>annotation class <a href="-comment/index.html">Comment</a>(texts: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Add comments to corresponding property.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace strikethrough"><div class="block"><div class="block"><span class="token annotation">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html"><span class="token annotation">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><strike><span class="token keyword">annotation class </span></strike><a href="-comment/index.html"><strike>Comment</strike></a><strike><span class="token punctuation">(</span></strike><strike>texts</strike><strike><span class="token operator">: </span></strike><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><strike><span class="token punctuation">)</span></strike><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1552267734%2FClasslikes%2F788909594" anchor-label="Fold" id="-1552267734%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-fold/index.html"><span><span>Fold</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1552267734%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#-1552267734%2FClasslikes%2F788909594"><span><span>Fold</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1552267734%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html">Target</a>(<span>allowedTargets = [<span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr>]</span><wbr></wbr>)</div></div>annotation class <a href="-fold/index.html">Fold</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Force fold the corresponding property(needs to be list-like or map-like).</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace strikethrough"><strike><span class="token keyword">typealias </span></strike><a href="index.html#-1552267734%2FClasslikes%2F788909594">Fold</a><strike><span class="token operator"> = </span></strike><a href="-inline/index.html">Inline</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-856425454%2FClasslikes%2F788909594" anchor-label="Inline" id="-856425454%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-inline/index.html"><span><span>Inline</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-856425454%2FClasslikes%2F788909594"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html"><span class="token annotation">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-inline/index.html">Inline</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Force inline the corresponding property(needs to be list-like or map-like).</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="770636104%2FClasslikes%2F788909594" anchor-label="Literal" id="770636104%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-literal/index.html"><span><span>Literal</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="770636104%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-literal/index.html"><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="770636104%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html">Target</a>(<span>allowedTargets = [<span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr>]</span><wbr></wbr>)</div></div>annotation class <a href="-literal/index.html">Literal</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Mark the corresponding <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">kotlin.String</a> property as literal when encoded.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html"><span class="token annotation">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-literal/index.html">Literal</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Mark the corresponding <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">kotlin.String</a> property as literal when encoded.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1540517494%2FClasslikes%2F788909594" anchor-label="Multiline" id="-1540517494%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-multiline/index.html"><span><span>Multiline</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1540517494%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-multiline/index.html"><span><span>Multiline</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1540517494%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html">Target</a>(<span>allowedTargets = [<span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr>]</span><wbr></wbr>)</div></div>annotation class <a href="-multiline/index.html">Multiline</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Mark the corresponding <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">kotlin.String</a> property as multiline when encoded.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html"><span class="token annotation">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-multiline/index.html">Multiline</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Mark the corresponding <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">kotlin.String</a> property as multiline when encoded.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="770993905%2FClasslikes%2F788909594" anchor-label="Toml" id="770993905%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml/index.html"><span><span>Toml</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="770993905%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml/index.html"><span><span>Toml</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="770993905%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">sealed class <a href="-toml/index.html">Toml</a> : <span data-unresolved-link="kotlinx.serialization/StringFormat///PointingToDeclaration/">StringFormat</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">The main entry point to use TOML.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="-toml/index.html">Toml</a> : <span data-unresolved-link="kotlinx.serialization/StringFormat///PointingToDeclaration/">StringFormat</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">The main entry point to use TOML.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-838732456%2FClasslikes%2F788909594" anchor-label="TomlArray" id="-838732456%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-array/index.html"><span>Toml</span><wbr></wbr><span><span>Array</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-838732456%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-array/index.html"><span>Toml</span><wbr></wbr><span><span>Array</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-838732456%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">class <a href="-toml-array/index.html">TomlArray</a> : <a href="-toml-element/index.html">TomlElement</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a>&lt;<a href="-toml-element/index.html">TomlElement</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Represents array in TOML, which values are <a href="-toml-element/index.html">TomlElement</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-toml-array/index.html">TomlArray</a> : <a href="-toml-element/index.html">TomlElement</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-toml-element/index.html">TomlElement</a><span class="token operator">&gt; </span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Represents array in TOML, which values are <a href="-toml-element/index.html">TomlElement</a>.</p></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1953065966%2FClasslikes%2F788909594" anchor-label="TomlComment" id="-1953065966%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-comment/index.html"><span>Toml</span><wbr></wbr><span><span>Comment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1953065966%2FClasslikes%2F788909594"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-target/index.html"><span class="token annotation">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-toml-comment/index.html">TomlComment</a><span class="token punctuation">(</span>text<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Add comments to corresponding property.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1205937592%2FClasslikes%2F788909594" anchor-label="TomlConfigBuilder" id="1205937592%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-config-builder/index.html"><span>Toml</span><wbr></wbr><span>Config</span><wbr></wbr><span><span>Builder</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1205937592%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-config-builder/index.html"><span>Toml</span><wbr></wbr><span>Config</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1205937592%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">class <a href="-toml-config-builder/index.html">TomlConfigBuilder</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Builder provided for <code>Toml { ... }</code> factory function.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-toml-config-builder/index.html">TomlConfigBuilder</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Builder provided for <code class="lang-kotlin">Toml { ... }</code> factory function.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1473732117%2FClasslikes%2F788909594" anchor-label="TomlElement" id="1473732117%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-element/index.html"><span>Toml</span><wbr></wbr><span><span>Element</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1473732117%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-element/index.html"><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1473732117%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">sealed class <a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Represents anything in TOML, including and only including <a href="-toml-null/index.html">TomlNull</a>, <a href="-toml-literal/index.html">TomlLiteral</a>, <a href="-toml-array/index.html">TomlArray</a>, <a href="-toml-table/index.html">TomlTable</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Represents anything in TOML, including and only including <a href="-toml-null/index.html">TomlNull</a>, <a href="-toml-literal/index.html">TomlLiteral</a>, <a href="-toml-array/index.html">TomlArray</a>, <a href="-toml-table/index.html">TomlTable</a>.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-725443646%2FClasslikes%2F788909594" anchor-label="TomlLiteral" id="-725443646%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-literal/index.html"><span>Toml</span><wbr></wbr><span><span>Literal</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-725443646%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-literal/index.html"><span>Toml</span><wbr></wbr><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-725443646%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">class <a href="-toml-literal/index.html">TomlLiteral</a> : <a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Represents literal value, which can be booleans, numbers, chars, strings.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-toml-literal/index.html">TomlLiteral</a> : <a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Represents literal value, which can be booleans, numbers, chars, strings.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="293351210%2FClasslikes%2F788909594" anchor-label="TomlNull" id="293351210%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-null/index.html"><span>Toml</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="293351210%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-null/index.html"><span>Toml</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="293351210%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">object <a href="-toml-null/index.html">TomlNull</a> : <a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Represents null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-toml-null/index.html">TomlNull</a> : <a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Represents null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1626687875%2FClasslikes%2F788909594" anchor-label="TomlTable" id="1626687875%2FClasslikes%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-table/index.html"><span>Toml</span><wbr></wbr><span><span>Table</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1626687875%2FClasslikes%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-table/index.html"><span>Toml</span><wbr></wbr><span><span>Table</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1626687875%2FClasslikes%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">class <a href="-toml-table/index.html">TomlTable</a> : <a href="-toml-element/index.html">TomlElement</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, <a href="-toml-element/index.html">TomlElement</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Represents table in TOML, which keys are strings and values are <a href="-toml-element/index.html">TomlElement</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-toml-table/index.html">TomlTable</a> : <a href="-toml-element/index.html">TomlElement</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="-toml-element/index.html">TomlElement</a><span class="token operator">&gt; </span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Represents table in TOML, which keys are strings and values are <a href="-toml-element/index.html">TomlElement</a>.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -219,500 +231,435 @@
               <div class="table" data-togglable="Functions"><a data-name="511024066%2FFunctions%2F788909594" anchor-label="decodeFromTomlElement" id="511024066%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="decode-from-toml-element.html"><span>decode</span><wbr></wbr><span>From</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="511024066%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="decode-from-toml-element.html"><span>decode</span><wbr></wbr><span>From</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="511024066%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">inline fun &lt;<a href="decode-from-toml-element.html">T</a>&gt; <a href="-toml/index.html">Toml</a>.<a href="decode-from-toml-element.html">decodeFromTomlElement</a>(element: <a href="-toml-element/index.html">TomlElement</a>): <a href="decode-from-toml-element.html">T</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Deserializes <a href="decode-from-toml-element.html">element</a> into a value of type <a href="decode-from-toml-element.html">T</a> using serializer retrieved from reified type parameter.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-toml-element.html">T</a><span class="token operator">&gt; </span><a href="-toml/index.html">Toml</a><span class="token punctuation">.</span><a href="decode-from-toml-element.html"><span class="token function">decodeFromTomlElement</span></a><span class="token punctuation">(</span>element<span class="token operator">: </span><a href="-toml-element/index.html">TomlElement</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="decode-from-toml-element.html">T</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Deserializes <a href="decode-from-toml-element.html">element</a> into a value of type <a href="decode-from-toml-element.html">T</a> using serializer retrieved from reified type parameter.</p></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1765067448%2FFunctions%2F788909594" anchor-label="encodeToTomlElement" id="1765067448%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex">
+                        <div><a href="encode-to-toml-element.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1765067448%2FFunctions%2F788909594"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-toml-element.html">T</a><span class="token operator">&gt; </span><a href="-toml/index.html">Toml</a><span class="token punctuation">.</span><a href="encode-to-toml-element.html"><span class="token function">encodeToTomlElement</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="encode-to-toml-element.html">T</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-element/index.html">TomlElement</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Serializes <a href="encode-to-toml-element.html">value</a> into <a href="-toml-element/index.html">TomlElement</a> using serializer retrieved from reified type parameter.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-153061929%2FFunctions%2F788909594" anchor-label="get" id="-153061929%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get.html"><span><span>get</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-153061929%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get.html"><span><span>get</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-153061929%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">operator fun <a href="-toml-table/index.html">TomlTable</a>.<a href="get.html">get</a>(vararg keys: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>?): <a href="-toml-element/index.html">TomlElement</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Get value along with path constructed by <a href="get.html">keys</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="-toml-table/index.html">TomlTable</a><span class="token punctuation">.</span><a href="get.html"><span class="token function">get</span></a><span class="token punctuation">(</span><span class="token keyword">vararg </span>keys<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-element/index.html">TomlElement</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Get value along with path constructed by <a href="get.html">keys</a>.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-868023031%2FFunctions%2F788909594" anchor-label="toBoolean" id="-868023031%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-boolean.html"><span>to</span><wbr></wbr><span><span>Boolean</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-868023031%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-boolean.html"><span>to</span><wbr></wbr><span><span>Boolean</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-868023031%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-boolean.html">toBoolean</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as boolean.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-boolean.html"><span class="token function">toBoolean</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as boolean.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="994185503%2FFunctions%2F788909594" anchor-label="toBooleanOrNull" id="994185503%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-boolean-or-null.html"><span>to</span><wbr></wbr><span>Boolean</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="994185503%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-boolean-or-null.html"><span>to</span><wbr></wbr><span>Boolean</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="994185503%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-boolean-or-null.html">toBooleanOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as boolean only if content is &quot;true&quot; or &quot;false&quot;, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-boolean-or-null.html"><span class="token function">toBooleanOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as boolean only if content is &quot;true&quot; or &quot;false&quot;, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="959445409%2FFunctions%2F788909594" anchor-label="toByte" id="959445409%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-byte.html"><span>to</span><wbr></wbr><span><span>Byte</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="959445409%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-byte.html"><span>to</span><wbr></wbr><span><span>Byte</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="959445409%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-byte.html">toByte</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as byte.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-byte.html"><span class="token function">toByte</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as byte.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="542847927%2FFunctions%2F788909594" anchor-label="toByteOrNull" id="542847927%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-byte-or-null.html"><span>to</span><wbr></wbr><span>Byte</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="542847927%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-byte-or-null.html"><span>to</span><wbr></wbr><span>Byte</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="542847927%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-byte-or-null.html">toByteOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as byte only if content can be byte, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-byte-or-null.html"><span class="token function">toByteOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as byte only if content can be byte, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="2012287763%2FFunctions%2F788909594" anchor-label="toChar" id="2012287763%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-char.html"><span>to</span><wbr></wbr><span><span>Char</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2012287763%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-char.html"><span>to</span><wbr></wbr><span><span>Char</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2012287763%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-char.html">toChar</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as char.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-char.html"><span class="token function">toChar</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as char.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1800671319%2FFunctions%2F788909594" anchor-label="toCharOrNull" id="-1800671319%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-char-or-null.html"><span>to</span><wbr></wbr><span>Char</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1800671319%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-char-or-null.html"><span>to</span><wbr></wbr><span>Char</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1800671319%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-char-or-null.html">toCharOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as char only if the length of content is exactly 1, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-char-or-null.html"><span class="token function">toCharOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as char only if the length of content is exactly 1, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1034663928%2FFunctions%2F788909594" anchor-label="toDouble" id="1034663928%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-double.html"><span>to</span><wbr></wbr><span><span>Double</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1034663928%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-double.html"><span>to</span><wbr></wbr><span><span>Double</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1034663928%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-double.html">toDouble</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as double.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-double.html"><span class="token function">toDouble</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as double.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1993249998%2FFunctions%2F788909594" anchor-label="toDoubleOrNull" id="1993249998%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-double-or-null.html"><span>to</span><wbr></wbr><span>Double</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1993249998%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-double-or-null.html"><span>to</span><wbr></wbr><span>Double</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1993249998%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-double-or-null.html">toDoubleOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as double only if content can be an exact double or inf/-inf/nan, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-double-or-null.html"><span class="token function">toDoubleOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as double only if content can be an exact double or inf/-inf/nan, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="917722121%2FFunctions%2F788909594" anchor-label="toEnum" id="917722121%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-enum.html"><span>to</span><wbr></wbr><span><span>Enum</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="917722121%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-enum.html"><span>to</span><wbr></wbr><span><span>Enum</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="917722121%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">inline fun &lt;<a href="to-enum.html">E</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="to-enum.html">E</a>&gt;&gt; <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-enum.html">toEnum</a>(serializersModule: <span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span> = EmptySerializersModule): <a href="to-enum.html">E</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as enum with given enum class context.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="to-enum.html">E</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="to-enum.html">E</a><span class="token operator">&gt;</span><span class="token operator">&gt; </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-enum.html"><span class="token function">toEnum</span></a><span class="token punctuation">(</span>serializersModule<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span><span class="token operator"> = </span>EmptySerializersModule<span class="token punctuation">)</span><span class="token operator">: </span><a href="to-enum.html">E</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as enum with given enum class context.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1793582195%2FFunctions%2F788909594" anchor-label="toEnumOrNull" id="1793582195%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-enum-or-null.html"><span>to</span><wbr></wbr><span>Enum</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1793582195%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-enum-or-null.html"><span>to</span><wbr></wbr><span>Enum</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1793582195%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">inline fun &lt;<a href="to-enum-or-null.html">E</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="to-enum-or-null.html">E</a>&gt;&gt; <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-enum-or-null.html">toEnumOrNull</a>(serializersModule: <span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span> = EmptySerializersModule): <a href="to-enum-or-null.html">E</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as enum with given enum class context only if content suits in, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="to-enum-or-null.html">E</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="to-enum-or-null.html">E</a><span class="token operator">&gt;</span><span class="token operator">&gt; </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-enum-or-null.html"><span class="token function">toEnumOrNull</span></a><span class="token punctuation">(</span>serializersModule<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span><span class="token operator"> = </span>EmptySerializersModule<span class="token punctuation">)</span><span class="token operator">: </span><a href="to-enum-or-null.html">E</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as enum with given enum class context only if content suits in, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1585573291%2FFunctions%2F788909594" anchor-label="toFloat" id="-1585573291%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-float.html"><span>to</span><wbr></wbr><span><span>Float</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1585573291%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-float.html"><span>to</span><wbr></wbr><span><span>Float</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1585573291%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-float.html">toFloat</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as float.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-float.html"><span class="token function">toFloat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as float.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1570305387%2FFunctions%2F788909594" anchor-label="toFloatOrNull" id="1570305387%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-float-or-null.html"><span>to</span><wbr></wbr><span>Float</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1570305387%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-float-or-null.html"><span>to</span><wbr></wbr><span>Float</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1570305387%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-float-or-null.html">toFloatOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as float only if content can be an exact float or inf/-inf/nan, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-float-or-null.html"><span class="token function">toFloatOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as float only if content can be an exact float or inf/-inf/nan, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1650911966%2FFunctions%2F788909594" anchor-label="toInt" id="-1650911966%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-int.html"><span>to</span><wbr></wbr><span><span>Int</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1650911966%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-int.html"><span>to</span><wbr></wbr><span><span>Int</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1650911966%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-int.html">toInt</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as int.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-int.html"><span class="token function">toInt</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as int.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1035474312%2FFunctions%2F788909594" anchor-label="toIntOrNull" id="-1035474312%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-int-or-null.html"><span>to</span><wbr></wbr><span>Int</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1035474312%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-int-or-null.html"><span>to</span><wbr></wbr><span>Int</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1035474312%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-int-or-null.html">toIntOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as int only if content can be int, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-int-or-null.html"><span class="token function">toIntOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as int only if content can be int, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-80105811%2FFunctions%2F788909594" anchor-label="toLong" id="-80105811%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-long.html"><span>to</span><wbr></wbr><span><span>Long</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-80105811%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-long.html"><span>to</span><wbr></wbr><span><span>Long</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-80105811%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-long.html">toLong</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as long.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-long.html"><span class="token function">toLong</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as long.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1168904253%2FFunctions%2F788909594" anchor-label="toLongOrNull" id="-1168904253%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-long-or-null.html"><span>to</span><wbr></wbr><span>Long</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1168904253%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-long-or-null.html"><span>to</span><wbr></wbr><span>Long</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1168904253%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-long-or-null.html">toLongOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as long only if content can be long, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-long-or-null.html"><span class="token function">toLongOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as long only if content can be long, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1666185799%2FFunctions%2F788909594" anchor-label="Toml" id="1666185799%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml.html"><span><span>Toml</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1666185799%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml.html"><span><span>Toml</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1666185799%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml.html">Toml</a>(from: <a href="-toml/index.html">Toml</a> = Toml, config: <a href="-toml-config-builder/index.html">TomlConfigBuilder</a>.() -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> = {}): <a href="-toml/index.html">Toml</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Factory function for creating custom instance of <a href="-toml/index.html">Toml</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml.html"><span class="token function">Toml</span></a><span class="token punctuation">(</span>from<span class="token operator">: </span><a href="-toml/index.html">Toml</a><span class="token operator"> = </span>Toml<span class="token punctuation">, </span>config<span class="token operator">: </span><span class="token keyword"></span><a href="-toml-config-builder/index.html">TomlConfigBuilder</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml/index.html">Toml</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Factory function for creating custom instance of <a href="-toml/index.html">Toml</a>.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-781395503%2FFunctions%2F788909594" anchor-label="TomlArray" id="-781395503%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-array.html"><span>Toml</span><wbr></wbr><span><span>Array</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-781395503%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-array.html"><span>Toml</span><wbr></wbr><span><span>Array</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-781395503%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-array.html">TomlArray</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html">Iterable</a>&lt;*&gt;): <a href="-toml-array/index.html">TomlArray</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-array/index.html">TomlArray</a> from the given iterable <a href="-toml-array.html">value</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-array.html"><span class="token function">TomlArray</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html">Iterable</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-array/index.html">TomlArray</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-array/index.html">TomlArray</a> from the given iterable <a href="-toml-array.html">value</a>.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1855187195%2FFunctions%2F788909594" anchor-label="TomlLiteral" id="-1855187195%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-literal.html"><span>Toml</span><wbr></wbr><span><span>Literal</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1855187195%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-literal.html"><span>Toml</span><wbr></wbr><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1855187195%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal.html">TomlLiteral</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>): <a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given boolean <a href="-toml-literal.html">value</a>.</p></div></div>
-<div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal.html">TomlLiteral</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a>): <a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given char <a href="-toml-literal.html">value</a>.</p></div></div>
-<div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal.html">TomlLiteral</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a>): <a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given numeric <a href="-toml-literal.html">value</a>.</p></div></div>
-<div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal.html">TomlLiteral</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>): <a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given string <a href="-toml-literal.html">value</a>.</p></div></div>
-<div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">inline fun &lt;<a href="-toml-literal.html">E</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-toml-literal.html">E</a>&gt;&gt; <a href="-toml-literal.html">TomlLiteral</a>(value: <a href="-toml-literal.html">E</a>, serializersModule: <span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span> = EmptySerializersModule): <a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given enum <a href="-toml-literal.html">value</a>. Delegates to creator function which consumes string.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal.html"><span class="token function">TomlLiteral</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given boolean <a href="-toml-literal.html">value</a>.</p></div><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal.html"><span class="token function">TomlLiteral</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given char <a href="-toml-literal.html">value</a>.</p></div><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal.html"><span class="token function">TomlLiteral</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given numeric <a href="-toml-literal.html">value</a>.</p></div><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal.html"><span class="token function">TomlLiteral</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given string <a href="-toml-literal.html">value</a>.</p></div><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-toml-literal.html">E</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-toml-literal.html">E</a><span class="token operator">&gt;</span><span class="token operator">&gt; </span><a href="-toml-literal.html"><span class="token function">TomlLiteral</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="-toml-literal.html">E</a><span class="token punctuation">, </span>serializersModule<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span><span class="token operator"> = </span>EmptySerializersModule<span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-literal/index.html">TomlLiteral</a> from the given enum <a href="-toml-literal.html">value</a>. Delegates to creator function which consumes string.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1178425290%2FFunctions%2F788909594" anchor-label="TomlTable" id="-1178425290%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-toml-table.html"><span>Toml</span><wbr></wbr><span><span>Table</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1178425290%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-toml-table.html"><span>Toml</span><wbr></wbr><span><span>Table</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1178425290%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-table.html">TomlTable</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a>&lt;*, *&gt;): <a href="-toml-table/index.html">TomlTable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Creates <a href="-toml-table/index.html">TomlTable</a> from the given map <a href="-toml-table.html">value</a>.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-table.html"><span class="token function">TomlTable</span></a><span class="token punctuation">(</span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-table/index.html">TomlTable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Creates <a href="-toml-table/index.html">TomlTable</a> from the given map <a href="-toml-table.html">value</a>.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1525011509%2FFunctions%2F788909594" anchor-label="toShort" id="1525011509%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-short.html"><span>to</span><wbr></wbr><span><span>Short</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1525011509%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-short.html"><span>to</span><wbr></wbr><span><span>Short</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1525011509%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-short.html">toShort</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as short.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-short.html"><span class="token function">toShort</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as short.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="165662539%2FFunctions%2F788909594" anchor-label="toShortOrNull" id="165662539%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-short-or-null.html"><span>to</span><wbr></wbr><span>Short</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="165662539%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-short-or-null.html"><span>to</span><wbr></wbr><span>Short</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="165662539%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-literal/index.html">TomlLiteral</a>.<a href="to-short-or-null.html">toShortOrNull</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Returns content as short only if content can be short, otherwise null.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="token punctuation">.</span><a href="to-short-or-null.html"><span class="token function">toShortOrNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a><span class="token operator">?</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Returns content as short only if content can be short, otherwise null.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-731679169%2FFunctions%2F788909594" anchor-label="toTomlArray" id="-731679169%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-toml-array.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Array</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-731679169%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-toml-array.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Array</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-731679169%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-element/index.html">TomlElement</a>.<a href="to-toml-array.html">toTomlArray</a>(): <a href="-toml-array/index.html">TomlArray</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlArray.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-element/index.html">TomlElement</a><span class="token punctuation">.</span><a href="to-toml-array.html"><span class="token function">toTomlArray</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-array/index.html">TomlArray</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlArray.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-112564951%2FFunctions%2F788909594" anchor-label="toTomlLiteral" id="-112564951%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-toml-literal.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Literal</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-112564951%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-toml-literal.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-112564951%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-element/index.html">TomlElement</a>.<a href="to-toml-literal.html">toTomlLiteral</a>(): <a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlLiteral.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-element/index.html">TomlElement</a><span class="token punctuation">.</span><a href="to-toml-literal.html"><span class="token function">toTomlLiteral</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-literal/index.html">TomlLiteral</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlLiteral.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1830568939%2FFunctions%2F788909594" anchor-label="toTomlNull" id="-1830568939%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-toml-null.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Null</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1830568939%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-toml-null.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1830568939%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-element/index.html">TomlElement</a>.<a href="to-toml-null.html">toTomlNull</a>(): <a href="-toml-null/index.html">TomlNull</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlNull.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-element/index.html">TomlElement</a><span class="token punctuation">.</span><a href="to-toml-null.html"><span class="token function">toTomlNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-null/index.html">TomlNull</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlNull.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-935109014%2FFunctions%2F788909594" anchor-label="toTomlTable" id="-935109014%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
                 <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-toml-table.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Table</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-935109014%2FFunctions%2F788909594"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="to-toml-table.html"><span>to</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Table</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-935109014%2FFunctions%2F788909594"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace">fun <a href="-toml-element/index.html">TomlElement</a>.<a href="to-toml-table.html">toTomlTable</a>(): <a href="-toml-table/index.html">TomlTable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlTable.</p></div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-toml-element/index.html">TomlElement</a><span class="token punctuation">.</span><a href="to-toml-table.html"><span class="token function">toTomlTable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-toml-table/index.html">TomlTable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><p class="paragraph">Convert <span data-unresolved-link="net.peanuuutz.tomlkt//&amp;lt;this&amp;gt;/#/PointingToCallableParameters(-1)/">this</span> to TomlTable.</p></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -720,7 +667,7 @@
             </div>
           </div>
         </div>
-        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
       </div>
     </div>
   </body>

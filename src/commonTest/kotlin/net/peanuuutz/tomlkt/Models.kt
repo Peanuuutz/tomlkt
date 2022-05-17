@@ -4,8 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class User(
+    @TomlComment("Name of this user")
     val name: String,
-    @Fold
+    @Inline
     val account: Account? = null
 )
 
@@ -20,14 +21,17 @@ val cooperator = User("Anonymous")
 
 @Serializable
 data class Project(
-    @Comment("Project name")
+    @TomlComment("Project name")
     val name: String,
-    @Comment("Current maintainability, could be HIGH or LOW")
+    @TomlComment("""
+        Current maintainability
+        Could be HIGH or LOW
+    """)
     val maintainability: Maintainability,
     @Multiline @Literal
     val description: String? = null,
     val owner: User,
-    @Comment("Thank you! :)")
+    @TomlComment("Thank you! :)")
     val contributors: Set<User> = setOf(owner)
 )
 

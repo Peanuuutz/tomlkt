@@ -65,6 +65,7 @@ internal class TomlElementDecoder(
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder = when (descriptor.kind) {
         StructureKind.CLASS -> ClassDecoder(element.toTomlTable())
+        StructureKind.OBJECT -> ClassDecoder(element.toTomlTable())
         StructureKind.LIST -> ArrayDecoder(element.toTomlArray())
         StructureKind.MAP -> MapDecoder(element.toTomlTable())
         else -> throw UnsupportedSerialKindException(descriptor.kind)
@@ -95,6 +96,7 @@ internal class TomlElementDecoder(
 
         override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder = when (descriptor.kind) {
             StructureKind.CLASS -> ClassDecoder(currentElement.toTomlTable())
+            StructureKind.OBJECT -> ClassDecoder(currentElement.toTomlTable())
             StructureKind.LIST -> ArrayDecoder(currentElement.toTomlArray())
             StructureKind.MAP -> MapDecoder(currentElement.toTomlTable())
             else -> throw UnsupportedSerialKindException(descriptor.kind)
@@ -163,7 +165,7 @@ internal class TomlElementDecoder(
 
     internal inner class MapDecoder(private val table: TomlTable) : AbstractDecoder() {
         private val iterator: Iterator<TomlElement> = iterator {
-            table.forEach { (k, v) ->
+            for ((k, v) in table) {
                 yield(TomlLiteral(k))
                 yield(v)
             }

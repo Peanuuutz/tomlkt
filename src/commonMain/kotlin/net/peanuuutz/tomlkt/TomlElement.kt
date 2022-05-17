@@ -371,7 +371,8 @@ public fun TomlElement.toTomlTable(): TomlTable = this as? TomlTable ?: failConv
  * Creates [TomlTable] from the given map [value].
  */
 public fun TomlTable(value: Map<*, *>): TomlTable = TomlTable(buildMap(value.size) {
-    value.forEach { (k, v) -> put(k.toTomlKey(), v.toTomlElement()) }
+    for ((k, v) in value)
+        put(k.toTomlKey(), v.toTomlElement())
 })
 
 // Extensions for TomlTable
@@ -388,7 +389,8 @@ public operator fun TomlTable.get(vararg keys: Any?): TomlElement? = getByPathRe
 // Internal
 
 internal fun TomlTable(value: KeyNode): TomlTable = TomlTable(buildMap(value.children.size) {
-    value.children.forEach { put(it.key, it.toTomlElement()) }
+    for (node in value.children)
+        put(node.key, node.toTomlElement())
 })
 
 private tailrec fun TomlTable.getByPathRecursively(

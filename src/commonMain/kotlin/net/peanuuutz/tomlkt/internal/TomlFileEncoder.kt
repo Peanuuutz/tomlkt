@@ -22,20 +22,11 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind.CLASS
 import kotlinx.serialization.descriptors.StructureKind.LIST
 import kotlinx.serialization.descriptors.StructureKind.MAP
+import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.TomlConfig
-import net.peanuuutz.tomlkt.TomlElement
-import net.peanuuutz.tomlkt.TomlNull
-import net.peanuuutz.tomlkt.TomlLiteral
-import net.peanuuutz.tomlkt.TomlArray
-import net.peanuuutz.tomlkt.TomlTable
-import net.peanuuutz.tomlkt.toTomlKey
-import net.peanuuutz.tomlkt.Comment
-import net.peanuuutz.tomlkt.Fold
-import net.peanuuutz.tomlkt.Multiline
-import net.peanuuutz.tomlkt.Literal
+import net.peanuuutz.tomlkt.*
 
 internal class TomlFileEncoder(
     private val config: TomlConfig,
@@ -67,34 +58,38 @@ internal class TomlFileEncoder(
 
     private fun beginStructure(
         descriptor: SerialDescriptor,
-        forceFold: Boolean
-    ): CompositeEncoder = if (descriptor.kind == CLASS) {
-        if (forceFold)
-            FlowClassEncoder()
-        else {
-            ClassEncoder(
-                structuredIndex = calculateStructuredIndex(descriptor),
-                structured = true,
-                path = ""
-            )
+        forceInline: Boolean
+    ): CompositeEncoder = when (descriptor.kind) {
+        CLASS -> {
+            if (forceInline)
+                FlowClassEncoder()
+            else {
+                ClassEncoder(
+                    structuredIndex = calculateStructuredIndex(descriptor),
+                    structured = true,
+                    path = ""
+                )
+            }
         }
-    } else throw UnsupportedSerialKindException(descriptor.kind)
+        OBJECT -> FlowClassEncoder()
+        else -> throw UnsupportedSerialKindException(descriptor.kind)
+    }
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = beginCollection(descriptor, collectionSize, false)
 
     private fun beginCollection(
         descriptor: SerialDescriptor,
         collectionSize: Int,
-        forceFold: Boolean
+        forceInline: Boolean
     ): CompositeEncoder = when (descriptor.kind) {
         LIST -> {
-            if (forceFold || collectionSize == 0)
+            if (forceInline || collectionSize == 0)
                 FlowArrayEncoder(collectionSize)
             else
                 BlockArrayEncoder(collectionSize)
         }
         MAP -> {
-            if (forceFold || collectionSize == 0)
+            if (forceInline || collectionSize == 0)
                 FlowMapEncoder(collectionSize)
             else {
                 MapEncoder(
@@ -108,8 +103,8 @@ internal class TomlFileEncoder(
         else -> throw UnsupportedSerialKindException(descriptor.kind)
     }
 
-    private fun SerialDescriptor.foldAt(index: Int): Boolean
-        = getElementAnnotations(index).filterIsInstance<Fold>().isNotEmpty()
+    private fun SerialDescriptor.inlineAt(index: Int): Boolean
+        = getElementAnnotations(index).filterIsInstance<Inline>().isNotEmpty()
 
     private val SerialDescriptor.isTable: Boolean get() = kind == CLASS || kind == MAP
 
@@ -121,7 +116,7 @@ internal class TomlFileEncoder(
         var structuredIndex = 0
         for (i in descriptor.elementsCount - 1 downTo 0) {
             val elementDescriptor = descriptor.getElementDescriptor(i)
-            if (descriptor.foldAt(i) || !elementDescriptor.isTable && !elementDescriptor.isArrayOfTable) {
+            if (descriptor.inlineAt(i) || !elementDescriptor.isTable && !elementDescriptor.isArrayOfTable) {
                 structuredIndex = i + 1
                 break
             }
@@ -323,27 +318,31 @@ internal class TomlFileEncoder(
         protected val structured: Boolean,
         private val path: String
     ) : AbstractEncoder() {
-        protected var foldChild: Boolean = false
+        protected var inlineChild: Boolean = false
 
         protected lateinit var currentChildPath: String
 
         protected var structuredChild: Boolean = false
 
-        override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = if (descriptor.kind == CLASS) {
-            if (foldChild)
-                FlowClassEncoder()
-            else {
-                ClassEncoder(
-                    structuredIndex = calculateStructuredIndex(descriptor),
-                    structured = structuredChild,
-                    path = currentChildPath
-                )
+        override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = when (descriptor.kind) {
+            CLASS -> {
+                if (inlineChild)
+                    FlowClassEncoder()
+                else {
+                    ClassEncoder(
+                        structuredIndex = calculateStructuredIndex(descriptor),
+                        structured = structuredChild,
+                        path = currentChildPath
+                    )
+                }
             }
-        } else throw UnsupportedSerialKindException(descriptor.kind)
+            OBJECT -> FlowClassEncoder()
+            else -> throw UnsupportedSerialKindException(descriptor.kind)
+        }
 
         override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = when (descriptor.kind) {
             LIST -> {
-                if (foldChild || collectionSize == 0) {
+                if (inlineChild || collectionSize == 0) {
                     FlowArrayEncoder(collectionSize)
                 } else if (structuredChild && descriptor.isArrayOfTable) {
                     ArrayOfTableEncoder(
@@ -354,7 +353,7 @@ internal class TomlFileEncoder(
             }
             MAP -> {
                 val valueDescriptor = descriptor.getElementDescriptor(1)
-                if (foldChild || collectionSize == 0 || valueDescriptor.isTomlElement)
+                if (inlineChild || collectionSize == 0 || valueDescriptor.isTomlElement)
                     FlowMapEncoder(collectionSize)
                 else {
                     MapEncoder(
@@ -382,10 +381,10 @@ internal class TomlFileEncoder(
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
             comment(descriptor, index)
             val elementName = descriptor.getElementName(index).escape().doubleQuotedIfNeeded()
-            foldChild = descriptor.foldAt(index)
+            inlineChild = descriptor.inlineAt(index)
             currentChildPath = concatPath(elementName)
             structuredChild = structured && index >= structuredIndex
-            if (foldChild)
+            if (inlineChild)
                 builder.appendKey(if (structured) elementName else currentChildPath)
             else {
                 if (structuredChild) {
@@ -400,15 +399,22 @@ internal class TomlFileEncoder(
 
         private fun comment(descriptor: SerialDescriptor, index: Int) {
             if (structured) {
-                val list = mutableListOf<String>()
-                descriptor.getElementAnnotations(index)
-                    .filterIsInstance<Comment>()
-                    .takeIf { it.isNotEmpty() }
-                    ?.let { it[0].texts.forEach(list::add) }
-                if (list.size > 0) {
-                    if (index != 0)
+                val lines = mutableListOf<String>()
+                val annotations = descriptor.getElementAnnotations(index)
+                var inline = false
+                for (annotation in annotations) {
+                    if (annotation is Inline) {
+                        inline = true
+                    } else if (annotation is TomlComment) {
+                        annotation.text.trimIndent().split('\n').forEach(lines::add)
+                    }
+                }
+                if (lines.size > 0) {
+                    val elementDescriptor = descriptor.getElementDescriptor(index)
+                    if ((elementDescriptor.isTable || elementDescriptor.isArrayOfTable) && !inline)
                         builder.appendLine()
-                    list.forEach { builder.appendLine("# ${it.escape(false)}") }
+                    for (line in lines)
+                        builder.appendLine("# ${line.escape(false)}")
                 }
             }
         }
