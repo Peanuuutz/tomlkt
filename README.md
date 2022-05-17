@@ -119,11 +119,14 @@ fun main() {
 
 ### Comment
 
-Implemented as an annotation `@Comment` on **properties**:
+Implemented as an annotation `@TomlComment` on **properties**:
 
 ```kotlin
 class IntData(
-    @Comment("An integer,", "but is decoded into Long originally")
+    @TomlComment("""
+        An integer,
+        but is decoded into Long originally
+    """)
     val int: Int
 )
 IntData(10086)
@@ -202,7 +205,7 @@ It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the
 
 The working process of tomlkt:
 
-* Serialization: Model / TomlElement → (TomlFileEncoder) → File(String)
+* Serialization: Model / TomlElement → (TomlFileEncoder) → File(String); Model → (TomlElementEncoder) → TomlElement
 * Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model
 
 As you see, if you already have a TOML file, you can have no model class, but still gain access to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).

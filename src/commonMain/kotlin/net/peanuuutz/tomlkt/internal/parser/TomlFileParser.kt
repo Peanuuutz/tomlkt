@@ -69,9 +69,9 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
     // Start right before the [chars], end on the last token
     private fun expectNext(chars: CharSequence) {
         incompleteOn(!beforeFinal(chars.length - 1))
-        chars.forEach {
+        for (char in chars) {
             currentPosition++
-            incompleteOn(getChar() != it)
+            incompleteOn(getChar() != char)
         }
     }
 

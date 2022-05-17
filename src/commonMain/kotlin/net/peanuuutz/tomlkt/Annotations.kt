@@ -23,7 +23,10 @@ import kotlinx.serialization.SerialInfo
  *
  * ```kotlin
  * data class IntData(
- *     @Comment("An integer,", "but is decoded into Long originally")
+ *     @TomlComment("""
+ *         An integer,
+ *         but is decoded into Long originally
+ *     """)
  *     val int: Int
  * )
  * IntData(10086)
@@ -37,20 +40,31 @@ import kotlinx.serialization.SerialInfo
  * int = 10086
  * ```
  *
- * @property texts the comment texts. As it is vararg, one for each line (Note: '\n' will be escaped)
+ * @property text the comment texts.
  */
+@SerialInfo
+@Target(AnnotationTarget.PROPERTY)
+public annotation class TomlComment(val text: String)
+
+@Deprecated(
+    message = "Support for multiline strings",
+    replaceWith = ReplaceWith(
+        expression = "TomlComment",
+        imports = [ "net.peanuuutz.tomlkt.TomlComment" ]
+    )
+)
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class Comment(vararg val texts: String)
 
 /**
- * Force fold the corresponding property(needs to be list-like or map-like).
+ * Force inline the corresponding property(needs to be list-like or map-like).
  *
  * ```kotlin
  * data class Data(
- *     @Fold
- *     val foldProperty: Map<String, String>,
- *     val noFoldProperty: Map<String, String>
+ *     @Inline
+ *     val inlineProperty: Map<String, String>,
+ *     val noInlineProperty: Map<String, String>
  * )
  * val data = mapOf("a" to "something", "b" to "another thing")
  * Data(data, data)
@@ -59,20 +73,27 @@ public annotation class Comment(vararg val texts: String)
  * will produce:
  *
  * ```toml
- * foldProperty = { a = "something", b = "another thing" }
+ * inlineProperty = { a = "something", b = "another thing" }
  *
- * [noFoldProperty]
+ * [noInlineProperty]
  * a = "something"
  * b = "another thing"
  * ```
  *
- * Without that @Fold, both of these will act like how noFoldProperty behaves.
- *
- * Just try it. ;)
+ * Without the @Inline, both of the two properties will act like how noInlineProperty behaves.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class Fold
+public annotation class Inline
+
+@Deprecated(
+    message = "Name change",
+    replaceWith = ReplaceWith(
+        expression = "Inline",
+        imports = [ "net.peanuuutz.tomlkt.Inline" ]
+    )
+)
+public typealias Fold = Inline
 
 /**
  * Mark the corresponding [kotlin.String] property as multiline when encoded.

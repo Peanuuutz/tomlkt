@@ -35,6 +35,23 @@ class EncoderTest {
     }
 
     @Test
+    fun encodeToTomlElement() {
+        val projects = mapOf("Toml" to tomlProject, "Yaml" to yamlProject)
+        val score = Score(
+            examinee = "Loney Chou",
+            scores = mapOf("Listening" to 80, "Reading" to 95)
+        )
+
+        printIfDebug(Toml.encodeToTomlElement(Int.serializer(), 2))
+        printIfDebug(Toml.encodeToTomlElement(String.serializer(), "I\n&\nU"))
+        printIfDebug("-----")
+        printIfDebug(Toml.encodeToTomlElement(MapSerializer(String.serializer(), Project.serializer()), projects))
+        printIfDebug("-----")
+        val scoreAsTable = Toml.encodeToTomlElement(Score.serializer(), score)
+        printIfDebug(Toml.decodeFromTomlElement(Score.serializer(), scoreAsTable))
+    }
+
+    @Test
     fun escape() {
         printIfDebug(anotherLyrics.escape())
     }

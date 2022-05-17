@@ -11,7 +11,7 @@ plugins {
 }
 
 val archivesName: String by project
-base.archivesBaseName = archivesName
+base.archivesName.set(archivesName)
 
 repositories {
     mavenCentral()

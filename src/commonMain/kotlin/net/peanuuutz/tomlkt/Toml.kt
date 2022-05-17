@@ -23,11 +23,11 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
+import net.peanuuutz.tomlkt.internal.*
 import net.peanuuutz.tomlkt.internal.TomlElementDecoder
+import net.peanuuutz.tomlkt.internal.TomlElementEncoder
 import net.peanuuutz.tomlkt.internal.TomlFileEncoder
 import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
-import net.peanuuutz.tomlkt.internal.TomlEncodingException
-import net.peanuuutz.tomlkt.internal.TomlDecodingException
 
 /**
  * The main entry point to use TOML.
@@ -102,6 +102,17 @@ public sealed class Toml(
     }
 
     /**
+     * Serializes [value] into [TomlElement] using [serializer].
+     *
+     * @throws TomlEncodingException when [value] cannot be serialized.
+     */
+    public fun <T> encodeToTomlElement(serializer: SerializationStrategy<T>, value: T): TomlElement {
+        val encoder = TomlElementEncoder(config, serializersModule)
+        serializer.serialize(encoder, value)
+        return encoder.element
+    }
+
+    /**
      * Deserializes [string] into a value of type [T] using [deserializer].
      *
      * @param string **MUST** be a TOML file, as this method delegates parsing to [parseToTomlTable].
@@ -137,6 +148,14 @@ public fun Toml(
     from: Toml = Toml,
     config: TomlConfigBuilder.() -> Unit
 ): Toml = TomlImpl(TomlConfigBuilder(from.config).apply(config).build())
+
+/**
+ * Serializes [value] into [TomlElement] using serializer retrieved from reified type parameter.
+ *
+ * @throws TomlEncodingException when [value] cannot be serialized.
+ */
+public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement
+    = encodeToTomlElement(serializersModule.serializer(), value)
 
 /**
  * Deserializes [element] into a value of type [T] using serializer retrieved from reified type parameter.

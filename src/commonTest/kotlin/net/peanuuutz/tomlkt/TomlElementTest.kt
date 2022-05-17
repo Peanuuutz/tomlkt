@@ -23,7 +23,7 @@ class TomlElementTest {
     fun tomlArray() {
         val array = TomlArray(listOf('1', null, '\b', true))
         assertEquals(array[0].toTomlLiteral().toInt(), 1)
-        val tomlString = Toml.encodeToString(array) // Maybe add an 'alwaysFoldArrayOfPrimitive' config...
+        val tomlString = Toml.encodeToString(array) // Maybe add an 'alwaysInlineArrayOfPrimitive' config...
         printIfDebug(tomlString)
     }
 
