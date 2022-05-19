@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.peanuuutz:tomlkt:0.1.1")
+    implementation("net.peanuuutz:tomlkt:0.1.2")
 }
 ```
 </details>
@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.peanuuutz:tomlkt:0.1.1"
+    implementation "net.peanuuutz:tomlkt:0.1.2"
 }
 ```
 </details>
@@ -44,7 +44,7 @@ dependencies {
 <dependency>
   <groupId>net.peanuuutz</groupId>
   <artifactId>tomlkt-jvm</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
 </dependency>
 ```
 </details>
@@ -146,7 +146,7 @@ Basic strings are encoded as `"<content>"`. For multilines and literals, put an 
 
 ```kotlin
 class MultilineStringData(
-    @Multiline
+    @TomlMultilineString
     val multilineString: String
 )
 MultilineStringData("""
@@ -155,7 +155,7 @@ MultilineStringData("""
 """.trimIndent())
 
 class LiteralStringData(
-    @Literal
+    @TomlLiteralString
     val literalString: String
 )
 LiteralStringData("C:\\Users\\<User>\\.m2\\repositories")

@@ -104,7 +104,7 @@ internal class TomlFileEncoder(
     }
 
     private fun SerialDescriptor.inlineAt(index: Int): Boolean
-        = getElementAnnotations(index).filterIsInstance<Inline>().isNotEmpty()
+        = getElementAnnotations(index).filterIsInstance<TomlInline>().isNotEmpty()
 
     private val SerialDescriptor.isTable: Boolean get() = kind == CLASS || kind == MAP
 
@@ -208,13 +208,13 @@ internal class TomlFileEncoder(
                 serializer.serialize(this, value)
             else {
                 val annotations = descriptor.getElementAnnotations(index)
-                if (annotations.filterIsInstance<Literal>().isEmpty()) {
-                    if (annotations.filterIsInstance<Multiline>().isEmpty())
+                if (annotations.filterIsInstance<TomlLiteralString>().isEmpty()) {
+                    if (annotations.filterIsInstance<TomlMultilineString>().isEmpty())
                         serializer.serialize(this, value)
                     else
                         encodeMultilineString(value)
                 } else {
-                    if (annotations.filterIsInstance<Multiline>().isEmpty())
+                    if (annotations.filterIsInstance<TomlMultilineString>().isEmpty())
                         encodeLiteralString(value)
                     else
                         encodeMultilineLiteralString(value)
@@ -403,7 +403,7 @@ internal class TomlFileEncoder(
                 val annotations = descriptor.getElementAnnotations(index)
                 var inline = false
                 for (annotation in annotations) {
-                    if (annotation is Inline) {
+                    if (annotation is TomlInline) {
                         inline = true
                     } else if (annotation is TomlComment) {
                         annotation.text.trimIndent().split('\n').forEach(lines::add)

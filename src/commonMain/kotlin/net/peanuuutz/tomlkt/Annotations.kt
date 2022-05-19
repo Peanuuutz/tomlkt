@@ -58,11 +58,11 @@ public annotation class TomlComment(val text: String)
 public annotation class Comment(vararg val texts: String)
 
 /**
- * Force inline the corresponding property(needs to be list-like or map-like).
+ * Force inline the corresponding property (needs to be list-like or map-like).
  *
  * ```kotlin
  * data class Data(
- *     @Inline
+ *     @TomlInline
  *     val inlineProperty: Map<String, String>,
  *     val noInlineProperty: Map<String, String>
  * )
@@ -80,11 +80,11 @@ public annotation class Comment(vararg val texts: String)
  * b = "another thing"
  * ```
  *
- * Without the @Inline, both of the two properties will act like how noInlineProperty behaves.
+ * Without the @TomlInline, both of the two properties will act like how noInlineProperty behaves.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class Inline
+public annotation class TomlInline
 
 @Deprecated(
     message = "Name change",
@@ -93,14 +93,14 @@ public annotation class Inline
         imports = [ "net.peanuuutz.tomlkt.Inline" ]
     )
 )
-public typealias Fold = Inline
+public typealias Fold = TomlInline
 
 /**
  * Mark the corresponding [kotlin.String] property as multiline when encoded.
  *
  * ```kotlin
  * class MultilineStringData(
- *     @Multiline
+ *     @TomlMultilineString
  *     val multilineString: String
  * )
  * MultilineStringData("""
@@ -119,14 +119,23 @@ public typealias Fold = Inline
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class Multiline
+public annotation class TomlMultilineString
+
+@Deprecated(
+    message = "Name change",
+    replaceWith = ReplaceWith(
+        expression = "TomlMultilineString",
+        imports = [ "net.peanuuutz.tomlkt.TomlMultilineString" ]
+    )
+)
+public typealias Multiline = TomlMultilineString
 
 /**
  * Mark the corresponding [kotlin.String] property as literal when encoded.
  *
  * ```kotlin
  * class LiteralStringData(
- *     @Literal
+ *     @TomlLiteralString
  *     val literalString: String
  * )
  * LiteralStringData("C:\\Users\\<User>\\.m2\\repositories")
@@ -140,4 +149,13 @@ public annotation class Multiline
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class Literal
+public annotation class TomlLiteralString
+
+@Deprecated(
+    message = "Name change",
+    replaceWith = ReplaceWith(
+        expression = "TomlLiteralString",
+        imports = [ "net.peanuuutz.tomlkt.TomlLiteralString" ]
+    )
+)
+public typealias Literal = TomlLiteralString
