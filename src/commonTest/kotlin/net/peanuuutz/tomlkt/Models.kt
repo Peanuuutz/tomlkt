@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class User(
     @TomlComment("Name of this user")
     val name: String,
-    @Inline
+    @TomlInline
     val account: Account? = null
 )
 
@@ -28,7 +28,7 @@ data class Project(
         Could be HIGH or LOW
     """)
     val maintainability: Maintainability,
-    @Multiline @Literal
+    @TomlMultilineString @TomlLiteralString
     val description: String? = null,
     val owner: User,
     @TomlComment("Thank you! :)")
