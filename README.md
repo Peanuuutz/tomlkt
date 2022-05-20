@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.peanuuutz:tomlkt:0.1.2")
+    implementation("net.peanuuutz:tomlkt:0.1.3")
 }
 ```
 </details>
@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.peanuuutz:tomlkt:0.1.2"
+    implementation "net.peanuuutz:tomlkt:0.1.3"
 }
 ```
 </details>
@@ -44,7 +44,7 @@ dependencies {
 <dependency>
   <groupId>net.peanuuutz</groupId>
   <artifactId>tomlkt-jvm</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
 </dependency>
 ```
 </details>

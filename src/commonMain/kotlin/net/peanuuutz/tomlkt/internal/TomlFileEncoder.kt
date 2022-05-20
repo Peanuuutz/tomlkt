@@ -51,10 +51,12 @@ internal class TomlFileEncoder(
         }
     }
 
-    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = encodeString(enumDescriptor.getElementName(index))
     override fun encodeInline(inlineDescriptor: SerialDescriptor): Encoder = this
+    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int)
+        = encodeString(enumDescriptor.getElementName(index))
 
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = beginStructure(descriptor, false)
+    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder
+        = beginStructure(descriptor, false)
 
     private fun beginStructure(
         descriptor: SerialDescriptor,
@@ -75,7 +77,8 @@ internal class TomlFileEncoder(
         else -> throw UnsupportedSerialKindException(descriptor.kind)
     }
 
-    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = beginCollection(descriptor, collectionSize, false)
+    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder
+        = beginCollection(descriptor, collectionSize, false)
 
     private fun beginCollection(
         descriptor: SerialDescriptor,
@@ -103,8 +106,7 @@ internal class TomlFileEncoder(
         else -> throw UnsupportedSerialKindException(descriptor.kind)
     }
 
-    private fun SerialDescriptor.inlineAt(index: Int): Boolean
-        = getElementAnnotations(index).filterIsInstance<TomlInline>().isNotEmpty()
+    private fun SerialDescriptor.inlineAt(index: Int): Boolean = getElementAnnotations(index).any { it is TomlInline }
 
     private val SerialDescriptor.isTable: Boolean get() = kind == CLASS || kind == MAP
 
@@ -129,13 +131,40 @@ internal class TomlFileEncoder(
 
         final override fun encodeBoolean(value: Boolean) = this@TomlFileEncoder.encodeBoolean(value)
         final override fun encodeByte(value: Byte) = this@TomlFileEncoder.encodeByte(value)
+        private fun encodeByteWithBase(value: Byte, base: TomlInteger.Base) {
+            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            builder.append(base.prefix).append(value.toString(base.value))
+        }
         final override fun encodeShort(value: Short) = this@TomlFileEncoder.encodeShort(value)
+        private fun encodeShortWithBase(value: Short, base: TomlInteger.Base) {
+            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            builder.append(base.prefix).append(value.toString(base.value))
+        }
         final override fun encodeInt(value: Int) = this@TomlFileEncoder.encodeInt(value)
+        private fun encodeIntWithBase(value: Int, base: TomlInteger.Base) {
+            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            builder.append(base.prefix).append(value.toString(base.value))
+        }
         final override fun encodeLong(value: Long) = this@TomlFileEncoder.encodeLong(value)
+        private fun encodeLongWithBase(value: Long, base: TomlInteger.Base) {
+            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            builder.append(base.prefix).append(value.toString(base.value))
+        }
         final override fun encodeFloat(value: Float) = this@TomlFileEncoder.encodeFloat(value)
         final override fun encodeDouble(value: Double) = this@TomlFileEncoder.encodeDouble(value)
         final override fun encodeChar(value: Char) = this@TomlFileEncoder.encodeChar(value)
         final override fun encodeString(value: String) = this@TomlFileEncoder.encodeString(value)
+        private fun encodeMultilineString(value: String) {
+            builder.appendLine("\"\"\"").append(value.escape(true)).append("\"\"\"")
+        }
+        private fun encodeLiteralString(value: String) {
+            require('\'' !in value && '\n' !in value) { "Cannot have '\\'' or '\\n' in literal string" }
+            builder.append(value.singleQuoted)
+        }
+        private fun encodeMultilineLiteralString(value: String) {
+            require("'''" !in value) { "Cannot have \"\\'\\'\\'\" in multiline literal string" }
+            builder.appendLine("'''").append(value).append("'''")
+        }
         final override fun encodeNull() = this@TomlFileEncoder.encodeNull()
         final override fun encodeTomlElement(value: TomlElement) { // Internal
             when (value) {
@@ -144,32 +173,73 @@ internal class TomlFileEncoder(
                 is TomlTable -> TomlTableSerializer.serialize(this, value)
             }
         }
-        private fun encodeMultilineString(value: String) { builder.append("\"\"\"\n").append(value.escape(true)).append("\"\"\"") }
-        private fun encodeLiteralString(value: String) {
-            require('\'' !in value && '\n' !in value) { "Cannot have '\\'' or '\\n' in literal string" }
-            builder.append(value.singleQuoted)
-        }
-        private fun encodeMultilineLiteralString(value: String) {
-            require("'''" !in value) { "Cannot have \"\\'\\'\\'\" in multiline literal string" }
-            builder.append("'''\n").append(value).append("'''")
-        }
 
-        final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = this@TomlFileEncoder.encodeEnum(enumDescriptor, index)
         final override fun encodeInline(inlineDescriptor: SerialDescriptor): Encoder = this
+        final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int)
+            = this@TomlFileEncoder.encodeEnum(enumDescriptor, index)
 
-        override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = beginStructure(descriptor, true)
+        override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder
+            = beginStructure(descriptor, true)
 
-        override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = beginCollection(descriptor, collectionSize, true)
+        override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder
+            = beginCollection(descriptor, collectionSize, true)
 
-        final override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) { encodeSerializableElement(descriptor, index, Boolean.serializer(), value) }
-        final override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) { encodeSerializableElement(descriptor, index, Byte.serializer(), value) }
-        final override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) { encodeSerializableElement(descriptor, index, Short.serializer(), value) }
-        final override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) { encodeSerializableElement(descriptor, index, Int.serializer(), value) }
-        final override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) { encodeSerializableElement(descriptor, index, Long.serializer(), value) }
-        final override fun encodeFloatElement(descriptor: SerialDescriptor, index: Int, value: Float) { encodeSerializableElement(descriptor, index, Float.serializer(), value) }
-        final override fun encodeDoubleElement(descriptor: SerialDescriptor, index: Int, value: Double) { encodeSerializableElement(descriptor, index, Double.serializer(), value) }
-        final override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) { encodeSerializableElement(descriptor, index, Char.serializer(), value) }
-        final override fun encodeStringElement(descriptor: SerialDescriptor, index: Int, value: String) { encodeSerializableElement(descriptor, index, String.serializer(), value) }
+        final override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) {
+            encodeSerializableElement(descriptor, index, Boolean.serializer(), value)
+        }
+        final override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
+            encodeTomlIntegerElement(descriptor, index, value, ::encodeByte, ::encodeByteWithBase)
+        }
+        final override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) {
+            encodeTomlIntegerElement(descriptor, index, value, ::encodeShort, ::encodeShortWithBase)
+        }
+        final override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
+            encodeTomlIntegerElement(descriptor, index, value, ::encodeInt, ::encodeIntWithBase)
+        }
+        final override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
+            encodeTomlIntegerElement(descriptor, index, value, ::encodeLong, ::encodeLongWithBase)
+        }
+        private inline fun <T> encodeTomlIntegerElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            value: T,
+            encodeNormally: (T) -> Unit,
+            encodeWithBase: (T, TomlInteger.Base) -> Unit
+        ) {
+            head(descriptor, index, value)
+            val annotation = descriptor.getElementAnnotations(index).firstOrNull { it is TomlInteger } as? TomlInteger
+            if (annotation == null) {
+                encodeNormally(value)
+            } else {
+                encodeWithBase(value, annotation.base)
+            }
+            tail(descriptor, index)
+        }
+        final override fun encodeFloatElement(descriptor: SerialDescriptor, index: Int, value: Float) {
+            encodeSerializableElement(descriptor, index, Float.serializer(), value)
+        }
+        final override fun encodeDoubleElement(descriptor: SerialDescriptor, index: Int, value: Double) {
+            encodeSerializableElement(descriptor, index, Double.serializer(), value)
+        }
+        final override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) {
+            encodeSerializableElement(descriptor, index, Char.serializer(), value)
+        }
+        final override fun encodeStringElement(descriptor: SerialDescriptor, index: Int, value: String) {
+            head(descriptor, index, value)
+            val annotations = descriptor.getElementAnnotations(index)
+            if (annotations.any { it is TomlLiteralString }) {
+                if (annotations.any { it is TomlMultilineString })
+                    encodeMultilineLiteralString(value)
+                else
+                    encodeLiteralString(value)
+            } else {
+                if (annotations.any { it is TomlMultilineString })
+                    encodeMultilineString(value)
+                else
+                    encodeString(value)
+            }
+            tail(descriptor, index)
+        }
 
         final override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder = this
 
@@ -179,62 +249,38 @@ internal class TomlFileEncoder(
             serializer: SerializationStrategy<T>,
             value: T?
         ) {
-            if (value == null)
-                encodeSerializableElement(descriptor, index, TomlNullSerializer, TomlNull)
-            else
-                encodeSerializableElement(descriptor, index, serializer, value)
+            when (value) { // Revisit type-specific encoding
+                null -> encodeSerializableElement(descriptor, index, TomlNullSerializer, TomlNull)
+                is Byte -> encodeByteElement(descriptor, index, value)
+                is Short -> encodeShortElement(descriptor, index, value)
+                is Int -> encodeIntElement(descriptor, index, value)
+                is Long -> encodeLongElement(descriptor, index, value)
+                is String -> encodeStringElement(descriptor, index, value)
+                else -> encodeSerializableElement(descriptor, index, serializer, value)
+            }
         }
 
-        final override fun <T> encodeSerializableElement(
+        override fun <T> encodeSerializableElement(
             descriptor: SerialDescriptor,
             index: Int,
             serializer: SerializationStrategy<T>,
             value: T
         ) {
             head(descriptor, index, value)
-            serialize(descriptor, index, serializer, value)
+            serializer.serialize(this, value)
             tail(descriptor, index)
         }
 
         protected abstract fun <T> head(descriptor: SerialDescriptor, index: Int, value: T)
-
-        protected open fun <T> serialize(
-            descriptor: SerialDescriptor,
-            index: Int,
-            serializer: SerializationStrategy<T>,
-            value: T
-        ) {
-            if (value !is String)
-                serializer.serialize(this, value)
-            else {
-                val annotations = descriptor.getElementAnnotations(index)
-                if (annotations.filterIsInstance<TomlLiteralString>().isEmpty()) {
-                    if (annotations.filterIsInstance<TomlMultilineString>().isEmpty())
-                        serializer.serialize(this, value)
-                    else
-                        encodeMultilineString(value)
-                } else {
-                    if (annotations.filterIsInstance<TomlMultilineString>().isEmpty())
-                        encodeLiteralString(value)
-                    else
-                        encodeMultilineLiteralString(value)
-                }
-            }
-        }
 
         protected abstract fun tail(descriptor: SerialDescriptor, index: Int)
 
         protected fun Appendable.appendKey(value: String): Appendable = append(value).append(" = ")
     }
 
-    internal abstract inner class BlockEncoder : AbstractEncoder() {
-        final override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = super.beginStructure(descriptor)
-        final override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = super.beginCollection(descriptor, collectionSize)
-    }
-
     internal inner class BlockArrayEncoder(
         private val collectionSize: Int
-    ) : BlockEncoder() {
+    ) : AbstractEncoder() {
         init { builder.appendLine('[') }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) { builder.append(INDENT) }
@@ -248,14 +294,9 @@ internal class TomlFileEncoder(
         override fun endStructure(descriptor: SerialDescriptor) { builder.append(']') }
     }
 
-    internal abstract inner class FlowEncoder : AbstractEncoder() {
-        final override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = super.beginStructure(descriptor)
-        final override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = super.beginCollection(descriptor, collectionSize)
-    }
-
     internal inner class FlowArrayEncoder(
         private val collectionSize: Int
-    ) : FlowEncoder() {
+    ) : AbstractEncoder() {
         init { builder.append("[ ") }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {}
@@ -268,7 +309,7 @@ internal class TomlFileEncoder(
         override fun endStructure(descriptor: SerialDescriptor) { builder.append(" ]") }
     }
 
-    internal inner class FlowClassEncoder : FlowEncoder() {
+    internal inner class FlowClassEncoder : AbstractEncoder() {
         init { builder.append("{ ") }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
@@ -285,7 +326,7 @@ internal class TomlFileEncoder(
 
     internal inner class FlowMapEncoder(
         private val collectionSize: Int
-    ) : FlowEncoder() {
+    ) : AbstractEncoder() {
         private var isKey: Boolean = true
 
         init { builder.append("{ ") }
@@ -295,14 +336,16 @@ internal class TomlFileEncoder(
                 builder.appendKey(value.toTomlKey().escape().doubleQuotedIfNeeded())
         }
 
-        override fun <T> serialize(
+        override fun <T> encodeSerializableElement(
             descriptor: SerialDescriptor,
             index: Int,
             serializer: SerializationStrategy<T>,
             value: T
         ) {
+            head(descriptor, index, value)
             if (!isKey)
-                super.serialize(descriptor, index, serializer, value)
+                serializer.serialize(this, value)
+            tail(descriptor, index)
         }
 
         override fun tail(descriptor: SerialDescriptor, index: Int) {
@@ -476,14 +519,16 @@ internal class TomlFileEncoder(
             }
         }
 
-        override fun <T> serialize(
+        override fun <T> encodeSerializableElement(
             descriptor: SerialDescriptor,
             index: Int,
             serializer: SerializationStrategy<T>,
             value: T
         ) {
+            head(descriptor, index, value)
             if (!isKey)
-                super.serialize(descriptor, index, serializer, value)
+                serializer.serialize(this, value)
+            tail(descriptor, index)
         }
 
         override fun tail(descriptor: SerialDescriptor, index: Int) {

@@ -4,17 +4,23 @@ import kotlinx.serialization.builtins.serializer
 import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 class DecoderTest {
-    @OptIn(ExperimentalTime::class)
     @Test
-    fun parseTest() {
-        lateinit var table: TomlTable
-        val time = measureTime { table = Toml.parseToTomlTable(cargo) }
-        printIfDebug(time)
+    fun parseTomlInteger() {
+        val integers = Toml.parseToTomlTable(integers)
+        printIfDebug(integers)
+        assertEquals(integers["two"]?.toTomlLiteral()?.toIntOrNull(), 4)
+        assertEquals(integers["eight"]?.toTomlLiteral()?.toIntOrNull(), 64)
+        assertEquals(integers["ten"]?.toTomlLiteral()?.toIntOrNull(), -100)
+        assertEquals(integers["sixteen"]?.toTomlLiteral()?.toIntOrNull(), 256)
+    }
+
+    @Test
+    fun parseHugeConfig() {
+        val table = Toml.parseToTomlTable(cargo)
         printIfDebug(table)
+        assertEquals(table["package", "version"]?.toTomlLiteral()?.content, "0.0.1")
     }
 
     @Test
@@ -40,6 +46,6 @@ class DecoderTest {
 
     @Test
     fun unescape() {
-        printIfDebug(thirdLyrics.unescape())
+        assertEquals(thirdLyrics.trimIndent().unescape(), "Oops we broke up,\nwe're better off as friends.")
     }
 }

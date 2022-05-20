@@ -52,6 +52,8 @@ val yamlProject = Project(
     owner = User("Him188")
 )
 
+val projects = mapOf("Toml" to tomlProject, "Yaml" to yamlProject)
+
 @Serializable
 enum class Maintainability { HIGH, LOW }
 
@@ -61,8 +63,19 @@ data class Score(
     val scores: Map<String, Int>
 )
 
+val exampleScore = Score(
+    examinee = "Loney Chou",
+    scores = mapOf("Listening" to 80, "Reading" to 95)
+)
+
 @Serializable
 class EmptyClass
 
 @Serializable
 data class Box<T>(val content: T? = null)
+
+@Serializable
+data class ByteCode(@TomlInteger(TomlInteger.Base.BIN) val code: Byte)
+
+@Serializable
+data class Color(@TomlInteger(TomlInteger.Base.HEX) val value: Long)

@@ -62,6 +62,16 @@ $dokka.location:net.peanuuutz.tomlkt/TomlElement/content/#/PointingToDeclaration
 $dokka.location:net.peanuuutz.tomlkt/TomlElement/toString/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-element/to-string.html
 $dokka.location:net.peanuuutz.tomlkt/TomlInline///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-inline/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlInline/TomlInline/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-inline/-toml-inline.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base.BIN///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/-b-i-n/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base.DEC///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/-d-e-c/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base.HEX///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/-h-e-x/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base.OCT///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/-o-c-t/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base/prefix/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/prefix.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base/value/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/value.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger/TomlInteger/#net.peanuuutz.tomlkt.TomlInteger.Base/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-toml-integer.html
+$dokka.location:net.peanuuutz.tomlkt/TomlInteger/base/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/base.html
 $dokka.location:net.peanuuutz.tomlkt/TomlLiteral///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-literal/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlLiteral/content/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-literal/content.html
 $dokka.location:net.peanuuutz.tomlkt/TomlLiteral/equals/#kotlin.Any?/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-literal/equals.html
