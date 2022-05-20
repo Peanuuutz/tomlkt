@@ -89,8 +89,8 @@ public annotation class TomlInline
 @Deprecated(
     message = "Name change",
     replaceWith = ReplaceWith(
-        expression = "Inline",
-        imports = [ "net.peanuuutz.tomlkt.Inline" ]
+        expression = "TomlInline",
+        imports = [ "net.peanuuutz.tomlkt.TomlInline" ]
     )
 )
 public typealias Fold = TomlInline
@@ -159,3 +159,34 @@ public annotation class TomlLiteralString
     )
 )
 public typealias Literal = TomlLiteralString
+
+/**
+ * Set the display of the annotated [kotlin.Int] or [kotlin.Long].
+ *
+ * ```kotlin
+ * class ByteCode(
+ *     @TomlInteger(TomlInteger.Display.BIN)
+ *     val code: Byte
+ * )
+ * ByteCode(0b1101)
+ * ```
+ *
+ * will produce:
+ *
+ * ```toml
+ * code = 0b1101
+ * ```
+ */
+@SerialInfo
+@Target(AnnotationTarget.PROPERTY)
+public annotation class TomlInteger(val base: Base) {
+    /**
+     * Representation of integer.
+     */
+    public enum class Base(public val value: Int, public val prefix: String) {
+        DEC(10, ""),
+        HEX(16, "0x"),
+        BIN(2, "0b"),
+        OCT(8, "0o")
+    }
+}
