@@ -96,7 +96,7 @@ public annotation class TomlInline
 public typealias Fold = TomlInline
 
 /**
- * Mark the corresponding [kotlin.String] property as multiline when encoded.
+ * Mark the corresponding [String] property as multiline when encoded.
  *
  * ```kotlin
  * class MultilineStringData(
@@ -131,7 +131,7 @@ public annotation class TomlMultilineString
 public typealias Multiline = TomlMultilineString
 
 /**
- * Mark the corresponding [kotlin.String] property as literal when encoded.
+ * Mark the corresponding [String] property as literal when encoded.
  *
  * ```kotlin
  * class LiteralStringData(
@@ -161,11 +161,11 @@ public annotation class TomlLiteralString
 public typealias Literal = TomlLiteralString
 
 /**
- * Set the display of the annotated [kotlin.Int] or [kotlin.Long].
+ * Set the representation of the corresponding [Byte], [Short], [Int], [Long] property.
  *
  * ```kotlin
  * class ByteCode(
- *     @TomlInteger(TomlInteger.Display.BIN)
+ *     @TomlInteger(TomlInteger.Base.BIN)
  *     val code: Byte
  * )
  * ByteCode(0b1101)
@@ -181,7 +181,7 @@ public typealias Literal = TomlLiteralString
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInteger(val base: Base) {
     /**
-     * Representation of integer.
+     * Representation of a [TOML integer](https://toml.io/en/v1.0.0#integer).
      */
     public enum class Base(public val value: Int, public val prefix: String) {
         DEC(10, ""),

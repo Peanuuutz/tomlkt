@@ -1,6 +1,14 @@
 package net.peanuuutz.tomlkt
 
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.SerialKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Serializable
 data class User(
@@ -79,3 +87,21 @@ data class ByteCode(@TomlInteger(TomlInteger.Base.BIN) val code: Byte)
 
 @Serializable
 data class Color(@TomlInteger(TomlInteger.Base.HEX) val value: Long)
+
+@Serializable
+data class StringOrColor(val content: @Serializable(StringOrColorSerializer::class) Any)
+
+object StringOrColorSerializer : KSerializer<Any> {
+    @OptIn(InternalSerializationApi::class)
+    override val descriptor: SerialDescriptor = buildSerialDescriptor("SOC", SerialKind.CONTEXTUAL)
+
+    override fun serialize(encoder: Encoder, value: Any) {
+        if (value is String) {
+            String.serializer().serialize(encoder, value)
+        } else if (value is Color) {
+            Color.serializer().serialize(encoder, value)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): Any = Any()
+}

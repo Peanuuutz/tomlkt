@@ -134,7 +134,9 @@ internal class TomlElementDecoder(
     internal inner class ArrayDecoder(private val array: TomlArray) : AbstractDecoder() {
         override val currentElement: TomlElement get() = array[elementIndex++]
 
-        override fun decodeElementIndex(descriptor: SerialDescriptor): Int = if (elementIndex == array.size) CompositeDecoder.DECODE_DONE else elementIndex++
+        override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
+            return if (elementIndex == array.size) CompositeDecoder.DECODE_DONE else elementIndex++
+        }
 
         override fun decodeCollectionSize(descriptor: SerialDescriptor): Int = array.size
 
@@ -156,10 +158,14 @@ internal class TomlElementDecoder(
                         throw UnknownKeyException(entry.key)
                     elementIndex++
                     index
-                } else CompositeDecoder.DECODE_DONE
+                } else {
+                    CompositeDecoder.DECODE_DONE
+                }
             } else if (iterator.hasNext() && !config.ignoreUnknownKeys) {
                 throw UnknownKeyException(iterator.next().key)
-            } else CompositeDecoder.DECODE_DONE
+            } else {
+                CompositeDecoder.DECODE_DONE
+            }
         }
     }
 
@@ -171,10 +177,11 @@ internal class TomlElementDecoder(
             }
         }
 
-        override val currentElement: TomlElement
-            get() = iterator.next()
+        override val currentElement: TomlElement get() = iterator.next()
 
-        override fun decodeElementIndex(descriptor: SerialDescriptor): Int = if (iterator.hasNext()) elementIndex++ else CompositeDecoder.DECODE_DONE
+        override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
+            return if (iterator.hasNext()) elementIndex++ else CompositeDecoder.DECODE_DONE
+        }
 
         override fun decodeCollectionSize(descriptor: SerialDescriptor): Int = table.size
 
