@@ -57,13 +57,14 @@ private object Mappings {
     fun escape(char: Char, multiline: Boolean): String = if (char.code >= 128) {
         char.toString()
     } else {
-        if (!multiline)
+        if (!multiline) {
             mappings[char.code]
-        else {
-            if (char == '\\' || char != '\t' && char != '\r' && char != '\n')
+        } else {
+            if (char == '\\' || char != '\t' && char != '\r' && char != '\n') {
                 mappings[char.code]
-            else
+            } else {
                 char.toString()
+            }
         }
     }
 
@@ -71,9 +72,9 @@ private object Mappings {
         val builder = StringBuilder()
         var i = -1
         while (++i < string.length) {
-            if (string[i] != '\\')
+            if (string[i] != '\\') {
                 builder.append(string[i])
-            else {
+            } else {
                 require(i != string.lastIndex)
                 when (val c = string[i + 1]) {
                     'b', 't', 'n', 'f', 'r', '"', '\\' -> {
@@ -126,12 +127,16 @@ internal fun String.toNumber(
         val strings = split('e', ignoreCase = true)
         factor *= 10.0.pow(strings[1].toInt())
         strings[0].toDouble() * factor
-    } else toDouble() * factor
+    } else {
+        toDouble() * factor
+    }
 } else {
     var factor = if (positive) 1L else -1L
     if (isExponent) {
         val strings = split('e', ignoreCase = true)
         factor *= (10.0.pow(strings[1].toInt())).toLong()
         strings[0].toLong(radix) * factor
-    } else toLong(radix) * factor
+    } else {
+        toLong(radix) * factor
+    }
 }

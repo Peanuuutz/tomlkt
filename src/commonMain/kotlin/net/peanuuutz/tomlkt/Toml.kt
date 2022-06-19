@@ -119,16 +119,18 @@ public sealed class Toml(
      *
      * @throws TomlDecodingException when [string] cannot be parsed into [TomlTable] or cannot be deserialized.
      */
-    override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T
-        = deserializer.deserialize(TomlElementDecoder(config, serializersModule, parseToTomlTable(string)))
+    override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
+        return deserializer.deserialize(TomlElementDecoder(config, serializersModule, parseToTomlTable(string)))
+    }
 
     /**
      * Deserializes [element] into a value of type [T] using [deserializer].
      *
      * @throws TomlDecodingException when [element] cannot be deserialized.
      */
-    public fun <T> decodeFromTomlElement(deserializer: DeserializationStrategy<T>, element: TomlElement): T
-        = deserializer.deserialize(TomlElementDecoder(config, serializersModule, element))
+    public fun <T> decodeFromTomlElement(deserializer: DeserializationStrategy<T>, element: TomlElement): T {
+        return deserializer.deserialize(TomlElementDecoder(config, serializersModule, element))
+    }
 
     /**
      * Parses [string] into equivalent representation of [TomlTable].
@@ -154,16 +156,18 @@ public fun Toml(
  *
  * @throws TomlEncodingException when [value] cannot be serialized.
  */
-public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement
-    = encodeToTomlElement(serializersModule.serializer(), value)
+public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
+    return encodeToTomlElement(serializersModule.serializer(), value)
+}
 
 /**
  * Deserializes [element] into a value of type [T] using serializer retrieved from reified type parameter.
  *
  * @throws TomlDecodingException when [element] cannot be deserialized.
  */
-public inline fun <reified T> Toml.decodeFromTomlElement(element: TomlElement): T
-    = decodeFromTomlElement(serializersModule.serializer(), element)
+public inline fun <reified T> Toml.decodeFromTomlElement(element: TomlElement): T {
+    return decodeFromTomlElement(serializersModule.serializer(), element)
+}
 
 // Internal
 

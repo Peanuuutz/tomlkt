@@ -14,7 +14,6 @@
     limitations under the License.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
 @file:Suppress("UNUSED")
 
 package net.peanuuutz.tomlkt
@@ -398,9 +397,9 @@ private tailrec fun TomlTable.getByPathRecursively(
     index: Int
 ): TomlElement? {
     val value = get(keys[index])
-    return if (index == keys.lastIndex)
+    return if (index == keys.lastIndex) {
         value
-    else when (value) {
+    } else when (value) {
         is TomlTable -> value.getByPathRecursively(keys, index + 1)
         TomlNull, is TomlLiteral, is TomlArray, null -> null
     }

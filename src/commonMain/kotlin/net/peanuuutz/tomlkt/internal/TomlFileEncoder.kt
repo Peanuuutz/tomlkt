@@ -19,6 +19,7 @@ package net.peanuuutz.tomlkt.internal
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.SerialKind.CONTEXTUAL
 import kotlinx.serialization.descriptors.StructureKind.CLASS
 import kotlinx.serialization.descriptors.StructureKind.LIST
 import kotlinx.serialization.descriptors.StructureKind.MAP
@@ -26,7 +27,18 @@ import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.*
+import net.peanuuutz.tomlkt.toTomlKey
+import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlComment
+import net.peanuuutz.tomlkt.TomlConfig
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlInline
+import net.peanuuutz.tomlkt.TomlInteger
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlLiteralString
+import net.peanuuutz.tomlkt.TomlMultilineString
+import net.peanuuutz.tomlkt.TomlNull
+import net.peanuuutz.tomlkt.TomlTable
 
 internal class TomlFileEncoder(
     private val config: TomlConfig,
@@ -52,20 +64,22 @@ internal class TomlFileEncoder(
     }
 
     override fun encodeInline(inlineDescriptor: SerialDescriptor): Encoder = this
-    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int)
-        = encodeString(enumDescriptor.getElementName(index))
+    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+        encodeString(enumDescriptor.getElementName(index))
+    }
 
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder
-        = beginStructure(descriptor, false)
+    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
+        return beginStructure(descriptor, false)
+    }
 
     private fun beginStructure(
         descriptor: SerialDescriptor,
         forceInline: Boolean
     ): CompositeEncoder = when (descriptor.kind) {
         CLASS -> {
-            if (forceInline)
+            if (forceInline) {
                 FlowClassEncoder()
-            else {
+            } else {
                 ClassEncoder(
                     structuredIndex = calculateStructuredIndex(descriptor),
                     structured = true,
@@ -77,8 +91,9 @@ internal class TomlFileEncoder(
         else -> throw UnsupportedSerialKindException(descriptor.kind)
     }
 
-    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder
-        = beginCollection(descriptor, collectionSize, false)
+    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
+        return beginCollection(descriptor, collectionSize, false)
+    }
 
     private fun beginCollection(
         descriptor: SerialDescriptor,
@@ -86,15 +101,16 @@ internal class TomlFileEncoder(
         forceInline: Boolean
     ): CompositeEncoder = when (descriptor.kind) {
         LIST -> {
-            if (forceInline || collectionSize == 0)
+            if (forceInline || collectionSize == 0) {
                 FlowArrayEncoder(collectionSize)
-            else
+            } else {
                 BlockArrayEncoder(collectionSize)
+            }
         }
         MAP -> {
-            if (forceInline || collectionSize == 0)
+            if (forceInline || collectionSize == 0) {
                 FlowMapEncoder(collectionSize)
-            else {
+            } else {
                 MapEncoder(
                     collectionSize = collectionSize,
                     valueDescriptor = descriptor.getElementDescriptor(1),
@@ -108,17 +124,19 @@ internal class TomlFileEncoder(
 
     private fun SerialDescriptor.inlineAt(index: Int): Boolean = getElementAnnotations(index).any { it is TomlInline }
 
-    private val SerialDescriptor.isTable: Boolean get() = kind == CLASS || kind == MAP
+    private val SerialDescriptor.isClassOrMap: Boolean get() = kind == CLASS || kind == MAP
 
-    private val SerialDescriptor.isArrayOfTable: Boolean get() = kind == LIST && getElementDescriptor(0).isTable
+    private val SerialDescriptor.isArrayOfTable: Boolean get() = kind == LIST && getElementDescriptor(0).isClassOrMap
 
-    private val SerialDescriptor.isTomlElement: Boolean get() = this == TomlElement.serializer().descriptor
+    private val SerialDescriptor.isTomlTable: Boolean get() {
+        return serialName.removeSuffix("?").let(TomlTableSerializer.descriptor.serialName::equals)
+    }
 
     private fun calculateStructuredIndex(descriptor: SerialDescriptor): Int {
         var structuredIndex = 0
         for (i in descriptor.elementsCount - 1 downTo 0) {
             val elementDescriptor = descriptor.getElementDescriptor(i)
-            if (descriptor.inlineAt(i) || !elementDescriptor.isTable && !elementDescriptor.isArrayOfTable) {
+            if (descriptor.inlineAt(i) || !elementDescriptor.isClassOrMap && !elementDescriptor.isArrayOfTable) {
                 structuredIndex = i + 1
                 break
             }
@@ -175,14 +193,17 @@ internal class TomlFileEncoder(
         }
 
         final override fun encodeInline(inlineDescriptor: SerialDescriptor): Encoder = this
-        final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int)
-            = this@TomlFileEncoder.encodeEnum(enumDescriptor, index)
+        final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+            this@TomlFileEncoder.encodeEnum(enumDescriptor, index)
+        }
 
-        override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder
-            = beginStructure(descriptor, true)
+        override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
+            return beginStructure(descriptor, true)
+        }
 
-        override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder
-            = beginCollection(descriptor, collectionSize, true)
+        override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
+            return beginCollection(descriptor, collectionSize, true)
+        }
 
         final override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) {
             encodeSerializableElement(descriptor, index, Boolean.serializer(), value)
@@ -228,15 +249,17 @@ internal class TomlFileEncoder(
             head(descriptor, index, value)
             val annotations = descriptor.getElementAnnotations(index)
             if (annotations.any { it is TomlLiteralString }) {
-                if (annotations.any { it is TomlMultilineString })
+                if (annotations.any { it is TomlMultilineString }) {
                     encodeMultilineLiteralString(value)
-                else
+                } else {
                     encodeLiteralString(value)
+                }
             } else {
-                if (annotations.any { it is TomlMultilineString })
+                if (annotations.any { it is TomlMultilineString }) {
                     encodeMultilineString(value)
-                else
+                } else {
                     encodeString(value)
+                }
             }
             tail(descriptor, index)
         }
@@ -332,8 +355,7 @@ internal class TomlFileEncoder(
         init { builder.append("{ ") }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
-            if (isKey)
-                builder.appendKey(value.toTomlKey().escape().doubleQuotedIfNeeded())
+            builder.appendKey(value.toTomlKey().escape().doubleQuotedIfNeeded())
         }
 
         override fun <T> encodeSerializableElement(
@@ -342,9 +364,11 @@ internal class TomlFileEncoder(
             serializer: SerializationStrategy<T>,
             value: T
         ) {
-            head(descriptor, index, value)
-            if (!isKey)
+            if (isKey) {
+                head(descriptor, index, value)
+            } else {
                 serializer.serialize(this, value)
+            }
             tail(descriptor, index)
         }
 
@@ -369,9 +393,9 @@ internal class TomlFileEncoder(
 
         override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder = when (descriptor.kind) {
             CLASS -> {
-                if (inlineChild)
+                if (inlineChild) {
                     FlowClassEncoder()
-                else {
+                } else {
                     ClassEncoder(
                         structuredIndex = calculateStructuredIndex(descriptor),
                         structured = structuredChild,
@@ -383,7 +407,10 @@ internal class TomlFileEncoder(
             else -> throw UnsupportedSerialKindException(descriptor.kind)
         }
 
-        override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder = when (descriptor.kind) {
+        override fun beginCollection(
+            descriptor: SerialDescriptor,
+            collectionSize: Int
+        ): CompositeEncoder = when (descriptor.kind) {
             LIST -> {
                 if (inlineChild || collectionSize == 0) {
                     FlowArrayEncoder(collectionSize)
@@ -392,13 +419,15 @@ internal class TomlFileEncoder(
                         collectionSize = collectionSize,
                         path = currentChildPath
                     )
-                } else BlockArrayEncoder(collectionSize)
+                } else {
+                    BlockArrayEncoder(collectionSize)
+                }
             }
             MAP -> {
                 val valueDescriptor = descriptor.getElementDescriptor(1)
-                if (inlineChild || collectionSize == 0 || valueDescriptor.isTomlElement)
+                if (inlineChild || collectionSize == 0) {
                     FlowMapEncoder(collectionSize)
-                else {
+                } else {
                     MapEncoder(
                         collectionSize = collectionSize,
                         valueDescriptor = valueDescriptor,
@@ -410,8 +439,9 @@ internal class TomlFileEncoder(
             else -> throw UnsupportedSerialKindException(descriptor.kind)
         }
 
-        protected fun concatPath(childPath: String): String
-            = if (path.isNotEmpty()) "$path.$childPath" else childPath
+        protected fun concatPath(childPath: String): String {
+            return if (path.isNotEmpty()) "$path.$childPath" else childPath
+        }
 
         override fun endStructure(descriptor: SerialDescriptor) {}
     }
@@ -424,41 +454,42 @@ internal class TomlFileEncoder(
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
             comment(descriptor, index)
             val elementName = descriptor.getElementName(index).escape().doubleQuotedIfNeeded()
-            inlineChild = descriptor.inlineAt(index)
+            val elementDescriptor = descriptor.getElementDescriptor(index)
+            inlineChild = descriptor.inlineAt(index) ||
+                    elementDescriptor.kind == CONTEXTUAL ||
+                    elementDescriptor.isTomlTable
             currentChildPath = concatPath(elementName)
             structuredChild = structured && index >= structuredIndex
-            if (inlineChild)
+            if (inlineChild) {
                 builder.appendKey(if (structured) elementName else currentChildPath)
-            else {
-                if (structuredChild) {
-                    if (descriptor.getElementDescriptor(index).isTable)
-                        builder.appendLine().appendLine("[$currentChildPath]")
-                } else {
-                    if (!descriptor.getElementDescriptor(index).isTable)
-                        builder.appendKey(if (structured) elementName else currentChildPath)
-                }
+            } else if (structuredChild) {
+                if (elementDescriptor.isClassOrMap)
+                    builder.appendLine().appendLine("[$currentChildPath]")
+            } else {
+                if (!elementDescriptor.isClassOrMap)
+                    builder.appendKey(if (structured) elementName else currentChildPath)
             }
         }
 
         private fun comment(descriptor: SerialDescriptor, index: Int) {
-            if (structured) {
-                val lines = mutableListOf<String>()
-                val annotations = descriptor.getElementAnnotations(index)
-                var inline = false
-                for (annotation in annotations) {
-                    if (annotation is TomlInline) {
-                        inline = true
-                    } else if (annotation is TomlComment) {
-                        annotation.text.trimIndent().split('\n').forEach(lines::add)
-                    }
+            if (!structured)
+                return
+            val lines = mutableListOf<String>()
+            val annotations = descriptor.getElementAnnotations(index)
+            var inline = false
+            for (annotation in annotations) {
+                if (annotation is TomlInline) {
+                    inline = true
+                } else if (annotation is TomlComment) {
+                    annotation.text.trimIndent().split('\n').forEach(lines::add)
                 }
-                if (lines.size > 0) {
-                    val elementDescriptor = descriptor.getElementDescriptor(index)
-                    if ((elementDescriptor.isTable || elementDescriptor.isArrayOfTable) && !inline)
-                        builder.appendLine()
-                    for (line in lines)
-                        builder.appendLine("# ${line.escape(false)}")
-                }
+            }
+            if (lines.size > 0) {
+                val elementDescriptor = descriptor.getElementDescriptor(index)
+                if ((elementDescriptor.isClassOrMap || elementDescriptor.isArrayOfTable) && !inline)
+                    builder.appendLine()
+                for (line in lines)
+                    builder.appendLine("# ${line.escape(false)}")
             }
         }
 
@@ -495,7 +526,10 @@ internal class TomlFileEncoder(
     ) : TableLikeEncoder(structured, path) {
         private var isKey: Boolean = true
 
-        init { structuredChild = structured }
+        init {
+            inlineChild = valueDescriptor.kind == CONTEXTUAL || valueDescriptor.isTomlTable
+            structuredChild = structured
+        }
 
         override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
             if (config.checkArrayInMap && collectionSize == 0 && descriptor.isArrayOfTable)
@@ -504,18 +538,19 @@ internal class TomlFileEncoder(
         }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
-            if (isKey) {
-                val key = value.toTomlKey().escape().doubleQuotedIfNeeded()
-                currentChildPath = concatPath(key)
-                if (structuredChild) {
-                    if (valueDescriptor.isTable)
-                        builder.appendLine().appendLine("[$currentChildPath]")
-                    else if (!valueDescriptor.isArrayOfTable)
-                        builder.appendKey(key)
-                } else {
-                    if (!valueDescriptor.isTable)
-                        builder.appendKey(currentChildPath)
+            val key = value.toTomlKey().escape().doubleQuotedIfNeeded()
+            currentChildPath = concatPath(key)
+            if (inlineChild) {
+                builder.appendKey(if (structured) key else currentChildPath)
+            } else if (structuredChild) {
+                if (valueDescriptor.isClassOrMap) {
+                    builder.appendLine().appendLine("[$currentChildPath]")
+                } else if (!valueDescriptor.isArrayOfTable) {
+                    builder.appendKey(key)
                 }
+            } else {
+                if (!valueDescriptor.isClassOrMap)
+                    builder.appendKey(currentChildPath)
             }
         }
 
@@ -525,9 +560,11 @@ internal class TomlFileEncoder(
             serializer: SerializationStrategy<T>,
             value: T
         ) {
-            head(descriptor, index, value)
-            if (!isKey)
+            if (isKey) {
+                head(descriptor, index, value)
+            } else {
                 serializer.serialize(this, value)
+            }
             tail(descriptor, index)
         }
 
