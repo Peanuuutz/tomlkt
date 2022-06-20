@@ -56,6 +56,7 @@ $dokka.location:net.peanuuutz.tomlkt/TomlComment/text/#/PointingToDeclaration/t
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/checkArrayInMap/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/check-array-in-map.html
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/ignoreUnknownKeys/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/ignore-unknown-keys.html
+$dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/itemsPerLineInBlockArray/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/items-per-line-in-block-array.html
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/serializersModule/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/serializers-module.html
 $dokka.location:net.peanuuutz.tomlkt/TomlElement///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-element/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlElement/content/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-element/content.html

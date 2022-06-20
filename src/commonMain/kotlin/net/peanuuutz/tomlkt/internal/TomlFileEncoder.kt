@@ -129,7 +129,7 @@ internal class TomlFileEncoder(
     private val SerialDescriptor.isArrayOfTable: Boolean get() = kind == LIST && getElementDescriptor(0).isClassOrMap
 
     private val SerialDescriptor.isTomlTable: Boolean get() {
-        return serialName.removeSuffix("?").let(TomlTableSerializer.descriptor.serialName::equals)
+        return serialName.removeSuffix("?") == TomlTableSerializer.descriptor.serialName
     }
 
     private fun calculateStructuredIndex(descriptor: SerialDescriptor): Int {
@@ -304,17 +304,32 @@ internal class TomlFileEncoder(
     internal inner class BlockArrayEncoder(
         private val collectionSize: Int
     ) : AbstractEncoder() {
+        private var itemsInCurrentLine: Int = 0
+
         init { builder.appendLine('[') }
 
-        override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) { builder.append(INDENT) }
+        override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
+            if (itemsInCurrentLine == 0) {
+                builder.append(INDENT)
+            } else {
+                builder.append(' ')
+            }
+        }
 
         override fun tail(descriptor: SerialDescriptor, index: Int) {
             if (index != collectionSize - 1)
                 builder.append(',')
-            builder.appendLine()
+            if (++itemsInCurrentLine >= config.itemsPerLineInBlockArray) {
+                builder.appendLine()
+                itemsInCurrentLine = 0
+            }
         }
 
-        override fun endStructure(descriptor: SerialDescriptor) { builder.append(']') }
+        override fun endStructure(descriptor: SerialDescriptor) {
+            if (itemsInCurrentLine != 0)
+                builder.appendLine()
+            builder.append(']')
+        }
     }
 
     internal inner class FlowArrayEncoder(
@@ -396,10 +411,15 @@ internal class TomlFileEncoder(
                 if (inlineChild) {
                     FlowClassEncoder()
                 } else {
+                    val childPath = if (structured && !structuredChild) {
+                        currentChildPath.removePrefix("$path.")
+                    } else {
+                        currentChildPath
+                    }
                     ClassEncoder(
                         structuredIndex = calculateStructuredIndex(descriptor),
                         structured = structuredChild,
-                        path = currentChildPath
+                        path = childPath
                     )
                 }
             }
@@ -457,7 +477,8 @@ internal class TomlFileEncoder(
             val elementDescriptor = descriptor.getElementDescriptor(index)
             inlineChild = descriptor.inlineAt(index) ||
                     elementDescriptor.kind == CONTEXTUAL ||
-                    elementDescriptor.isTomlTable
+                    elementDescriptor.isTomlTable ||
+                    value == TomlNull
             currentChildPath = concatPath(elementName)
             structuredChild = structured && index >= structuredIndex
             if (inlineChild) {
@@ -509,6 +530,8 @@ internal class TomlFileEncoder(
         }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
+            if (value == TomlNull)
+                throw NullInArrayOfTableException()
             builder.appendLine().appendLine("[[$currentChildPath]]")
         }
 
@@ -526,26 +549,42 @@ internal class TomlFileEncoder(
     ) : TableLikeEncoder(structured, path) {
         private var isKey: Boolean = true
 
+        private lateinit var key: String
+
         init {
             inlineChild = valueDescriptor.kind == CONTEXTUAL || valueDescriptor.isTomlTable
             structuredChild = structured
         }
 
         override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
-            if (config.checkArrayInMap && collectionSize == 0 && descriptor.isArrayOfTable)
-                throw EmptyArrayOfTableInMapException()
+            if (!descriptor.isArrayOfTable) { // This descriptor is the same as valueDescriptor property
+                appendKey()
+            } else if (collectionSize == 0) {
+                appendKeyForEmptyArrayOfTable()
+            }
             return super.beginCollection(descriptor, collectionSize)
         }
 
         override fun <T> head(descriptor: SerialDescriptor, index: Int, value: T) {
-            val key = value.toTomlKey().escape().doubleQuotedIfNeeded()
+            if (isKey) {
+                storeKey(value)
+            } else if (valueDescriptor.kind != LIST && valueDescriptor.kind != MAP || value == TomlNull) {
+                appendKey() // For collections, defer to beginCollection() above
+            }
+        }
+
+        private fun <T> storeKey(value: T) {
+            key = value.toTomlKey().escape().doubleQuotedIfNeeded()
             currentChildPath = concatPath(key)
+        }
+
+        private fun appendKey() {
             if (inlineChild) {
                 builder.appendKey(if (structured) key else currentChildPath)
             } else if (structuredChild) {
                 if (valueDescriptor.isClassOrMap) {
                     builder.appendLine().appendLine("[$currentChildPath]")
-                } else if (!valueDescriptor.isArrayOfTable) {
+                } else {
                     builder.appendKey(key)
                 }
             } else {
@@ -554,17 +593,19 @@ internal class TomlFileEncoder(
             }
         }
 
+        private fun appendKeyForEmptyArrayOfTable() {
+            builder.appendKey(if (structured) key else currentChildPath)
+        }
+
         override fun <T> encodeSerializableElement(
             descriptor: SerialDescriptor,
             index: Int,
             serializer: SerializationStrategy<T>,
             value: T
         ) {
-            if (isKey) {
-                head(descriptor, index, value)
-            } else {
+            head(descriptor, index, value)
+            if (!isKey)
                 serializer.serialize(this, value)
-            }
             tail(descriptor, index)
         }
 

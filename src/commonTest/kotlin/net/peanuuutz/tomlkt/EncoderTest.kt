@@ -1,5 +1,6 @@
 package net.peanuuutz.tomlkt
 
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import net.peanuuutz.tomlkt.internal.escape
@@ -16,6 +17,8 @@ class EncoderTest {
     @Test
     fun encodeClass() {
         printIfDebug(Toml.encodeToString(Project.serializer(), tomlProject))
+        printIfDebug("-----")
+        printIfDebug(Toml.encodeToString(Box.serializer(Project.serializer()), Box(tomlProject)))
     }
 
     @Test
@@ -23,6 +26,23 @@ class EncoderTest {
         printIfDebug(Toml.encodeToString(MapSerializer(String.serializer(), Project.serializer()), projects))
         printIfDebug("-----")
         printIfDebug(Toml.encodeToString(Score.serializer(), exampleScore))
+        printIfDebug("-----")
+        val emptyArrayOfTableInMap = mapOf("Something" to listOf(), "More" to listOf(tomlProject))
+        val arrayOfTableInMapSerializer = MapSerializer(String.serializer(), ListSerializer(Project.serializer()))
+        printIfDebug(Toml.encodeToString(
+            serializer = arrayOfTableInMapSerializer,
+            value = emptyArrayOfTableInMap
+        ))
+        printIfDebug("-----")
+        printIfDebug(Toml.encodeToString(
+            serializer = Box.serializer(arrayOfTableInMapSerializer),
+            value = Box(emptyArrayOfTableInMap)
+        ))
+        printIfDebug("-----")
+        printIfDebug(Toml.encodeToString(
+            serializer = MapSerializer(Int.serializer(), arrayOfTableInMapSerializer),
+            value = mapOf(1 to emptyArrayOfTableInMap)
+        ))
     }
 
     @Test

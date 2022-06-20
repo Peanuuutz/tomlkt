@@ -29,16 +29,21 @@ internal class NonPrimitiveKeyException : TomlEncodingException()
 
 internal class UnsupportedSerialKindException(kind: SerialKind) : TomlEncodingException("$kind")
 
-internal class EmptyArrayOfTableInMapException : TomlEncodingException("Switch TomlConfig.checkArrayInMap to false to suppress (may result in unspecific behavior)")
+internal class NullInArrayOfTableException : TomlEncodingException(
+    message = "Due to encoding process, no null is allowed in array of table, " +
+            "please mark the corresponding property as @TomlInline"
+)
 
 internal sealed class TomlDecodingException(message: String) : SerializationException(message)
 
-internal class UnexpectedTokenException(token: Char, line: Int) : TomlDecodingException("'${if (token != '\'') token.escape() else "\\'"}' (L$line)")
+internal class UnexpectedTokenException(token: Char, line: Int) : TomlDecodingException(
+    message = "'${if (token != '\'') token.escape() else "\\'"}' (L$line)"
+)
 
 internal class IncompleteException(line: Int) : TomlDecodingException("(L$line)")
 
-internal class ConflictEntryException(key: String) : TomlDecodingException(key) {
-    constructor(path: Path) : this(path.joinToString(".") { it.escape().doubleQuotedIfNeeded() })
-}
+internal class ConflictEntryException(path: Path) : TomlDecodingException(
+    message = path.joinToString(".") { it.escape().doubleQuotedIfNeeded() }
+)
 
 internal class UnknownKeyException(key: String) : TomlDecodingException(key)
