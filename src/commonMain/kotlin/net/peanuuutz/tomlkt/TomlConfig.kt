@@ -33,17 +33,10 @@ public class TomlConfigBuilder internal constructor(from: TomlConfig) {
 
     // Serialization
 
-    /**
-     * Specifies whether to check empty array of table as value inside table.
-     *
-     * Due to no context before encoding value(array of table), encoder cannot decide whether to
-     * encode key as table-like `[[key]]` or key-value-like `key = [...]`.
-     *
-     * **If set to `false`, unspecific behavior would be witnessed.**
-     *
-     * `true` by default.
-     */
-    public var checkArrayInMap: Boolean = from.checkArrayInMap
+    @Deprecated("Issue solved. Now empty array of table in map will be fine")
+    public var checkArrayInMap: Boolean = false
+
+    public var itemsPerLineInBlockArray: Int = from.itemsPerLineInBlockArray
 
     // Deserialization
 
@@ -58,7 +51,7 @@ public class TomlConfigBuilder internal constructor(from: TomlConfig) {
 
     internal fun build(): TomlConfig = TomlConfig(
         serializersModule,
-        checkArrayInMap,
+        itemsPerLineInBlockArray,
         ignoreUnknownKeys
     )
 }
@@ -67,6 +60,6 @@ public class TomlConfigBuilder internal constructor(from: TomlConfig) {
 
 internal data class TomlConfig(
     val serializersModule: SerializersModule = EmptySerializersModule,
-    val checkArrayInMap: Boolean = true,
+    val itemsPerLineInBlockArray: Int = 1,
     val ignoreUnknownKeys: Boolean = false
 )

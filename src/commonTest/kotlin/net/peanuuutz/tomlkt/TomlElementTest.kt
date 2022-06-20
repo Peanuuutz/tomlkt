@@ -47,16 +47,19 @@ class TomlElementTest {
     fun nestedElement() {
         val boxedArray = Box(TomlArray(listOf(1, 2)))
         printIfDebug(Toml.encodeToString(Box.serializer(TomlArray.serializer()), boxedArray))
+        printIfDebug("-----")
         val mapOfTables = mapOf(1 to TomlTable(mapOf(1 to 1)))
         val mapOfTablesSerializer = MapSerializer(Int.serializer(), TomlTable.serializer())
         printIfDebug(Toml.encodeToString(
             serializer = mapOfTablesSerializer,
             value = mapOfTables
         ))
+        printIfDebug("-----")
         printIfDebug(Toml.encodeToString(
             serializer = MapSerializer(Int.serializer(), mapOfTablesSerializer),
             value = mapOf(1 to mapOfTables)
         ))
+        printIfDebug("-----")
         printIfDebug(Toml.encodeToString(
             serializer = Box.serializer(MapSerializer(Int.serializer(), Box.serializer(mapOfTablesSerializer))),
             value = Box(mapOf(1 to Box(mapOfTables)))
