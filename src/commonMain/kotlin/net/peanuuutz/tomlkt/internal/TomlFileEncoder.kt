@@ -33,6 +33,7 @@ import net.peanuuutz.tomlkt.TomlBlockArray
 import net.peanuuutz.tomlkt.TomlComment
 import net.peanuuutz.tomlkt.TomlConfig
 import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlInline
 import net.peanuuutz.tomlkt.TomlInteger
 import net.peanuuutz.tomlkt.TomlLiteral
@@ -56,7 +57,7 @@ internal class TomlFileEncoder(
     override fun encodeChar(value: Char) { builder.append(value.escape().doubleQuoted) }
     override fun encodeString(value: String) { builder.append(value.escape().doubleQuoted) }
     override fun encodeNull() { encodeTomlElement(TomlNull) }
-    override fun encodeTomlElement(value: TomlElement) { // Internal
+    override fun encodeTomlElement(value: TomlElement) {
         when (value) {
             TomlNull, is TomlLiteral -> builder.append(value.toString())
             is TomlArray -> TomlArraySerializer.serialize(this, value)
@@ -205,7 +206,7 @@ internal class TomlFileEncoder(
             builder.appendLine("'''").append(value).append("'''")
         }
         final override fun encodeNull() = this@TomlFileEncoder.encodeNull()
-        final override fun encodeTomlElement(value: TomlElement) { // Internal
+        final override fun encodeTomlElement(value: TomlElement) {
             when (value) {
                 TomlNull, is TomlLiteral -> builder.append(value.toString())
                 is TomlArray -> TomlArraySerializer.serialize(this, value)

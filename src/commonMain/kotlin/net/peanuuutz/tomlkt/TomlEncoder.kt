@@ -14,11 +14,13 @@
     limitations under the License.
  */
 
-package net.peanuuutz.tomlkt.internal
+package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.encoding.Encoder
-import net.peanuuutz.tomlkt.TomlElement
 
-internal interface TomlEncoder : Encoder {
-    fun encodeTomlElement(value: TomlElement) // For convenience
+public interface TomlEncoder : Encoder {
+    public fun encodeTomlElement(value: TomlElement)
 }
+
+public fun Encoder.asTomlEncoder(): TomlEncoder = this as? TomlEncoder
+    ?: error("Expect TomlEncoder, but found ${this::class.simpleName}")

@@ -41,6 +41,7 @@ import net.peanuuutz.tomlkt.toDouble
 import net.peanuuutz.tomlkt.toChar
 import net.peanuuutz.tomlkt.toTomlNull
 import net.peanuuutz.tomlkt.TomlConfig
+import net.peanuuutz.tomlkt.TomlDecoder
 
 internal class TomlElementDecoder(
     private val config: TomlConfig,
@@ -58,7 +59,7 @@ internal class TomlElementDecoder(
     override fun decodeString(): String = element.toTomlLiteral().content
     override fun decodeNull(): Nothing? = element.toTomlNull().content
     override fun decodeNotNullMark(): Boolean = element != TomlNull
-    override fun decodeTomlElement(): TomlElement = element // Internal
+    override fun decodeTomlElement(): TomlElement = element
 
     override fun decodeEnum(enumDescriptor: SerialDescriptor): Int = enumDescriptor.getElementIndex(element.toTomlLiteral().content)
     override fun decodeInline(inlineDescriptor: SerialDescriptor): Decoder = this
@@ -89,7 +90,7 @@ internal class TomlElementDecoder(
         final override fun decodeString(): String = currentElement.toTomlLiteral().content
         final override fun decodeNull(): Nothing? = currentElement.toTomlNull().content
         final override fun decodeNotNullMark(): Boolean = currentElement != TomlNull
-        final override fun decodeTomlElement(): TomlElement = currentElement // Internal
+        final override fun decodeTomlElement(): TomlElement = currentElement
 
         final override fun decodeEnum(enumDescriptor: SerialDescriptor): Int = enumDescriptor.getElementIndex(currentElement.toTomlLiteral().content)
         final override fun decodeInline(inlineDescriptor: SerialDescriptor): Decoder = this

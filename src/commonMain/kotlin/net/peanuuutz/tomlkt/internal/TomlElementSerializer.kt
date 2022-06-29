@@ -35,6 +35,8 @@ import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.asTomlDecoder
+import net.peanuuutz.tomlkt.asTomlEncoder
 import net.peanuuutz.tomlkt.toTomlNull
 import net.peanuuutz.tomlkt.toTomlLiteral
 import net.peanuuutz.tomlkt.toTomlArray
@@ -97,9 +99,3 @@ internal object TomlTableSerializer : KSerializer<TomlTable> {
 
     override fun deserialize(decoder: Decoder): TomlTable = decoder.asTomlDecoder().decodeTomlElement().toTomlTable()
 }
-
-private fun Encoder.asTomlEncoder(): TomlEncoder = this as? TomlEncoder
-    ?: throw IllegalStateException("Expect TomlEncoderAddon, but found ${this::class.simpleName}")
-
-private fun Decoder.asTomlDecoder(): TomlDecoder = this as? TomlDecoder
-    ?: throw IllegalStateException("Expect TomlDecoderAddon, but found ${this::class.simpleName}")
