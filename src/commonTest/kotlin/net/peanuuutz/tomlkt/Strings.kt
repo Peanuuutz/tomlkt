@@ -203,3 +203,8 @@ internal const val integers: String = """
     ten = -100
     sixteen = 0x100
 """
+
+internal const val externalModule: String = """
+    name = "example"
+    id = 4321234
+"""

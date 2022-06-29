@@ -89,7 +89,37 @@ data class ByteCode(@TomlInteger(TomlInteger.Base.BIN) val code: Byte)
 data class Color(@TomlInteger(TomlInteger.Base.HEX) val value: Long)
 
 @Serializable
+data class NullablePairList<F, S>(
+    @TomlBlockArray(2)
+    val list: List<Pair<F, S>?>
+)
+
+val nullablePairList = NullablePairList(
+    list = listOf(
+        Pair("key", 1),
+        null,
+        Pair("key", 3),
+        Pair("key", 4)
+    )
+)
+
+@Serializable
+data class NullableColorMap(
+    val map: Map<String, Color?>
+)
+
+val nullableColorMap = NullableColorMap(mapOf("1" to null))
+
+@Serializable
 data class StringOrColor(val content: @Serializable(StringOrColorSerializer::class) Any)
+
+@Serializable
+data class Module(
+    val id: ULong,
+    val name: String
+)
+
+val module = Module(id = 1L.toULong(), name = "core")
 
 object StringOrColorSerializer : KSerializer<Any> {
     @OptIn(InternalSerializationApi::class)

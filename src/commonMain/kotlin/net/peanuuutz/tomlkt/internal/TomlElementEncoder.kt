@@ -102,7 +102,9 @@ internal class TomlElementEncoder(
         final override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) { encodeSerializableElement(descriptor, index, Char.serializer(), value) }
         final override fun encodeStringElement(descriptor: SerialDescriptor, index: Int, value: String) { encodeSerializableElement(descriptor, index, String.serializer(), value) }
 
-        final override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder = this
+        final override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder {
+            TODO("Not yet implemented")
+        }
 
         final override fun <T : Any> encodeNullableSerializableElement(
             descriptor: SerialDescriptor,

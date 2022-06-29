@@ -50,6 +50,9 @@ $dokka.location:net.peanuuutz.tomlkt/TomlArray/content/#/PointingToDeclaration/
 $dokka.location:net.peanuuutz.tomlkt/TomlArray/equals/#kotlin.Any?/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-array/equals.html
 $dokka.location:net.peanuuutz.tomlkt/TomlArray/hashCode/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-array/hash-code.html
 $dokka.location:net.peanuuutz.tomlkt/TomlArray/toString/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-array/to-string.html
+$dokka.location:net.peanuuutz.tomlkt/TomlBlockArray///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-block-array/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlBlockArray/TomlBlockArray/#kotlin.Int/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-block-array/-toml-block-array.html
+$dokka.location:net.peanuuutz.tomlkt/TomlBlockArray/itemsPerLine/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-block-array/items-per-line.html
 $dokka.location:net.peanuuutz.tomlkt/TomlComment///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-comment/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlComment/TomlComment/#kotlin.String/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-comment/-toml-comment.html
 $dokka.location:net.peanuuutz.tomlkt/TomlComment/text/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-comment/text.html

@@ -30,8 +30,12 @@ internal class NonPrimitiveKeyException : TomlEncodingException()
 internal class UnsupportedSerialKindException(kind: SerialKind) : TomlEncodingException("$kind")
 
 internal class NullInArrayOfTableException : TomlEncodingException(
-    message = "Due to encoding process, no null is allowed in array of table, " +
-            "please mark the corresponding property as @TomlInline"
+    message = "Null is not allowed in array of table, " +
+            "please mark the corresponding property as @TomlBlockArray or @TomlInline"
+)
+
+internal class EmptyArrayOfTableInMapException : TomlEncodingException(
+    message = "Empty array of table can only be the first in map"
 )
 
 internal sealed class TomlDecodingException(message: String) : SerializationException(message)
