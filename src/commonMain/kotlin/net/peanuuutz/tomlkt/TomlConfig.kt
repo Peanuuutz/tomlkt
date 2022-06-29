@@ -36,6 +36,11 @@ public class TomlConfigBuilder internal constructor(from: TomlConfig) {
     @Deprecated("Issue solved. Now empty array of table in map will be fine")
     public var checkArrayInMap: Boolean = false
 
+    /**
+     * Specifies how many items are encoded per line in block array.
+     *
+     * 1 by default.
+     */
     public var itemsPerLineInBlockArray: Int = from.itemsPerLineInBlockArray
 
     // Deserialization

@@ -37,7 +37,6 @@ internal fun String.escape(multiline: Boolean = false): String = map { it.escape
 internal fun String.unescape(): String = if (isBlank()) this else Mappings.unescape(this)
 
 private object Mappings {
-    @OptIn(ExperimentalStdlibApi::class)
     private val mappings: List<String> = buildList(128) {
         for (i in 0..0xf)
             add(i, "\\u000$i")

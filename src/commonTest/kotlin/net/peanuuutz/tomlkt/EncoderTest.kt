@@ -22,8 +22,18 @@ class EncoderTest {
     }
 
     @Test
+    fun encodeArrayOfTable() {
+        printIfDebug(Toml.encodeToString(
+            serializer = NullablePairList.serializer(String.serializer(), Int.serializer()),
+            value = nullablePairList
+        ))
+    }
+
+    @Test
     fun encodeMap() {
         printIfDebug(Toml.encodeToString(MapSerializer(String.serializer(), Project.serializer()), projects))
+        printIfDebug("-----")
+        printIfDebug(Toml.encodeToString(NullableColorMap.serializer(), nullableColorMap))
         printIfDebug("-----")
         printIfDebug(Toml.encodeToString(Score.serializer(), exampleScore))
         printIfDebug("-----")
@@ -69,6 +79,15 @@ class EncoderTest {
         val scoreAsTable = Toml.encodeToTomlElement(Score.serializer(), exampleScore)
         printIfDebug(Toml.decodeFromTomlElement(Score.serializer(), scoreAsTable))
         assertEquals(scoreAsTable.toTomlTable()["examinee"]?.toTomlLiteral()?.content, "Loney Chou")
+    }
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun encodeInlineClass() {
+        val boxedUInt = Box(1.toUInt())
+        printIfDebug(Toml.encodeToString(Box.serializer(UInt.serializer()), boxedUInt))
+        printIfDebug("-----")
+        printIfDebug(Toml.encodeToString(Module.serializer(), module))
     }
 
     @Test

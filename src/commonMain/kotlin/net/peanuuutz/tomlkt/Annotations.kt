@@ -58,7 +58,7 @@ public annotation class TomlComment(val text: String)
 public annotation class Comment(vararg val texts: String)
 
 /**
- * Force inline the corresponding property (needs to be list-like or map-like).
+ * Force inline the corresponding array-like or table-like property.
  *
  * ```kotlin
  * data class Data(
@@ -80,11 +80,39 @@ public annotation class Comment(vararg val texts: String)
  * b = "another thing"
  * ```
  *
- * Without the @TomlInline, both of the two properties will act like how noInlineProperty behaves.
+ * Without @TomlInline, both of the two properties will act like how noInlineProperty behaves.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInline
+
+/**
+ * Modify the encoding of corresponding array-like property, either to force array of tables
+ * to be encoded as block array, or to change how many items will be encoded per line
+ * (will override [TomlConfig][TomlConfigBuilder.itemsPerLineInBlockArray]).
+ *
+ * Note: If the corresponding property is marked [TomlInline], this annotation will not take effect.
+ *
+ * ```kotlin
+ * data class NullablePairList<F, S>(
+ *     @TomlBlockArray(2)
+ *     val list: List<Pair<F, S>?>
+ * )
+ * NullablePairList(listOf(Pair("key", 1), null, Pair("key", 3), Pair("key", 4)))
+ * ```
+ *
+ * will produce:
+ *
+ * ```toml
+ * list = [
+ *     { first = "key", second = 1 }, null,
+ *     { first = "key", second = 3 }, { first = "key", second = 4 }
+ * ]
+ * ```
+ */
+@SerialInfo
+@Target(AnnotationTarget.PROPERTY)
+public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 
 @Deprecated(
     message = "Name change",

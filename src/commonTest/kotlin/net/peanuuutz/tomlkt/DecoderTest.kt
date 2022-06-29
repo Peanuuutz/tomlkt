@@ -30,6 +30,17 @@ class DecoderTest {
         assertEquals(project.maintainability, Maintainability.HIGH)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun decodeInlineClass() {
+        val boxedUInt = Toml.decodeFromString(Box.serializer(UInt.serializer()), "content = 0x10")
+        printIfDebug(boxedUInt)
+        assertEquals(boxedUInt.content, 16L.toUInt())
+        val externalModule = Toml.decodeFromString(Module.serializer(), externalModule)
+        printIfDebug(externalModule)
+        assertEquals(externalModule.id, 4321234L.toULong())
+    }
+
     @Test
     fun decodeGeneric() {
         val box = Toml.decodeFromString(Box.serializer(Boolean.serializer()), boxContent)
