@@ -9,6 +9,8 @@ $dokka.location:net.peanuuutz.tomlkt//TomlLiteral/#kotlin.Char/PointingToDeclara
 $dokka.location:net.peanuuutz.tomlkt//TomlLiteral/#kotlin.Number/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-literal.html
 $dokka.location:net.peanuuutz.tomlkt//TomlLiteral/#kotlin.String/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-literal.html
 $dokka.location:net.peanuuutz.tomlkt//TomlTable/#kotlin.collections.Map[*,*]/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-table.html
+$dokka.location:net.peanuuutz.tomlkt//asTomlDecoder/kotlinx.serialization.encoding.Decoder#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/as-toml-decoder.html
+$dokka.location:net.peanuuutz.tomlkt//asTomlEncoder/kotlinx.serialization.encoding.Encoder#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/as-toml-encoder.html
 $dokka.location:net.peanuuutz.tomlkt//decodeFromTomlElement/net.peanuuutz.tomlkt.Toml#net.peanuuutz.tomlkt.TomlElement/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/decode-from-toml-element.html
 $dokka.location:net.peanuuutz.tomlkt//encodeToTomlElement/net.peanuuutz.tomlkt.Toml#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/encode-to-toml-element.html
 $dokka.location:net.peanuuutz.tomlkt//get/net.peanuuutz.tomlkt.TomlTable#kotlin.Array[kotlin.Any?]/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/get.html
@@ -61,9 +63,13 @@ $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/checkArrayInMap/#/Pointin
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/ignoreUnknownKeys/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/ignore-unknown-keys.html
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/itemsPerLineInBlockArray/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/items-per-line-in-block-array.html
 $dokka.location:net.peanuuutz.tomlkt/TomlConfigBuilder/serializersModule/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-config-builder/serializers-module.html
+$dokka.location:net.peanuuutz.tomlkt/TomlDecoder///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-decoder/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlDecoder/decodeTomlElement/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-decoder/decode-toml-element.html
 $dokka.location:net.peanuuutz.tomlkt/TomlElement///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-element/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlElement/content/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-element/content.html
 $dokka.location:net.peanuuutz.tomlkt/TomlElement/toString/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-element/to-string.html
+$dokka.location:net.peanuuutz.tomlkt/TomlEncoder///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-encoder/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlEncoder/encodeTomlElement/#net.peanuuutz.tomlkt.TomlElement/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-encoder/encode-toml-element.html
 $dokka.location:net.peanuuutz.tomlkt/TomlInline///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-inline/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlInline/TomlInline/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-inline/-toml-inline.html
 $dokka.location:net.peanuuutz.tomlkt/TomlInteger.Base.BIN///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-integer/-base/-b-i-n/index.html
