@@ -25,91 +25,156 @@ import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.internal.IncompleteException
 import net.peanuuutz.tomlkt.internal.UnexpectedTokenException
-import net.peanuuutz.tomlkt.internal.S
 import net.peanuuutz.tomlkt.internal.BARE_KEY_REGEX
+import net.peanuuutz.tomlkt.internal.COMMENT
 import net.peanuuutz.tomlkt.internal.contains
-import net.peanuuutz.tomlkt.internal.RADIX
-import net.peanuuutz.tomlkt.internal.DEC_RANGE
+import net.peanuuutz.tomlkt.internal.DEC_CHARS
+import net.peanuuutz.tomlkt.internal.DEC_CHARS_AND_SIGN
+import net.peanuuutz.tomlkt.internal.END_ARRAY
+import net.peanuuutz.tomlkt.internal.END_TABLE
+import net.peanuuutz.tomlkt.internal.KEY_VALUE_DELIMITER
+import net.peanuuutz.tomlkt.internal.START_ARRAY
+import net.peanuuutz.tomlkt.internal.START_TABLE
 import net.peanuuutz.tomlkt.internal.toNumber
 import net.peanuuutz.tomlkt.internal.unescape
 
-internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
+internal class TomlFileParser(source: String) {
     private val source: String = source.replace("\r\n", "\n")
 
-    private var line: Int = 1
+    private val lastIndex: Int = this.source.lastIndex
+
+    private var currentLine: Int = 1
 
     private var currentPosition: Int = -1
 
     // region Utils
 
-    private fun getChar(offset: Int = 0): Char = source[currentPosition + offset]
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun getChar(): Char {
+        return source[currentPosition]
+    }
 
-    private fun beforeFinal(offset: Int = 0): Boolean = currentPosition < source.lastIndex - offset
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun getChar(offset: Int): Char {
+        return source[currentPosition + offset]
+    }
 
-    private fun surroundedBy(previous: String, next: String): Boolean {
-        return getChar(-1) in previous && beforeFinal() && getChar(1) in next
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun lastOrEOF(): Boolean {
+        return currentPosition >= lastIndex
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun lastOrEOF(offset: Int): Boolean {
+        return currentPosition >= lastIndex + offset
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun beforeLast(): Boolean {
+        return currentPosition < lastIndex
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun beforeLast(offset: Int): Boolean {
+        return currentPosition < lastIndex + offset
+    }
+
+    private fun incomplete(): Nothing {
+        throw IncompleteException(currentLine)
     }
 
     @OptIn(ExperimentalContracts::class)
-    private fun incompleteOn(predicate: Boolean) {
+    private fun incompleteIf(predicate: Boolean) {
         contract { returns() implies !predicate }
-        if (predicate)
-            throw IncompleteException(line)
+
+        if (predicate) {
+            incomplete()
+        }
     }
 
-    private fun unexpectedToken(token: Char): Nothing = throw UnexpectedTokenException(token, line)
+    private fun unexpectedToken(token: Char): Nothing {
+        throw UnexpectedTokenException(token, currentLine)
+    }
 
     @OptIn(ExperimentalContracts::class)
-    private fun Char.unexpectedOn(predicate: Boolean) {
+    private fun Char.unexpectedIf(predicate: Boolean) {
         contract { returns() implies !predicate }
-        if (predicate)
+
+        if (predicate) {
             unexpectedToken(this)
+        }
     }
 
-    // Start right before the [chars], end on the last token
-    private fun expectNext(chars: CharSequence) {
-        incompleteOn(!beforeFinal(chars.length - 1))
-        for (char in chars) {
+    private fun expectNext(testChar: Char) {
+        incompleteIf(lastOrEOF())
+        currentPosition++
+        val currentChar = getChar()
+        currentChar.unexpectedIf(currentChar != testChar)
+    }
+
+    // Start right before [testString], end on the last token
+    private fun expectNext(testString: String) {
+        val requiredOffset = -(testString.length - 1)
+        incompleteIf(lastOrEOF(requiredOffset))
+        for (i in testString.indices) {
             currentPosition++
-            incompleteOn(getChar() != char)
+            val currentChar = getChar()
+            currentChar.unexpectedIf(currentChar != testString[i])
         }
     }
 
     // endregion
 
-    override fun parse(): TomlTable {
+    fun parse(): TomlTable {
         val tree = KeyNode("")
         val arrayOfTableIndices = mutableMapOf<Path, Int>()
         var tablePath: Path? = null
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
                 ' ', '\t' -> continue
-                '\n' -> line++
+                '\n' -> currentLine++
                 in BARE_KEY_REGEX, '"', '\'' -> {
                     currentPosition--
-                    val actualPath = tablePath?.plus(parsePath()) ?: parsePath()
-                    expectNext("${S.KEY_VALUE_DELIMITER}")
-                    tree.addByPath(actualPath, ValueNode(actualPath.last(), parseValue(false)), arrayOfTableIndices)
+                    val localPath = parsePath()
+                    expectNext(KEY_VALUE_DELIMITER)
+                    val path = if (tablePath != null) tablePath + localPath else localPath
+                    val node = ValueNode(path.last(), parseValue(inStructure = false))
+                    tree.addByPath(path, node, arrayOfTableIndices)
                 }
-                S.COMMENT -> parseComment()
-                S.START_ARRAY -> {
-                    incompleteOn(!beforeFinal())
-                    val isArrayOfTable = getChar(1) == S.START_ARRAY
-                    if (isArrayOfTable)
+                COMMENT -> parseComment()
+                START_ARRAY -> {
+                    incompleteIf(lastOrEOF())
+                    val isArrayOfTable = getChar(1) == START_ARRAY
+                    if (isArrayOfTable) {
                         currentPosition++
-                    tablePath = parseTableHead(isArrayOfTable).also { path ->
-                        if (isArrayOfTable) {
-                            arrayOfTableIndices.keys.removeAll { it != path && it.containsAll(path) }
-                            val index = arrayOfTableIndices[path]
-                            arrayOfTableIndices[path] = if (index == null) {
-                                tree.addByPath(path, ArrayNode(path.last()), arrayOfTableIndices)
-                                0
-                            } else index + 1
-                            tree.getByPath<ArrayNode>(path, arrayOfTableIndices).add(KeyNode(""))
-                        } else tree.addByPath(path, KeyNode(path.last()), arrayOfTableIndices)
                     }
+                    val path = parseTableHead(isArrayOfTable)
+                    if (isArrayOfTable) {
+                        // Copied from official codebase because theirs is not inline
+                        val iterator = arrayOfTableIndices.keys.iterator()
+                        while (iterator.hasNext()) {
+                            val next = iterator.next()
+                            if (next != path && next.containsAll(path)) {
+                                iterator.remove()
+                            }
+                        }
+                        val index = arrayOfTableIndices[path]
+                        if (index == null) {
+                            arrayOfTableIndices[path] = 0
+                            val node = ArrayNode(path.last())
+                            tree.addByPath(path, node, arrayOfTableIndices)
+                        } else {
+                            arrayOfTableIndices[path] = index + 1
+                        }
+                        val virtual = KeyNode("")
+                        tree.getByPath<ArrayNode>(path, arrayOfTableIndices).add(virtual)
+                    } else {
+                        val node = KeyNode(path.last())
+                        tree.addByPath(path, node, arrayOfTableIndices)
+                    }
+                    tablePath = path
                 }
-                else -> unexpectedToken(c)
+                else -> unexpectedToken(current)
             }
         }
         return TomlTable(tree)
@@ -119,243 +184,319 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
     private fun parseTableHead(isArrayOfTable: Boolean): Path {
         var path: Path? = null
         var justEnded = false
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
                 ' ', '\t' -> continue
-                '\n' -> incompleteOn(true)
-                S.END_ARRAY -> {
+                '\n' -> incomplete()
+                END_ARRAY -> {
                     if (isArrayOfTable) {
-                        incompleteOn(!beforeFinal() || getChar(1) != S.END_ARRAY)
+                        incompleteIf(lastOrEOF() || getChar(1) != END_ARRAY)
                         currentPosition++
                     }
                     justEnded = true
                     break
                 }
                 else -> {
-                    c.unexpectedOn(path != null)
+                    current.unexpectedIf(path != null)
                     currentPosition--
                     path = parsePath()
                 }
             }
         }
-        incompleteOn(path == null || !justEnded)
+        incompleteIf(path == null || !justEnded)
         return path
     }
 
     // Start right before the actual token, end right before '=' or ']'
     private fun parsePath(): Path {
         val path = mutableListOf<String>()
+        var justEnded = false
         var expectKey = true
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
                 ' ', '\t' -> continue
-                '\n' -> incompleteOn(true)
+                '\n' -> incomplete()
                 in BARE_KEY_REGEX -> {
-                    c.unexpectedOn(!expectKey)
+                    current.unexpectedIf(!expectKey)
                     path.add(parseBareKey())
                     expectKey = false
                 }
                 '"' -> {
-                    c.unexpectedOn(!expectKey)
+                    current.unexpectedIf(!expectKey)
                     path.add(parseStringKey())
                     expectKey = false
                 }
                 '\'' -> {
-                    c.unexpectedOn(!expectKey)
+                    current.unexpectedIf(!expectKey)
                     path.add(parseLiteralStringKey())
                     expectKey = false
                 }
-                S.PATH_DELIMITER -> {
-                    c.unexpectedOn(expectKey)
+                '.' -> {
+                    current.unexpectedIf(expectKey)
                     expectKey = true
                 }
-                S.KEY_VALUE_DELIMITER, S.END_ARRAY -> {
-                    c.unexpectedOn(expectKey)
+                KEY_VALUE_DELIMITER, END_ARRAY -> {
+                    current.unexpectedIf(expectKey)
+                    justEnded = true
+                    currentPosition--
                     break
                 }
-                else -> unexpectedToken(c)
+                else -> unexpectedToken(current)
             }
         }
-        incompleteOn(!beforeFinal(-1))
-        currentPosition--
+        incompleteIf(!justEnded)
         return path
     }
 
     // Start right on the actual token, end right before ' ' or '\t' or '\n' or '=' or '.' or ']'
     private fun parseBareKey(): String {
         val builder = StringBuilder().append(getChar())
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
-                ' ', '\t', S.KEY_VALUE_DELIMITER, S.PATH_DELIMITER, S.END_ARRAY -> break
-                '\n' -> incompleteOn(true)
-                else -> builder.append(c)
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
+                ' ', '\t', '.', KEY_VALUE_DELIMITER, END_ARRAY -> break
+                '\n' -> incomplete()
+                else -> builder.append(current)
             }
         }
         val result = builder.toString()
-        if (BARE_KEY_REGEX matches result) { // Lazy verification
+        if (BARE_KEY_REGEX matches result) { // Lazy check
             currentPosition--
             return result
-        } else unexpectedToken(result.filterNot(BARE_KEY_REGEX::contains)[0])
+        } else {
+            val unexpectedTokens = result.filterNot(BARE_KEY_REGEX::contains)
+            unexpectedToken(unexpectedTokens[0])
+        }
     }
 
     // Start right on the first '"', end on the last '"'
-    private fun parseStringKey(): String = parseStringValue().content
+    private fun parseStringKey(): String {
+        return parseStringValue().content
+    }
 
     // Start right on the first '\'', end on the last '\''
-    private fun parseLiteralStringKey(): String = parseLiteralStringValue().content
+    private fun parseLiteralStringKey(): String {
+        return parseLiteralStringValue().content
+    }
 
     // Start right before the actual token, end right before '\n' or ',' or ']' or '}'
     private fun parseValue(inStructure: Boolean): TomlElement {
         var element: TomlElement? = null
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
                 ' ', '\t' -> continue
                 '\n' -> {
-                    incompleteOn(element == null)
+                    incompleteIf(element == null)
                     break
                 }
-                S.COMMENT -> parseComment()
-                S.ITEM_DELIMITER, S.END_ARRAY, S.END_TABLE -> {
-                    c.unexpectedOn(!inStructure)
+                COMMENT -> parseComment()
+                ',', END_ARRAY, END_TABLE -> {
+                    current.unexpectedIf(!inStructure)
                     break
                 }
                 else -> {
-                    c.unexpectedOn(element != null)
-                    element = when (c) {
+                    current.unexpectedIf(element != null)
+                    element = when (current) {
                         't', 'f' -> parseBooleanValue()
-                        in DEC_RANGE -> parseNumberValue(true)
-                        'i' -> parseNonNumberValue(true)
+                        in DEC_CHARS -> parseNumberValue(positive = true)
+                        'i' -> parseNonNumberValue(positive = true)
                         'n' -> {
-                            incompleteOn(!beforeFinal())
-                            when (getChar(1)) {
-                                'a' -> parseNonNumberValue(true)
+                            incompleteIf(lastOrEOF())
+                            when (val next = getChar(1)) {
+                                'a' -> parseNonNumberValue(positive = true)
                                 'u' -> parseNullValue()
-                                else -> unexpectedToken(getChar(1))
+                                else -> unexpectedToken(next)
                             }
                         }
                         '+', '-' -> {
-                            incompleteOn(!beforeFinal())
-                            when (source[++currentPosition]) {
-                                in DEC_RANGE -> parseNumberValue(c == '+')
-                                'i', 'n' -> parseNonNumberValue(c == '+')
-                                else -> unexpectedToken(getChar())
+                            incompleteIf(lastOrEOF())
+                            currentPosition++
+                            when (val next = getChar()) {
+                                in DEC_CHARS -> parseNumberValue(current == '+')
+                                'i', 'n' -> parseNonNumberValue(current == '+')
+                                else -> unexpectedToken(next)
                             }
                         }
                         '"' -> parseStringValue()
                         '\'' -> parseLiteralStringValue()
-                        S.START_ARRAY -> parseArrayValue()
-                        S.START_TABLE -> parseInlineTableValue()
-                        else -> unexpectedToken(c)
+                        START_ARRAY -> parseArrayValue()
+                        START_TABLE -> parseInlineTableValue()
+                        else -> unexpectedToken(current)
                     }
                 }
             }
         }
-        incompleteOn(element == null)
+        incompleteIf(element == null)
         currentPosition--
         return element
     }
 
     // Start right on 't' or 'f', ends on the last token
-    private fun parseBooleanValue(): TomlLiteral = when (getChar()) {
-        't' -> {
-            expectNext("rue")
-            TomlLiteral(true)
+    private fun parseBooleanValue(): TomlLiteral {
+        return when (val current = getChar()) {
+            't' -> {
+                expectNext("rue")
+                TomlLiteral(true)
+            }
+            'f' -> {
+                expectNext("alse")
+                TomlLiteral(false)
+            }
+            else -> unexpectedToken(current)
         }
-        'f' -> {
-            expectNext("alse")
-            TomlLiteral(false)
-        }
-        else -> unexpectedToken(getChar())
     }
 
     // Start right on 'i' or 'n', end on the last token
-    private fun parseNonNumberValue(positive: Boolean): TomlLiteral = when (getChar()) {
-        'i' -> {
-            expectNext("nf")
-            TomlLiteral(if (positive) "inf" else "-inf", false)
+    private fun parseNonNumberValue(positive: Boolean): TomlLiteral {
+        return when (val current = getChar()) {
+            'i' -> {
+                expectNext("nf")
+                TomlLiteral(
+                    content = if (positive) "inf" else "-inf",
+                    isString = false
+                )
+            }
+            'n' -> {
+                expectNext("an")
+                TomlLiteral(
+                    content = "nan",
+                    isString = false
+                )
+            }
+            else -> unexpectedToken(current)
         }
-        'n' -> {
-            expectNext("an")
-            TomlLiteral("nan", false)
-        }
-        else -> unexpectedToken(getChar())
     }
 
     // Start right on the actual token, end right before ' ' or '\t' or '\n' or '#' or ',' or ']' or '}'
     private fun parseNumberValue(positive: Boolean): TomlLiteral {
-        val builder = StringBuilder().append(getChar())
-        if (!beforeFinal())
-            return TomlLiteral(builder.toString().toLong())
-        val radix = if (builder[0] != '0')
-            10
-        else when (val c = getChar(1)) {
-            'x', 'o', 'b' -> {
-                currentPosition++
-                RADIX[c]!!
-            }
-            in DEC_RANGE -> unexpectedToken(c)
-            else -> 10
+        val first = getChar()
+        if (lastOrEOF()) {
+            return TomlLiteral(
+                content = first.toString(),
+                isString = false
+            )
         }
+        val radix = if (first != '0') {
+            10
+        } else {
+            when (val next = getChar(1)) {
+                'x' -> {
+                    currentPosition++
+                    16
+                }
+                'o' -> {
+                    currentPosition++
+                    8
+                }
+                'b' -> {
+                    currentPosition++
+                    2
+                }
+                in DEC_CHARS -> unexpectedToken(next)
+                else -> 10
+            }
+        }
+        val builder = StringBuilder().append(first)
         var isDouble = false
         var isExponent = false
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
-                ' ', '\t', '\n', S.COMMENT, S.ITEM_DELIMITER, S.END_ARRAY, S.END_TABLE -> break
-                '0', '1' -> builder.append(c)
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
+                ' ', '\t', '\n', ',', COMMENT, END_ARRAY, END_TABLE -> break
+                '0', '1' -> builder.append(current)
                 '2', '3', '4', '5', '6', '7' -> {
-                    c.unexpectedOn(radix == 2)
-                    builder.append(c)
+                    current.unexpectedIf(radix == 2)
+                    builder.append(current)
                 }
                 '8', '9' -> {
-                    c.unexpectedOn(radix <= 8)
-                    builder.append(c)
+                    current.unexpectedIf(radix <= 8)
+                    builder.append(current)
                 }
-                S.PATH_DELIMITER -> {
-                    c.unexpectedOn(isExponent || isDouble || radix != 10 || !surroundedBy(DEC_RANGE, DEC_RANGE))
-                    builder.append(c)
+                '.' -> {
+                    val surroundedByNumber = getChar(-1) in DEC_CHARS &&
+                            beforeLast() &&
+                            getChar(1) in DEC_CHARS
+                    val unexpected = isExponent ||
+                            isDouble ||
+                            radix != 10 ||
+                            !surroundedByNumber
+                    current.unexpectedIf(unexpected)
+                    builder.append(current)
                     isDouble = true
                 }
                 'e', 'E' -> {
-                    c.unexpectedOn(radix <= 8)
+                    current.unexpectedIf(radix <= 8)
                     if (radix == 10) {
-                        c.unexpectedOn(isExponent || !surroundedBy(DEC_RANGE, "$DEC_RANGE+-"))
+                        val surroundedByNumber = getChar(-1) in DEC_CHARS &&
+                                beforeLast() &&
+                                getChar(1) in DEC_CHARS_AND_SIGN
+                        val unexpected = isExponent || !surroundedByNumber
+                        current.unexpectedIf(unexpected)
                         isExponent = true
                     }
-                    builder.append(c)
+                    builder.append(current)
                 }
                 'a', 'b', 'c', 'd', 'f', 'A', 'B', 'C', 'D', 'F' -> {
-                    c.unexpectedOn(radix <= 10)
-                    builder.append(c)
+                    current.unexpectedIf(radix <= 10)
+                    builder.append(current)
                 }
-                '_' -> c.unexpectedOn(!surroundedBy(DEC_RANGE, DEC_RANGE))
-                '+' -> c.unexpectedOn(getChar(-1) != 'e' && getChar(-1) != 'E')
+                '_' -> {
+                    val surroundedByNumber = getChar(-1) in DEC_CHARS &&
+                            beforeLast() &&
+                            getChar(1) in DEC_CHARS
+                    current.unexpectedIf(!surroundedByNumber)
+                }
+                '+' -> {
+                    val previous = getChar(-1)
+                    current.unexpectedIf(previous != 'e' && previous != 'E')
+                }
                 '-' -> {
-                    c.unexpectedOn(getChar(-1) != 'e' && getChar(-1) != 'E')
+                    val previous = getChar(-1)
+                    current.unexpectedIf(previous != 'e' && previous != 'E')
                     isDouble = true
-                    builder.append(c)
+                    builder.append(current)
                 }
-                else -> unexpectedToken(c)
+                else -> unexpectedToken(current)
             }
         }
         currentPosition--
-        return TomlLiteral(builder.toString().toNumber(positive, radix, isDouble, isExponent))
+        val number = builder.toString().toNumber(positive, radix, isDouble, isExponent)
+        return TomlLiteral(number)
     }
 
     // Start right on the first '"', end on the last '"'
     private fun parseStringValue(): TomlLiteral {
-        incompleteOn(!beforeFinal())
-        val multiline = checkIsMultiline('"') { return TomlLiteral("") }
+        incompleteIf(lastOrEOF())
+        val initialNext = getChar(1)
+        val multiline: Boolean
+        if (initialNext != '"') {
+            multiline = false
+        } else if (beforeLast(-1) && getChar(2) == '"') {
+            multiline = true
+            currentPosition += 2
+            incompleteIf(lastOrEOF())
+            if (initialNext == '\n') {
+                // Consume the initial line feed
+                currentPosition++
+            }
+        } else {
+            currentPosition++
+            return TomlLiteral("")
+        }
         val builder = StringBuilder()
         var trim = false
         var justEnded = false
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
-                ' ', '\t' -> if (!trim) builder.append(c)
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
+                ' ', '\t' -> {
+                    if (!trim) {
+                        builder.append(current)
+                    }
+                }
                 '\n' -> {
-                    incompleteOn(!multiline)
-                    if (!trim)
-                        builder.append(c)
-                    line++
+                    incompleteIf(!multiline)
+                    if (!trim) {
+                        builder.append(current)
+                    }
+                    currentLine++
                 }
                 '"' -> {
                     if (!multiline) {
@@ -363,89 +504,88 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
                             justEnded = true
                             break
                         }
-                        builder.append(c)
                     } else {
-                        incompleteOn(!beforeFinal(1))
+                        incompleteIf(lastOrEOF())
                         if (getChar(1) == '"' && getChar(2) == '"') {
                             currentPosition += 2
                             justEnded = true
                             break
                         }
-                        builder.append(c)
                     }
+                    builder.append(current)
                 }
                 '\\' -> {
-                    incompleteOn(!beforeFinal())
-                    when (val nextC = getChar(1)) {
+                    incompleteIf(lastOrEOF())
+                    when (val next = getChar(1)) {
                         ' ', '\t', '\n' -> {
-                            c.unexpectedOn(!multiline)
+                            current.unexpectedIf(!multiline)
                             trim = true
                         }
                         'u', 'b', 't', 'n', 'f', 'r', '"', '\\' -> {
-                            builder.append(c).append(nextC)
+                            builder.append(current).append(next)
                             currentPosition++
                         }
-                        else -> unexpectedToken(c)
+                        else -> unexpectedToken(current)
                     }
                 }
                 else -> {
-                    builder.append(c)
+                    builder.append(current)
                     trim = false
                 }
             }
         }
-        incompleteOn(!justEnded)
-        return TomlLiteral(builder.toString().unescape())
+        incompleteIf(!justEnded)
+        val content = builder.toString().unescape()
+        return TomlLiteral(content)
     }
 
     // Start right on '\'', end on the last '\''
     private fun parseLiteralStringValue(): TomlLiteral {
-        incompleteOn(!beforeFinal())
-        val multiline = checkIsMultiline('\'') { return TomlLiteral("") }
+        incompleteIf(lastOrEOF())
+        val initialNext = getChar(1)
+        val multiline: Boolean
+        if (initialNext != '\'') {
+            multiline = false
+        } else if (beforeLast(-1) && getChar(2) == '\'') {
+            multiline = true
+            currentPosition += 2
+            incompleteIf(lastOrEOF())
+            if (initialNext == '\n') {
+                currentPosition++
+            }
+        } else {
+            currentPosition++
+            return TomlLiteral("")
+        }
         val builder = StringBuilder()
         var justEnded = false
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
-                ' ', '\t' -> builder.append(c)
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
+                ' ', '\t' -> builder.append(current)
                 '\n' -> {
-                    incompleteOn(!multiline)
-                    builder.append(c)
-                    line++
+                    incompleteIf(!multiline)
+                    builder.append(current)
+                    currentLine++
                 }
                 '\'' -> {
                     if (!multiline) {
                         justEnded = true
                         break
                     }
-                    incompleteOn(!beforeFinal(1))
+                    incompleteIf(lastOrEOF())
                     if (getChar(1) == '\'' && getChar(2) == '\'') {
                         currentPosition += 2
                         justEnded = true
                         break
                     }
-                    builder.append(c)
+                    builder.append(current)
                 }
-                else -> builder.append(c)
+                else -> builder.append(current)
             }
         }
-        incompleteOn(!justEnded)
-        return TomlLiteral(builder.toString())
-    }
-
-    private inline fun checkIsMultiline(quote: Char, whenEmpty: () -> Unit): Boolean {
-        return if (getChar(1) != quote) {
-            false
-        } else if (beforeFinal(1) && getChar(2) == quote) {
-            currentPosition += 2
-            incompleteOn(!beforeFinal())
-            if (getChar(1) == '\n')
-                currentPosition++
-            true
-        } else {
-            currentPosition++
-            whenEmpty() // Should always return in place
-            false
-        }
+        incompleteIf(!justEnded)
+        val content = builder.toString()
+        return TomlLiteral(content)
     }
 
     // Start right on '[', end on ']'
@@ -453,27 +593,27 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
         val builder = mutableListOf<TomlElement>()
         var expectValue = true
         var justEnded = false
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
                 ' ', '\t' -> continue
-                '\n' -> line++
-                S.END_ARRAY -> {
+                '\n' -> currentLine++
+                END_ARRAY -> {
                     justEnded = true
                     break
                 }
-                S.ITEM_DELIMITER -> {
-                    c.unexpectedOn(expectValue)
+                ',' -> {
+                    current.unexpectedIf(expectValue)
                     expectValue = true
                 }
-                S.COMMENT -> parseComment()
+                COMMENT -> parseComment()
                 else -> {
                     currentPosition--
-                    builder.add(parseValue(true))
+                    builder.add(parseValue(inStructure = true))
                     expectValue = false
                 }
             }
         }
-        incompleteOn(!justEnded)
+        incompleteIf(!justEnded)
         return TomlArray(builder)
     }
 
@@ -483,35 +623,36 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
         var expectEntry = true
         var justStarted = true
         var justEnded = false
-        while (++currentPosition < source.length) {
-            when (val c = getChar()) {
+        while (++currentPosition <= lastIndex) {
+            when (val current = getChar()) {
                 ' ', '\t' -> continue
-                '\n' -> incompleteOn(true)
-                S.END_TABLE -> {
-                    c.unexpectedOn(expectEntry && !justStarted)
+                '\n' -> incomplete()
+                END_TABLE -> {
+                    current.unexpectedIf(expectEntry && !justStarted)
                     justEnded = true
                     break
                 }
-                S.ITEM_DELIMITER -> {
-                    c.unexpectedOn(expectEntry)
+                ',' -> {
+                    current.unexpectedIf(expectEntry)
                     expectEntry = true
                 }
-                S.COMMENT -> unexpectedToken(c)
+                COMMENT -> unexpectedToken(current)
                 else -> {
                     currentPosition--
                     val path = parsePath()
-                    expectNext("${S.KEY_VALUE_DELIMITER}")
-                    builder.addByPath(path, ValueNode(path.last(), parseValue(true)), null)
+                    expectNext(KEY_VALUE_DELIMITER)
+                    val node = ValueNode(path.last(), parseValue(inStructure = true))
+                    builder.addByPath(path, node, null)
                     expectEntry = false
                     justStarted = false
                 }
             }
         }
-        incompleteOn(!justEnded)
+        incompleteIf(!justEnded)
         return TomlTable(builder)
     }
 
-    // Start right on 'n', end on the last token
+    // Start right on 'n', end on the second 'l'
     private fun parseNullValue(): TomlNull {
         expectNext("ull")
         return TomlNull
@@ -519,9 +660,10 @@ internal class TomlFileParser(source: String) : TomlParser<TomlTable> {
 
     // Start right on '#', end right before '\n'
     private fun parseComment() {
-        while (++currentPosition < source.length) {
-            if (getChar() == '\n')
+        while (++currentPosition <= lastIndex) {
+            if (getChar() == '\n') {
                 break
+            }
         }
         currentPosition--
     }

@@ -18,9 +18,18 @@ package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * A special [Encoder] which is used internally by encoding process of [Toml], providing an extra
+ * [encodeTomlElement] to encode [TomlElement] to the current position.
+ */
+@SubclassOptInRequired(TomlSpecific::class)
 public interface TomlEncoder : Encoder {
     public fun encodeTomlElement(value: TomlElement)
 }
 
-public fun Encoder.asTomlEncoder(): TomlEncoder = this as? TomlEncoder
-    ?: error("Expect TomlEncoder, but found ${this::class.simpleName}")
+/**
+ * More convenient approach to cast [this] Decoder to [TomlEncoder].
+ */
+public fun Encoder.asTomlEncoder(): TomlEncoder {
+    return this as? TomlEncoder ?: error("Expect TomlEncoder, but found ${this::class.simpleName}")
+}

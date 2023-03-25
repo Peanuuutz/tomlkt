@@ -119,7 +119,8 @@ public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
     replaceWith = ReplaceWith(
         expression = "TomlInline",
         imports = [ "net.peanuuutz.tomlkt.TomlInline" ]
-    )
+    ),
+    level = DeprecationLevel.HIDDEN
 )
 public typealias Fold = TomlInline
 
@@ -154,7 +155,8 @@ public annotation class TomlMultilineString
     replaceWith = ReplaceWith(
         expression = "TomlMultilineString",
         imports = [ "net.peanuuutz.tomlkt.TomlMultilineString" ]
-    )
+    ),
+    level = DeprecationLevel.HIDDEN
 )
 public typealias Multiline = TomlMultilineString
 
@@ -184,7 +186,8 @@ public annotation class TomlLiteralString
     replaceWith = ReplaceWith(
         expression = "TomlLiteralString",
         imports = [ "net.peanuuutz.tomlkt.TomlLiteralString" ]
-    )
+    ),
+    level = DeprecationLevel.HIDDEN
 )
 public typealias Literal = TomlLiteralString
 
@@ -211,10 +214,13 @@ public annotation class TomlInteger(val base: Base) {
     /**
      * Representation of a [TOML integer](https://toml.io/en/v1.0.0#integer).
      */
-    public enum class Base(public val value: Int, public val prefix: String) {
+    public enum class Base(
+        public val value: Int,
+        public val prefix: String
+    ) {
         DEC(10, ""),
         HEX(16, "0x"),
         BIN(2, "0b"),
-        OCT(8, "0o")
+        OCT(8, "0o");
     }
 }

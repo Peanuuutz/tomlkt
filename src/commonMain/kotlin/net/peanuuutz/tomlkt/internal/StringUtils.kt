@@ -18,101 +18,141 @@ package net.peanuuutz.tomlkt.internal
 
 import kotlin.math.pow
 
-internal const val INDENT: String = "    "
+internal const val COMMENT = '#'
+
+internal const val KEY_VALUE_DELIMITER = '='
+
+internal const val START_ARRAY = '['
+
+internal const val END_ARRAY = ']'
+
+internal const val START_TABLE = '{'
+
+internal const val END_TABLE = '}'
 
 internal val BARE_KEY_REGEX: Regex = Regex("[A-Za-z0-9_-]+")
 
-internal operator fun Regex.contains(char: Char): Boolean = matches(char.toString())
+internal const val DEC_CHARS: String = "0123456789"
 
-internal inline val String.singleQuoted: String get() = "'$this'"
+internal const val DEC_CHARS_AND_SIGN: String = "$DEC_CHARS+-"
 
-internal inline val String.doubleQuoted: String get() = "\"$this\""
-
-internal fun String.doubleQuotedIfNeeded(): String = if (BARE_KEY_REGEX matches this) this else doubleQuoted
-
-internal fun Char.escape(multiline: Boolean = false): String = Mappings.escape(this, multiline)
-
-internal fun String.escape(multiline: Boolean = false): String = map { it.escape(multiline) }.joinToString("")
-
-internal fun String.unescape(): String = if (isBlank()) this else Mappings.unescape(this)
-
-private object Mappings {
-    private val mappings: List<String> = buildList(128) {
-        for (i in 0..0xf)
-            add(i, "\\u000$i")
-        for (i in 0x10..0x1f)
-            add(i, "\\u00$i")
-        for (i in 0x20..0x7f)
-            add(i, i.toChar().toString())
-        set('\b'.code, "\\b")
-        set('\t'.code, "\\t")
-        set('\n'.code, "\\n")
-        set(12, "\\f")
-        set('\r'.code, "\\r")
-        set('"'.code, "\\\"")
-        set('\\'.code, "\\\\")
+internal val ASCII_MAPPING: List<String> = buildList(128) {
+    for (i in 0x00..0x0f) {
+        add(i, "\\u000$i")
     }
+    for (i in 0x10..0x1f) {
+        add(i, "\\u00$i")
+    }
+    for (i in 0x20..0x7f) {
+        add(i, i.toChar().toString())
+    }
+    set('\b'.code, "\\b")
+    set('\t'.code, "\\t")
+    set('\n'.code, "\\n")
+    set('\r'.code, "\\r")
+    set('"'.code, "\\\"")
+    set('\\'.code, "\\\\")
+}
 
-    fun escape(char: Char, multiline: Boolean): String = if (char.code >= 128) {
-        char.toString()
-    } else {
-        if (!multiline) {
-            mappings[char.code]
-        } else {
-            if (char == '\\' || char != '\t' && char != '\r' && char != '\n') {
-                mappings[char.code]
-            } else {
-                char.toString()
-            }
+internal inline val String.singleQuoted: String
+    get() = "'$this'"
+
+internal inline val String.doubleQuoted: String
+    get() = "\"$this\""
+
+internal fun String.doubleQuotedIfNotPure(): String {
+    return if (BARE_KEY_REGEX matches this) this else doubleQuoted
+}
+
+internal operator fun Regex.contains(char: Char): Boolean {
+    return this matches char.toString()
+}
+
+internal fun Char.escape(multiline: Boolean = false): String {
+    return when {
+        code >= 128 -> toString()
+        !multiline -> ASCII_MAPPING[code]
+        this == '\\' -> "\\\\"
+        this == '\n' -> "\n"
+        this == '\t' -> "\t"
+        this == '\r' -> "\r"
+        else -> ASCII_MAPPING[code]
+    }
+}
+
+internal fun String.escape(multiline: Boolean = false): String {
+    val builder = StringBuilder()
+    for (i in indices) {
+        builder.append(get(i).escape(multiline))
+    }
+    return builder.toString()
+}
+
+internal fun String.unescape(): String {
+    if (isBlank()) {
+        return this
+    }
+    val builder = StringBuilder()
+    val lastIndex = lastIndex
+    var i = 0
+    while (i <= lastIndex) {
+        val current = get(i)
+        if (current != '\\') {
+            builder.append(current)
+            i++
+            continue
         }
-    }
-
-    fun unescape(string: String): String {
-        val builder = StringBuilder()
-        var i = -1
-        while (++i < string.length) {
-            if (string[i] != '\\') {
-                builder.append(string[i])
-            } else {
-                require(i != string.lastIndex)
-                when (val c = string[i + 1]) {
-                    'b', 't', 'n', 'f', 'r', '"', '\\' -> {
-                        builder.append(mappings.indexOf("\\$c").toChar())
-                        i++
-                    }
-                    'u' -> {
-                        require(string.lastIndex >= i + 5)
-                        builder.append(mappings.indexOf(string.substring(i, i + 6)).toChar())
-                        i += 5
-                    }
-                    else -> throw IllegalArgumentException("$c")
+        require(i != lastIndex) { "Unexpected end in $this" }
+        when (val next = get(i + 1)) {
+            'n' -> {
+                builder.append('\n')
+                i++
+            }
+            't' -> {
+                builder.append('\t')
+                i++
+            }
+            'r' -> {
+                builder.append('\r')
+                i++
+            }
+            '"' -> {
+                builder.append('\"')
+                i++
+            }
+            '\\' -> {
+                builder.append('\\')
+                i++
+            }
+            'b' -> {
+                builder.append('\b')
+                i++
+            }
+            'u' -> {
+                require(lastIndex >= i + 5) { "Unexpected end in $this" }
+                val index = ASCII_MAPPING.indexOf(substring(i, i + 6))
+                if (index == -1) {
+                    builder.append("\\u")
+                    i++
+                } else {
+                    builder.append(index.toChar())
+                    i += 5
                 }
             }
+            else -> error("Unknown escape $next")
         }
-        return builder.toString()
+        i++
     }
+    return builder.toString()
 }
 
-internal object S {
-    const val COMMENT = '#'
-    const val KEY_VALUE_DELIMITER = '='
-    const val START_ARRAY = '['
-    const val END_ARRAY = ']'
-    const val START_TABLE = '{'
-    const val END_TABLE = '}'
-    const val ITEM_DELIMITER = ','
-    const val PATH_DELIMITER = '.'
-}
-
-internal const val DEC_RANGE: String = "0123456789"
-
-internal val RADIX: Map<Char, Int> = mapOf('x' to 16, 'o' to 8, 'b' to 2)
-
-internal fun Number.toStringModified(): String = when (this) {
-    Double.POSITIVE_INFINITY, Float.POSITIVE_INFINITY -> "inf"
-    Double.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY -> "-inf"
-    Double.NaN, Float.NaN -> "nan"
-    else -> toString()
+internal fun Number.toStringModified(): String {
+    return when (this) {
+        Double.POSITIVE_INFINITY, Float.POSITIVE_INFINITY -> "inf"
+        Double.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY -> "-inf"
+        Double.NaN, Float.NaN -> "nan"
+        else -> toString()
+    }
 }
 
 internal fun String.toNumber(
@@ -120,22 +160,24 @@ internal fun String.toNumber(
     radix: Int,
     isDouble: Boolean,
     isExponent: Boolean
-): Number = if (isDouble) {
-    var factor = if (positive) 1.0 else -1.0
-    if (isExponent) {
-        val strings = split('e', ignoreCase = true)
-        factor *= 10.0.pow(strings[1].toInt())
-        strings[0].toDouble() * factor
+): Number {
+    return if (isDouble) {
+        var factor = if (positive) 1.0 else -1.0
+        if (isExponent) {
+            val strings = split('e', ignoreCase = true)
+            factor *= 10.0.pow(strings[1].toInt())
+            strings[0].toDouble() * factor
+        } else {
+            toDouble() * factor
+        }
     } else {
-        toDouble() * factor
-    }
-} else {
-    var factor = if (positive) 1L else -1L
-    if (isExponent) {
-        val strings = split('e', ignoreCase = true)
-        factor *= (10.0.pow(strings[1].toInt())).toLong()
-        strings[0].toLong(radix) * factor
-    } else {
-        toLong(radix) * factor
+        var factor = if (positive) 1L else -1L
+        if (isExponent) {
+            val strings = split('e', ignoreCase = true)
+            factor *= 10.0.pow(strings[1].toInt()).toLong()
+            strings[0].toLong(radix) * factor
+        } else {
+            toLong(radix) * factor
+        }
     }
 }

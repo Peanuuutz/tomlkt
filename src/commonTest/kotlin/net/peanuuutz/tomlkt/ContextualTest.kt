@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 
-class SpecialTest {
+class ContextualTest {
     @Test
     fun contextual() {
         val stringOrColor = StringOrColor(Color(0xFF0000))

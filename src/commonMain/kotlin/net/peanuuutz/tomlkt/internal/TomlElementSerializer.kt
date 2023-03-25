@@ -1,5 +1,3 @@
-@file:OptIn(InternalSerializationApi::class)
-
 /*
     Copyright 2022 Peanuuutz
 
@@ -15,6 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+@file:OptIn(InternalSerializationApi::class)
 
 package net.peanuuutz.tomlkt.internal
 
@@ -43,37 +43,54 @@ import net.peanuuutz.tomlkt.toTomlArray
 import net.peanuuutz.tomlkt.toTomlTable
 
 internal object TomlElementSerializer : KSerializer<TomlElement> {
-    override val descriptor: SerialDescriptor = buildSerialDescriptor("net.peanuuutz.tomlkt.TomlElement", SerialKind.CONTEXTUAL)
+    override val descriptor: SerialDescriptor = buildSerialDescriptor(
+        serialName = "net.peanuuutz.tomlkt.TomlElement",
+        kind = SerialKind.CONTEXTUAL
+    )
 
     override fun serialize(encoder: Encoder, value: TomlElement) {
         encoder.asTomlEncoder().encodeTomlElement(value)
     }
 
-    override fun deserialize(decoder: Decoder): TomlElement = decoder.asTomlDecoder().decodeTomlElement()
+    override fun deserialize(decoder: Decoder): TomlElement {
+        return decoder.asTomlDecoder().decodeTomlElement()
+    }
 }
 
 internal object TomlNullSerializer : KSerializer<TomlNull> {
-    override val descriptor: SerialDescriptor = buildSerialDescriptor("net.peanuuutz.tomlkt.TomlNull", SerialKind.CONTEXTUAL)
+    override val descriptor: SerialDescriptor = buildSerialDescriptor(
+        serialName = "net.peanuuutz.tomlkt.TomlNull",
+        kind = SerialKind.CONTEXTUAL
+    )
 
     override fun serialize(encoder: Encoder, value: TomlNull) {
-        encoder.asTomlEncoder().encodeTomlElement(TomlNull)
+        encoder.asTomlEncoder().encodeTomlElement(value)
     }
 
-    override fun deserialize(decoder: Decoder): TomlNull = decoder.asTomlDecoder().decodeTomlElement().toTomlNull()
+    override fun deserialize(decoder: Decoder): TomlNull {
+        return decoder.asTomlDecoder().decodeTomlElement().toTomlNull()
+    }
 }
 
 internal object TomlLiteralSerializer : KSerializer<TomlLiteral> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("net.peanuuutz.tomlkt.TomlLiteral", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        serialName = "net.peanuuutz.tomlkt.TomlLiteral",
+        kind = PrimitiveKind.STRING
+    )
 
     override fun serialize(encoder: Encoder, value: TomlLiteral) {
         encoder.asTomlEncoder().encodeTomlElement(value)
     }
 
-    override fun deserialize(decoder: Decoder): TomlLiteral = decoder.asTomlDecoder().decodeTomlElement().toTomlLiteral()
+    override fun deserialize(decoder: Decoder): TomlLiteral {
+        return decoder.asTomlDecoder().decodeTomlElement().toTomlLiteral()
+    }
 }
 
 internal object TomlArraySerializer : KSerializer<TomlArray> {
-    private val delegate: KSerializer<List<TomlElement>> = ListSerializer(TomlElementSerializer)
+    private val delegate: KSerializer<List<TomlElement>> = ListSerializer(
+        elementSerializer = TomlElementSerializer
+    )
 
     override val descriptor: SerialDescriptor = object : SerialDescriptor by delegate.descriptor {
         override val serialName: String = "net.peanuuutz.tomlkt.TomlArray"
@@ -83,11 +100,16 @@ internal object TomlArraySerializer : KSerializer<TomlArray> {
         delegate.serialize(encoder.asTomlEncoder(), value)
     }
 
-    override fun deserialize(decoder: Decoder): TomlArray = decoder.asTomlDecoder().decodeTomlElement().toTomlArray()
+    override fun deserialize(decoder: Decoder): TomlArray {
+        return decoder.asTomlDecoder().decodeTomlElement().toTomlArray()
+    }
 }
 
 internal object TomlTableSerializer : KSerializer<TomlTable> {
-    private val delegate: KSerializer<Map<String, TomlElement>> = MapSerializer(String.serializer(), TomlElementSerializer)
+    private val delegate: KSerializer<Map<String, TomlElement>> = MapSerializer(
+        keySerializer = String.serializer(),
+        valueSerializer = TomlElementSerializer
+    )
 
     override val descriptor: SerialDescriptor = object : SerialDescriptor by delegate.descriptor {
         override val serialName: String = "net.peanuuutz.tomlkt.TomlTable"
@@ -97,5 +119,7 @@ internal object TomlTableSerializer : KSerializer<TomlTable> {
         delegate.serialize(encoder.asTomlEncoder(), value)
     }
 
-    override fun deserialize(decoder: Decoder): TomlTable = decoder.asTomlDecoder().decodeTomlElement().toTomlTable()
+    override fun deserialize(decoder: Decoder): TomlTable {
+        return decoder.asTomlDecoder().decodeTomlElement().toTomlTable()
+    }
 }

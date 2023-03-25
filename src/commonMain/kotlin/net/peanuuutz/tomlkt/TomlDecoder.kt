@@ -18,9 +18,18 @@ package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.encoding.Decoder
 
+/**
+ * A special [Decoder] which is used internally by decoding process of [Toml], providing an extra
+ * [decodeTomlElement] to decode [TomlElement] from the current position.
+ */
+@SubclassOptInRequired(TomlSpecific::class)
 public interface TomlDecoder : Decoder {
     public fun decodeTomlElement(): TomlElement
 }
 
-public fun Decoder.asTomlDecoder(): TomlDecoder = this as? TomlDecoder
-    ?: error("Expect TomlDecoder, but found ${this::class.simpleName}")
+/**
+ * More convenient approach to cast [this] Decoder to [TomlDecoder].
+ */
+public fun Decoder.asTomlDecoder(): TomlDecoder {
+    return this as? TomlDecoder ?: error("Expect TomlDecoder, but found ${this::class.simpleName}")
+}

@@ -14,10 +14,19 @@
     limitations under the License.
  */
 
-package net.peanuuutz.tomlkt.internal.parser
+package net.peanuuutz.tomlkt
 
-import net.peanuuutz.tomlkt.TomlElement
+/**
+ * A [TomlWriter] that writes TOML as string.
+ */
+public class TomlStringWriter : TomlWriter {
+    private val delegate: StringBuilder = StringBuilder()
 
-internal interface TomlParser<T : TomlElement> {
-    fun parse(): T
+    override fun writeString(string: String) {
+        delegate.append(string)
+    }
+
+    override fun toString(): String {
+        return delegate.toString()
+    }
 }
