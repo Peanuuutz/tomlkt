@@ -147,6 +147,7 @@ public sealed class Toml(
      *
      * @throws TomlDecodingException when [string] cannot be parsed into [TomlTable] or cannot be deserialized.
      */
+    @Suppress("OutdatedDocumentation")
     override fun <T> decodeFromString(
         deserializer: DeserializationStrategy<T>,
         string: String

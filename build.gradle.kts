@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import java.net.URL
 
@@ -110,8 +111,17 @@ tasks {
         from(docsDir)
     }
 
-    build {
-        dependsOn(getByName("detektMetadataCommonMain"))
+    withType<Detekt> {
+        reports {
+            sarif.required.set(false)
+            xml.required.set(false)
+            html.required.set(false)
+            md.required.set(false)
+        }
+    }
+
+    check {
+        dependsOn(getByName("detektMetadataMain"))
     }
 }
 
