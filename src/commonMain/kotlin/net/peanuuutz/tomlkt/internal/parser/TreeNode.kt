@@ -28,25 +28,33 @@ internal sealed class TreeNode(val key: String) {
         return key == (other as TreeNode).key
     }
 
-    final override fun hashCode(): Int = key.hashCode()
+    final override fun hashCode(): Int {
+        return key.hashCode()
+    }
 }
 
 internal class KeyNode(key: String) : TreeNode(key) {
-    private val _children: MutableSet<TreeNode> = mutableSetOf()
-    val children: Set<TreeNode> get() = _children
+    val children: MutableSet<TreeNode> = mutableSetOf()
 
-    fun add(node: TreeNode): Boolean = _children.add(node)
+    fun add(node: TreeNode): Boolean {
+        return children.add(node)
+    }
 
-    operator fun get(key: String): TreeNode? = _children.find { it.key == key }
+    operator fun get(key: String): TreeNode? {
+        return children.find { it.key == key }
+    }
 }
 
 internal class ArrayNode(key: String) : TreeNode(key) {
-    private val _array: MutableList<KeyNode> = mutableListOf()
-    val array: List<KeyNode> get() = _array
+    val array: MutableList<KeyNode> = mutableListOf()
 
-    fun add(node: KeyNode): Boolean = _array.add(node)
+    fun add(node: KeyNode): Boolean {
+        return array.add(node)
+    }
 
-    operator fun get(index: Int): KeyNode = _array[index]
+    operator fun get(index: Int): KeyNode {
+        return array[index]
+    }
 }
 
 internal class ValueNode(key: String, val value: TomlElement) : TreeNode(key)
@@ -57,7 +65,9 @@ internal fun KeyNode.addByPath(
     path: Path,
     node: TreeNode,
     arrayOfTableIndices: Map<Path, Int>?
-) = addByPathRecursively(path, node, arrayOfTableIndices, 0)
+) {
+    addByPathRecursively(path, node, arrayOfTableIndices, 0)
+}
 
 private tailrec fun KeyNode.addByPathRecursively(
     path: Path,
@@ -67,17 +77,27 @@ private tailrec fun KeyNode.addByPathRecursively(
 ) {
     val child = get(path[index])
     if (index == path.lastIndex) {
-        if (child != null)
+        if (child != null) {
             throw ConflictEntryException(path)
-        add(node)
-    } else when (child) {
-        null -> KeyNode(path[index]).also(this::add).addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
-        is KeyNode -> child.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
-        is ArrayNode -> {
-            require(arrayOfTableIndices != null)
-            child[arrayOfTableIndices[path.subList(0, index + 1)]!!].addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
         }
-        is ValueNode -> throw ConflictEntryException(path)
+        add(node)
+    } else {
+        when (child) {
+            null -> {
+                val intermediate = KeyNode(path[index])
+                add(intermediate)
+                intermediate.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
+            }
+            is KeyNode -> child.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
+            is ArrayNode -> {
+                require(arrayOfTableIndices != null)
+                val currentPath = path.subList(0, index + 1)
+                val childIndex = arrayOfTableIndices[currentPath]!!
+                val grandChild = child[childIndex]
+                grandChild.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
+            }
+            is ValueNode -> throw ConflictEntryException(path)
+        }
     }
 }
 
@@ -86,21 +106,26 @@ internal fun <N : TreeNode> KeyNode.getByPath(
     arrayOfTableIndices: Map<Path, Int>?
 ): N = getByPathRecursively(path, arrayOfTableIndices, 0)
 
-@Suppress("UNCHECKED_CAST")
 private tailrec fun <N : TreeNode> KeyNode.getByPathRecursively(
     path: Path,
     arrayOfTableIndices: Map<Path, Int>?,
     index: Int
 ): N {
     val child = get(path[index])
-    return if (index == path.lastIndex)
+    return if (index == path.lastIndex) {
+        @Suppress("UNCHECKED_CAST")
         child as? N ?: error("Node on $path not found")
-    else when (child) {
-        null, is ValueNode -> error("Node on $path not found")
-        is KeyNode -> child.getByPathRecursively<N>(path, arrayOfTableIndices, index + 1)
-        is ArrayNode -> {
-            require(arrayOfTableIndices != null)
-            child[arrayOfTableIndices[path.subList(0, index + 1)]!!].getByPathRecursively(path, arrayOfTableIndices, index + 1)
+    } else {
+        when (child) {
+            null, is ValueNode -> error("Node on $path not found")
+            is KeyNode -> child.getByPathRecursively<N>(path, arrayOfTableIndices, index + 1)
+            is ArrayNode -> {
+                require(arrayOfTableIndices != null)
+                val currentPath = path.subList(0, index + 1)
+                val childIndex = arrayOfTableIndices[currentPath]!!
+                val grandChild = child[childIndex]
+                grandChild.getByPathRecursively(path, arrayOfTableIndices, index + 1)
+            }
         }
     }
 }

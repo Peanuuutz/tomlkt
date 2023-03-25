@@ -1,11 +1,13 @@
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import java.net.URL
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.dokka")
     kotlin("plugin.serialization")
+    id("org.jetbrains.dokka")
 
-    idea
+    id("io.gitlab.arturbosch.detekt")
+
     `maven-publish`
     signing
 }
@@ -24,23 +26,19 @@ kotlin {
         compilations.all {
             kotlinOptions.jvmTarget = "1.8"
         }
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
     }
 
-    js(LEGACY) {
-        useCommonJs()
+    js(IR) {
+        browser()
+        nodejs()
     }
 
-    val hostOs = System.getProperty("os.name")
-    when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        hostOs.startsWith("Windows") -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
-    
+    mingwX64()
+    macosArm64()
+    macosX64()
+    ios()
+    linuxX64()
+
     sourceSets {
         val serializationVersion: String by project
 
@@ -49,27 +47,29 @@ kotlin {
             languageSettings.optIn("kotlinx.serialization.ExperimentalSerializationApi")
         }
 
-        val commonMain by getting {
+        getByName("commonMain") {
             dependencies {
                 api("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
             }
         }
-        val commonTest by getting {
+
+        getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
 
-        val jvmTest by getting {
+        getByName("jvmTest") {
             dependencies {
                 implementation(kotlin("test-junit5"))
                 implementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
             }
         }
 
-        val jsTest by getting {
+        getByName("jsTest") {
             dependencies {
                 implementation(kotlin("test-js"))
             }
@@ -80,6 +80,10 @@ kotlin {
 val docsDir = projectDir.resolve("docs")
 
 tasks {
+    withType<KotlinJvmTest> {
+        useJUnitPlatform()
+    }
+
     dokkaHtml {
         outputDirectory.set(docsDir)
 
@@ -105,13 +109,21 @@ tasks {
         archiveClassifier.set("javadoc")
         from(docsDir)
     }
+
+    build {
+        dependsOn(getByName("detektMetadataCommonMain"))
+    }
+}
+
+detekt {
+    config = files("$projectDir/format/detekt.yml")
 }
 
 afterEvaluate {
     configure<PublishingExtension> {
-        publications.all {
-            (this as? MavenPublication)?.artifactId = project.name +
-                    "-$name".takeUnless { "kotlinMultiplatform" in it }.orEmpty()
+        publications.withType<MavenPublication> {
+            val classifier = if (name.contains("multiplatform", true)) "" else "-$name"
+            artifactId = "tomlkt$classifier"
         }
     }
 }
@@ -120,33 +132,40 @@ publishing {
     repositories {
         maven {
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+
             credentials {
                 username = System.getProperty("credentials.username")
                 password = System.getProperty("credentials.password")
             }
         }
     }
+
     publications {
         withType<MavenPublication> {
             artifact(tasks["createJavadocByDokka"])
+
             pom {
                 name.set("tomlkt")
                 description.set("TOML support for kotlinx.serialization")
                 url.set("https://github.com/Peanuuutz/tomlkt")
+
                 licenses {
                     license {
                         name.set("Apache-2.0")
                         url.set("https://www.apache.org/licenses/LICENSE-2.0")
                     }
                 }
+
                 issueManagement {
                     system.set("Github")
                     url.set("https://github.com/Peanuuutz/tomlkt/issues")
                 }
+
                 scm {
                     connection.set("https://github.com/Peanuuutz/tomlkt.git")
                     url.set("https://github.com/Peanuuutz/tomlkt")
                 }
+
                 developers {
                     developer {
                         name.set("Peanuuutz")

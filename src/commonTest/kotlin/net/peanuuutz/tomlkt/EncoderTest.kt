@@ -81,7 +81,6 @@ class EncoderTest {
         assertEquals(scoreAsTable.toTomlTable()["examinee"]?.toTomlLiteral()?.content, "Loney Chou")
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     @Test
     fun encodeInlineClass() {
         val boxedUInt = Box(1.toUInt())

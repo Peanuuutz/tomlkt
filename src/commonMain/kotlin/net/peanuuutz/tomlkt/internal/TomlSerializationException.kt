@@ -20,6 +20,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialKind
 import net.peanuuutz.tomlkt.internal.parser.Path
 
+// Encoding
+
 internal sealed class TomlEncodingException : SerializationException {
     constructor()
     constructor(message: String) : super(message)
@@ -27,7 +29,9 @@ internal sealed class TomlEncodingException : SerializationException {
 
 internal class NonPrimitiveKeyException : TomlEncodingException()
 
-internal class UnsupportedSerialKindException(kind: SerialKind) : TomlEncodingException("$kind")
+internal class UnsupportedSerialKindException(kind: SerialKind) : TomlEncodingException(
+    message = kind.toString()
+)
 
 internal class NullInArrayOfTableException : TomlEncodingException(
     message = "Null is not allowed in array of table, " +
@@ -38,16 +42,28 @@ internal class EmptyArrayOfTableInMapException : TomlEncodingException(
     message = "Empty array of table can only be the first in map"
 )
 
-internal sealed class TomlDecodingException(message: String) : SerializationException(message)
+// Decoding
+
+internal sealed class TomlDecodingException : SerializationException {
+    constructor()
+    constructor(message: String) : super(message)
+}
 
 internal class UnexpectedTokenException(token: Char, line: Int) : TomlDecodingException(
-    message = "'${if (token != '\'') token.escape() else "\\'"}' (L$line)"
+    message = "'${if (token != '\'') token.escape() else "\\'" }' (L$line)"
 )
 
-internal class IncompleteException(line: Int) : TomlDecodingException("(L$line)")
+internal class IncompleteException(line: Int) : TomlDecodingException(
+    message = "(L$line)"
+)
 
 internal class ConflictEntryException(path: Path) : TomlDecodingException(
-    message = path.joinToString(".") { it.escape().doubleQuotedIfNeeded() }
+    message = path.joinToString(
+        separator = ".",
+        transform = { it.escape().doubleQuotedIfNotPure() }
+    )
 )
 
-internal class UnknownKeyException(key: String) : TomlDecodingException(key)
+internal class UnknownKeyException(key: String) : TomlDecodingException(
+    message = key
+)

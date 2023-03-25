@@ -4,6 +4,8 @@ import kotlinx.serialization.builtins.serializer
 import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class DecoderTest {
     @Test
@@ -30,7 +32,6 @@ class DecoderTest {
         assertEquals(project.maintainability, Maintainability.HIGH)
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     @Test
     fun decodeInlineClass() {
         val boxedUInt = Toml.decodeFromString(Box.serializer(UInt.serializer()), "content = 0x10")
