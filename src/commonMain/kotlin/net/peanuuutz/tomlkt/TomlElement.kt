@@ -176,6 +176,7 @@ public fun TomlLiteral(value: String): TomlLiteral {
  * @param E the enum class which [value] belongs to.
  * @param serializersModule in most case could be ignored, but for contextual it should be present.
  */
+@Suppress("OutdatedDocumentation")
 public inline fun <reified E : Enum<E>> TomlLiteral(
     value: E,
     serializersModule: SerializersModule = EmptySerializersModule()
