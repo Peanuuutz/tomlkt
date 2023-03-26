@@ -5,3 +5,4 @@ out/
 build/
 .gradle/
 
+kotlin-js-store/
