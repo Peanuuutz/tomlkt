@@ -49,7 +49,8 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     public var itemsPerLineInBlockArray: Int = from.itemsPerLineInBlockArray
 
     @Deprecated(
-        message = "Issue solved. Now empty array of table in map will be fine",
+        message = "Empty array of table in map will be handled properly. " +
+                "Users can safely remove this property",
         level = DeprecationLevel.HIDDEN
     )
     public var checkArrayInMap: Boolean = false
