@@ -22,56 +22,9 @@ import net.peanuuutz.tomlkt.internal.UnknownKeyException
 import kotlin.jvm.JvmInline
 
 /**
- * Configuration used during encoding or decoding TOML string or [TomlElement].
- *
- * Instances of this class can be created by [TomlConfig] factory function.
+ * Builder provided for `Toml { ... }` factory function.
  */
-public class TomlConfig internal constructor(
-    public val serializersModule: SerializersModule,
-    public val indentation: TomlIndentation,
-    public val itemsPerLineInBlockArray: Int,
-    public val ignoreUnknownKeys: Boolean
-) {
-    override fun toString(): String {
-        return "TomlConfig(serializersModule=$serializersModule, " +
-                "indentation=$indentation, " +
-                "itemsPerLineInBlockArray=$itemsPerLineInBlockArray, " +
-                "ignoreUnknownKeys=$ignoreUnknownKeys)"
-    }
-
-    public companion object {
-        /**
-         * Default configuration, which implies the following:
-         *
-         * * [EmptySerializersModule] as [serializersModule].
-         * * Indentation with [4 spaces][TomlIndentation.Space4].
-         * * Exactly 1 item on a single line of a block array by default.
-         * * Do NOT ignore unknown keys if coming across.
-         */
-        public val Default: TomlConfig = TomlConfig(
-            serializersModule = EmptySerializersModule(),
-            indentation = TomlIndentation.Space4,
-            itemsPerLineInBlockArray = 1,
-            ignoreUnknownKeys = false
-        )
-    }
-}
-
-/**
- * Factory function for creating custom instance of [TomlConfig].
- *
- * @param from the original TomlConfig instance. [TomlConfig.Default] by default.
- * @param config builder DSL with [TomlConfigBuilder].
- */
-public inline fun TomlConfig(
-    from: TomlConfig = TomlConfig.Default,
-    config: TomlConfigBuilder.() -> Unit
-): TomlConfig = TomlConfigBuilder(from).apply(config).build()
-
-/**
- * Builder provided for `TomlConfig { ... }` factory function.
- */
-public class TomlConfigBuilder(from: TomlConfig = TomlConfig.Default) {
+public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConfig) {
     /**
      * SerializersModule with contextual serializers to be used in the Toml instance.
      *
@@ -96,7 +49,8 @@ public class TomlConfigBuilder(from: TomlConfig = TomlConfig.Default) {
     public var itemsPerLineInBlockArray: Int = from.itemsPerLineInBlockArray
 
     @Deprecated(
-        message = "Issue solved. Now empty array of table in map will be fine",
+        message = "Empty array of table in map will be handled properly. " +
+                "Users can safely remove this property",
         level = DeprecationLevel.HIDDEN
     )
     public var checkArrayInMap: Boolean = false
@@ -110,12 +64,10 @@ public class TomlConfigBuilder(from: TomlConfig = TomlConfig.Default) {
      */
     public var ignoreUnknownKeys: Boolean = from.ignoreUnknownKeys
 
-    // -------- Build --------
+    // -------- Internal --------
 
-    /**
-     * Build this builder to create a [TomlConfig] that contains all the configuration currently have.
-     */
-    public fun build(): TomlConfig = TomlConfig(
+    @PublishedApi
+    internal fun build(): TomlConfig = TomlConfig(
         serializersModule = serializersModule,
         indentation = indentation,
         itemsPerLineInBlockArray = itemsPerLineInBlockArray,
@@ -157,5 +109,23 @@ public value class TomlIndentation(public val representation: String) {
          * Indentation with a tab (`\t`).
          */
         public val Tab: TomlIndentation = TomlIndentation("\t")
+    }
+}
+
+// Internal
+
+internal class TomlConfig(
+    val serializersModule: SerializersModule,
+    val indentation: TomlIndentation,
+    val itemsPerLineInBlockArray: Int,
+    val ignoreUnknownKeys: Boolean
+) {
+    companion object {
+        val Default: TomlConfig = TomlConfig(
+            serializersModule = EmptySerializersModule(),
+            indentation = TomlIndentation.Space4,
+            itemsPerLineInBlockArray = 1,
+            ignoreUnknownKeys = false
+        )
     }
 }

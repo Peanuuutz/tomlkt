@@ -47,11 +47,12 @@ import kotlinx.serialization.SerialInfo
 public annotation class TomlComment(val text: String)
 
 @Deprecated(
-    message = "Support for multiline strings",
+    message = "Multiline string is now supported",
     replaceWith = ReplaceWith(
         expression = "TomlComment",
         imports = [ "net.peanuuutz.tomlkt.TomlComment" ]
-    )
+    ),
+    level = DeprecationLevel.HIDDEN
 )
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
@@ -115,7 +116,7 @@ public annotation class TomlInline
 public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 
 @Deprecated(
-    message = "Name change",
+    message = "Name changed",
     replaceWith = ReplaceWith(
         expression = "TomlInline",
         imports = [ "net.peanuuutz.tomlkt.TomlInline" ]
@@ -151,7 +152,7 @@ public typealias Fold = TomlInline
 public annotation class TomlMultilineString
 
 @Deprecated(
-    message = "Name change",
+    message = "Name changed",
     replaceWith = ReplaceWith(
         expression = "TomlMultilineString",
         imports = [ "net.peanuuutz.tomlkt.TomlMultilineString" ]
@@ -182,7 +183,7 @@ public typealias Multiline = TomlMultilineString
 public annotation class TomlLiteralString
 
 @Deprecated(
-    message = "Name change",
+    message = "Name changed",
     replaceWith = ReplaceWith(
         expression = "TomlLiteralString",
         imports = [ "net.peanuuutz.tomlkt.TomlLiteralString" ]

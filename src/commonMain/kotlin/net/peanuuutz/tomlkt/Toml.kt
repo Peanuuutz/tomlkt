@@ -80,7 +80,7 @@ import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
  * @see TomlElement
  */
 public sealed class Toml(
-    public val config: TomlConfig,
+    @PublishedApi internal val config: TomlConfig,
     override val serializersModule: SerializersModule = config.serializersModule
 ) : StringFormat {
     /**
@@ -192,7 +192,7 @@ public sealed class Toml(
 public inline fun Toml(
     from: Toml = Toml,
     config: TomlConfigBuilder.() -> Unit
-): Toml = TomlImpl(TomlConfig(from.config, config))
+): Toml = TomlImpl(TomlConfigBuilder(from.config).apply(config).build())
 
 /**
  * Serializes [value] into [writer] using serializer retrieved from reified type parameter.
