@@ -2,12 +2,15 @@ name: Publish
 
 on: workflow_dispatch
 
+env:
+  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+  ORG_GRADLE_PROJECT_inMemorySigningKey: ${{ secrets.GPG_K }}
+  ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.GPG_P }}
+
 jobs:
-  publish:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
+  publish-others:
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,8 +23,17 @@ jobs:
         run: chmod +x gradlew
       - name: Publish
         run: ./gradlew publish --stacktrace
-        env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
-          ORG_GRADLE_PROJECT_inMemorySigningKey: ${{ secrets.GPG_K }}
-          ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.GPG_P }}
+  publish-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: corretto
+      - name: Grant Gradle Wrapper Permission
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew publishMingwX64PublicationToMavenRepository --stacktrace
