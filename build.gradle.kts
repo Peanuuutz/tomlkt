@@ -138,14 +138,19 @@ afterEvaluate {
     }
 }
 
+val systemUsername = findProperty("mavenCentralUsername")?.toString()
+val systemPassword = findProperty("mavenCentralPassword")?.toString()
+val systemSigningKey = findProperty("inMemorySigningKey")?.toString()
+val systemSigningPassword = findProperty("inMemorySigningKeyPassword")?.toString()
+
 publishing {
     repositories {
         maven {
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
 
             credentials {
-                username = System.getenv("SONATYPE_USERNAME")
-                password = System.getenv("SONATYPE_PASSWORD")
+                username = systemUsername ?: System.getProperty("mavenCentralUsername")
+                password = systemPassword ?: System.getProperty("mavenCentralPassword")
             }
         }
     }
@@ -187,8 +192,8 @@ publishing {
 }
 
 signing {
-    val key = System.getenv("GPG_K")
-    val password = System.getenv("GPG_P")
-    useInMemoryPgpKeys(key, password)
+    if (systemUsername != null) {
+        useInMemoryPgpKeys(systemSigningKey, systemSigningPassword)
+    }
     sign(publishing.publications)
 }
