@@ -3,10 +3,10 @@ name: Publish
 on: workflow_dispatch
 
 env:
-  mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
-  mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
-  inMemorySigningKey: ${{ secrets.GPG_K }}
-  inMemorySigningKeyPassword: ${{ secrets.GPG_P }}
+  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+  ORG_GRADLE_PROJECT_inMemorySigningKey: ${{ secrets.GPG_K }}
+  ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.GPG_P }}
 
 jobs:
   publish-others:
