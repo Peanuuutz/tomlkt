@@ -15,6 +15,9 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 8
+          distribution: corretto
+      - name: Grant Gradle Wrapper Permission
+        run: chmod +x gradlew
       - name: Publish
         run: ./gradlew publish --stacktrace
         env:
