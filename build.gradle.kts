@@ -144,8 +144,8 @@ publishing {
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
 
             credentials {
-                username = System.getProperty("mavenCentralUsername")
-                password = System.getProperty("mavenCentralPassword")
+                username = System.getenv("SONATYPE_USERNAME")
+                password = System.getenv("SONATYPE_PASSWORD")
             }
         }
     }
@@ -187,10 +187,8 @@ publishing {
 }
 
 signing {
-    val key = System.getProperty("inMemorySigningKey")
-    if (key != null) {
-        val password = System.getProperty("inMemorySigningKeyPassword")
-        useInMemoryPgpKeys(key, password)
-    }
+    val key = System.getenv("GPG_K")
+    val password = System.getenv("GPG_P")
+    useInMemoryPgpKeys(key, password)
     sign(publishing.publications)
 }
