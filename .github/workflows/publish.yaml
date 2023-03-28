@@ -9,7 +9,7 @@ env:
   ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
 jobs:
-  publish-others:
+  publish:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -22,18 +22,4 @@ jobs:
       - name: Grant Gradle Wrapper Permission
         run: chmod +x gradlew
       - name: Publish
-        run: ./gradlew publish --stacktrace        
-  publish-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 8
-          distribution: corretto
-      - name: Grant Gradle Wrapper Permission
-        run: chmod +x gradlew
-      - name: Publish
-        run: ./gradlew publishMingwX64PublicationToMavenRepository --stacktrace
+        run: ./gradlew publish --stacktrace
