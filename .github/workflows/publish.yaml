@@ -3,10 +3,10 @@ name: Publish
 on: workflow_dispatch
 
 env:
-  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
-  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
-  ORG_GRADLE_PROJECT_inMemorySigningKey: ${{ secrets.GPG_K }}
-  ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.GPG_P }}
+  mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+  mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+  inMemorySigningKey: ${{ secrets.GPG_K }}
+  inMemorySigningKeyPassword: ${{ secrets.GPG_P }}
 
 jobs:
   publish-others:
@@ -22,7 +22,7 @@ jobs:
       - name: Grant Gradle Wrapper Permission
         run: chmod +x gradlew
       - name: Publish
-        run: ./gradlew publish --stacktrace
+        run: ./gradlew publish --stacktrace        
   publish-windows:
     runs-on: windows-latest
     steps:
