@@ -1,0 +1,24 @@
+name: Publish
+
+on: workflow_dispatch
+
+jobs:
+  publish:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, macos-latest, ubuntu-latest ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+      - name: Publish
+        run: ./gradlew publish --stacktrace
+        env:
+          ORG_GRADLE_PROJECT_credentials.username: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_credentials.password: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_K }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_P }}
