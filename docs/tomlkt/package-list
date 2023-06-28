@@ -12,6 +12,8 @@ $dokka.location:net.peanuuutz.tomlkt//TomlTable/#kotlin.collections.Map[*,*]/Poi
 $dokka.location:net.peanuuutz.tomlkt//asTomlDecoder/kotlinx.serialization.encoding.Decoder#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/as-toml-decoder.html
 $dokka.location:net.peanuuutz.tomlkt//asTomlEncoder/kotlinx.serialization.encoding.Encoder#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/as-toml-encoder.html
 $dokka.location:net.peanuuutz.tomlkt//decodeFromTomlElement/net.peanuuutz.tomlkt.Toml#net.peanuuutz.tomlkt.TomlElement/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/decode-from-toml-element.html
+$dokka.location:net.peanuuutz.tomlkt//encodeToStream/net.peanuuutz.tomlkt.Toml#TypeParam(bounds=[kotlin.Any?])#java.io.OutputStream/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/encode-to-stream.html
+$dokka.location:net.peanuuutz.tomlkt//encodeToStream/net.peanuuutz.tomlkt.Toml#kotlinx.serialization.SerializationStrategy[TypeParam(bounds=[kotlin.Any?])]#TypeParam(bounds=[kotlin.Any?])#java.io.OutputStream/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/encode-to-stream.html
 $dokka.location:net.peanuuutz.tomlkt//encodeToTomlElement/net.peanuuutz.tomlkt.Toml#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/encode-to-toml-element.html
 $dokka.location:net.peanuuutz.tomlkt//encodeToWriter/net.peanuuutz.tomlkt.Toml#TypeParam(bounds=[kotlin.Any?])#net.peanuuutz.tomlkt.TomlWriter/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/encode-to-writer.html
 $dokka.location:net.peanuuutz.tomlkt//get/net.peanuuutz.tomlkt.TomlTable#kotlin.Array[kotlin.Any?]/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/get.html
@@ -98,9 +100,16 @@ $dokka.location:net.peanuuutz.tomlkt/TomlNull///PointingToDeclaration/tomlkt/ne
 $dokka.location:net.peanuuutz.tomlkt/TomlNull/content/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-null/content.html
 $dokka.location:net.peanuuutz.tomlkt/TomlNull/toString/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-null/to-string.html
 $dokka.location:net.peanuuutz.tomlkt/TomlSpecific///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-specific/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStreamWriter///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-stream-writer/index.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStreamWriter/TomlStreamWriter/#java.io.OutputStream/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-stream-writer/-toml-stream-writer.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStreamWriter/writeChar/#kotlin.Char/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-stream-writer/write-char.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStreamWriter/writeLineFeed/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-stream-writer/write-line-feed.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStreamWriter/writeString/#kotlin.String/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-stream-writer/write-string.html
 $dokka.location:net.peanuuutz.tomlkt/TomlStringWriter///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-string-writer/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlStringWriter/TomlStringWriter/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-string-writer/-toml-string-writer.html
 $dokka.location:net.peanuuutz.tomlkt/TomlStringWriter/toString/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-string-writer/to-string.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStringWriter/writeChar/#kotlin.Char/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-string-writer/write-char.html
+$dokka.location:net.peanuuutz.tomlkt/TomlStringWriter/writeLineFeed/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-string-writer/write-line-feed.html
 $dokka.location:net.peanuuutz.tomlkt/TomlStringWriter/writeString/#kotlin.String/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-string-writer/write-string.html
 $dokka.location:net.peanuuutz.tomlkt/TomlTable///PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-table/index.html
 $dokka.location:net.peanuuutz.tomlkt/TomlTable/content/#/PointingToDeclaration/tomlkt/net.peanuuutz.tomlkt/-toml-table/content.html
