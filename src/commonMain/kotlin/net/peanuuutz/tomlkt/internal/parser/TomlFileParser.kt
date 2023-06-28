@@ -49,32 +49,26 @@ internal class TomlFileParser(source: String) {
 
     // region Utils
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun getChar(): Char {
         return source[currentPosition]
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun getChar(offset: Int): Char {
         return source[currentPosition + offset]
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun lastOrEOF(): Boolean {
         return currentPosition >= lastIndex
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun lastOrEOF(offset: Int): Boolean {
         return currentPosition >= lastIndex + offset
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun beforeLast(): Boolean {
         return currentPosition < lastIndex
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun beforeLast(offset: Int): Boolean {
         return currentPosition < lastIndex + offset
     }
