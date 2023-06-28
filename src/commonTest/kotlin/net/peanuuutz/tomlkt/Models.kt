@@ -15,7 +15,8 @@ data class User(
     @TomlComment("Name of this user")
     val name: String,
     @TomlInline
-    val account: Account? = null
+    val account: Account? = null,
+    val secondaryAccount: Account? = null
 )
 
 @Serializable
@@ -24,7 +25,11 @@ data class Account(
     val password: String
 )
 
-val owner = User("Peanuuutz", Account("peanuuutz", "123456"))
+val owner = User(
+    name = "Peanuuutz",
+    account = Account("peanuuutz", "123456"),
+    secondaryAccount = Account("placeholder", "654321")
+)
 val cooperator = User("Anonymous")
 
 @Serializable
@@ -36,9 +41,9 @@ data class Project(
         Could be HIGH or LOW
     """)
     val maintainability: Maintainability,
+    val owner: User,
     @TomlMultilineString @TomlLiteralString
     val description: String? = null,
-    val owner: User,
     @TomlComment("Thank you! :)")
     val contributors: Set<User> = setOf(owner)
 )
@@ -46,11 +51,11 @@ data class Project(
 val tomlProject = Project(
     name = "tomlkt",
     maintainability = Maintainability.HIGH,
+    owner = owner,
     description = """
         This is my first project, so sorry for any inconvenience! \
         Anyway, constructive criticism is welcomed. :)
     """.trimIndent(),
-    owner = owner,
     contributors = setOf(owner, cooperator)
 )
 

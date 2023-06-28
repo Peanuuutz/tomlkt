@@ -592,11 +592,11 @@ internal class TomlFileEncoder(
             val elementName = descriptor.getElementName(index)
                 .escape()
                 .doubleQuotedIfNotPure()
-            val key = if (structured) elementName else currentChildPath
-            val elementDescriptor = descriptor.getElementDescriptor(index)
             inlineChild = inlineChild || descriptor.forceInlineAt(index)
             currentChildPath = concatPath(elementName)
             structuredChild = structured && index >= structuredIndex
+            val key = if (structured) elementName else currentChildPath
+            val elementDescriptor = descriptor.getElementDescriptor(index)
             if (inlineChild) {
                 writer.writeKey(key)
             } else if (structuredChild) {

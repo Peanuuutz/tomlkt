@@ -54,6 +54,8 @@ internal val ASCII_MAPPING: List<String> = buildList(128) {
     set('\\'.code, "\\\\")
 }
 
+internal const val LINE_FEED_CODE: Int = '\n'.code
+
 internal inline val String.singleQuoted: String
     get() = "'$this'"
 
