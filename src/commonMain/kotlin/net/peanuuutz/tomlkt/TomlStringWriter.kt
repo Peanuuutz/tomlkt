@@ -18,15 +18,29 @@ package net.peanuuutz.tomlkt
 
 /**
  * A [TomlWriter] that writes TOML as string.
+ *
+ * Use with [Toml.encodeToWriter] to encode objects. This is useful for
+ * concatenating two TOML strings. However, user should prefer
+ * [Toml.encodeToString] if only one object is being encoded.
+ *
+ * When finished, simply call [toString] to get the result.
  */
 public class TomlStringWriter : TomlWriter {
-    private val delegate: StringBuilder = StringBuilder()
+    private val builder: StringBuilder = StringBuilder()
 
     override fun writeString(string: String) {
-        delegate.append(string)
+        builder.append(string)
+    }
+
+    override fun writeChar(char: Char) {
+        builder.append(char)
+    }
+
+    override fun writeLineFeed() {
+        builder.append('\n')
     }
 
     override fun toString(): String {
-        return delegate.toString()
+        return builder.toString()
     }
 }
