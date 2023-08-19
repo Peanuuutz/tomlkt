@@ -1,6 +1,6 @@
 # Tomlkt
 
-[![Maven Central](https://img.shields.io/maven-central/v/net.peanuuutz/tomlkt)](https://search.maven.org/artifact/net.peanuuutz/tomlkt)
+[![Maven Central](https://img.shields.io/maven-central/v/net.peanuuutz.tomlkt/tomlkt)](https://search.maven.org/artifact/net.peanuuutz.tomlkt/tomlkt)
 [![License](https://img.shields.io/github/license/Peanuuutz/tomlkt)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Lightweight and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML](https://toml.io/) serialization and deserialization.
