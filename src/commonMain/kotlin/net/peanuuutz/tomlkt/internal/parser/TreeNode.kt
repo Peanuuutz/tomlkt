@@ -59,7 +59,7 @@ internal class ArrayNode(key: String) : TreeNode(key) {
 
 internal class ValueNode(key: String, val value: TomlElement) : TreeNode(key)
 
-// Extensions
+// -------- Extensions --------
 
 internal fun KeyNode.addByPath(
     path: Path,

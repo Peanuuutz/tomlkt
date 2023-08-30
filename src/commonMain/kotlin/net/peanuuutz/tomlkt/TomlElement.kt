@@ -32,15 +32,17 @@ import net.peanuuutz.tomlkt.internal.doubleQuotedIfNotPure
 import net.peanuuutz.tomlkt.internal.escape
 import net.peanuuutz.tomlkt.internal.parser.ArrayNode
 import net.peanuuutz.tomlkt.internal.parser.KeyNode
+import net.peanuuutz.tomlkt.internal.parser.TreeNode
 import net.peanuuutz.tomlkt.internal.parser.ValueNode
 import net.peanuuutz.tomlkt.internal.toStringModified
 
-// TomlElement
+// -------- TomlElement --------
 
 /**
- * Represents anything in TOML, including and only including [TomlNull], [TomlLiteral], [TomlArray], [TomlTable].
+ * Represents anything in TOML, including and only including [TomlNull],
+ * [TomlLiteral], [TomlArray], [TomlTable].
  *
- * **Warning: Only use [Toml] to serialize/deserialize any sub-class.**
+ * **Warning: Only use [Toml] to serialize/deserialize any subclass.**
  */
 @Serializable(with = TomlElementSerializer::class)
 public sealed class TomlElement {
@@ -50,7 +52,8 @@ public sealed class TomlElement {
     public abstract val content: Any?
 
     /**
-     * Gives a string representation of this TomlElement. Each subclass has its own implementation.
+     * Gives a string representation of this TomlElement. Each subclass has its
+     * own implementation.
      *
      * ```kotlin
      * val table = TomlTable(mapOf("isEnabled" to true, "port" to 8080))
@@ -62,7 +65,7 @@ public sealed class TomlElement {
     public abstract override fun toString(): String
 }
 
-// TomlNull
+// -------- TomlNull --------
 
 /**
  * Represents null.
@@ -78,7 +81,7 @@ public object TomlNull : TomlElement() {
     }
 }
 
-// To TomlNull
+// ---- To TomlNull ----
 
 /**
  * Convert [this] to TomlNull.
@@ -89,7 +92,7 @@ public fun TomlElement.toTomlNull(): TomlNull {
     return this as? TomlNull ?: failConversion("TomlNull")
 }
 
-// TomlLiteral
+// -------- TomlLiteral --------
 
 /**
  * Represents literal value, which can be booleans, numbers, chars, strings.
@@ -129,7 +132,7 @@ public class TomlLiteral internal constructor(
     }
 }
 
-// To TomlLiteral
+// ---- To TomlLiteral ----
 
 /**
  * Convert [this] to TomlLiteral.
@@ -171,10 +174,40 @@ public fun TomlLiteral(value: String): TomlLiteral {
 }
 
 /**
- * Creates [TomlLiteral] from the given enum [value]. Delegates to creator function which consumes string.
+ * Creates [TomlLiteral] from the given `LocalDateTime` [value].
+ */
+public fun TomlLiteral(value: LocalDateTime): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates [TomlLiteral] from the given `OffsetDateTime` [value].
+ */
+public fun TomlLiteral(value: OffsetDateTime): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates [TomlLiteral] from the given `LocalDate` [value].
+ */
+public fun TomlLiteral(value: LocalDate): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates [TomlLiteral] from the given `LocalTime` [value].
+ */
+public fun TomlLiteral(value: LocalTime): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates [TomlLiteral] from the given enum [value]. Delegates to creator
+ * function which consumes string.
  *
  * @param E the enum class which [value] belongs to.
- * @param serializersModule in most case could be ignored, but for contextual it should be present.
+ * @param serializersModule in most case could be ignored, but for contextual
+ * it should be present.
  */
 @Suppress("OutdatedDocumentation")
 public inline fun <reified E : Enum<E>> TomlLiteral(
@@ -187,7 +220,7 @@ public inline fun <reified E : Enum<E>> TomlLiteral(
     return TomlLiteral(stringRepresentation)
 }
 
-// From TomlLiteral
+// ---- From TomlLiteral ----
 
 /**
  * Returns content as boolean.
@@ -283,7 +316,8 @@ public fun TomlLiteral.toFloat(): Float {
 }
 
 /**
- * Returns content as float only if content can be an exact float or inf/-inf/nan, otherwise null.
+ * Returns content as float only if content can be an exact float or
+ * inf/-inf/nan, otherwise null.
  */
 public fun TomlLiteral.toFloatOrNull(): Float? {
     return when (content) {
@@ -304,7 +338,8 @@ public fun TomlLiteral.toDouble(): Double {
 }
 
 /**
- * Returns content as double only if content can be an exact double or inf/-inf/nan, otherwise null.
+ * Returns content as double only if content can be an exact double or
+ * inf/-inf/nan, otherwise null.
  */
 public fun TomlLiteral.toDoubleOrNull(): Double? {
     return when (content) {
@@ -326,17 +361,105 @@ public fun TomlLiteral.toChar(): Char {
 }
 
 /**
- * Returns content as char only if the length of content is exactly 1, otherwise null.
+ * Returns content as char only if the length of content is exactly 1, otherwise
+ * null.
  */
 public fun TomlLiteral.toCharOrNull(): Char? {
     return content.singleOrNull()
 }
 
 /**
+ * Returns content as parsed `LocalDateTime`.
+ *
+ * @throws IllegalArgumentException if content cannot be parsed into
+ * `LocalDateTime`.
+ */
+public fun TomlLiteral.toLocalDateTime(): LocalDateTime {
+    return LocalDateTime(content)
+}
+
+/**
+ * Returns content as `LocalDateTime` only if content can be parsed into it,
+ * otherwise null.
+ */
+public fun TomlLiteral.toLocalDateTimeOrNull(): LocalDateTime? {
+    return try {
+        toLocalDateTime()
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}
+
+/**
+ * Returns content as parsed `OffsetDateTime`.
+ *
+ * @throws IllegalArgumentException if content cannot be parsed into
+ * `OffsetDateTime`.
+ */
+public fun TomlLiteral.toOffsetDateTime(): OffsetDateTime {
+    return OffsetDateTime(content)
+}
+
+/**
+ * Returns content as `OffsetDateTime` only if content can be parsed into it,
+ * otherwise null.
+ */
+public fun TomlLiteral.toOffsetDateTimeOrNull(): OffsetDateTime? {
+    return try {
+        toOffsetDateTime()
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}
+
+/**
+ * Returns content as parsed `LocalDate`.
+ *
+ * @throws IllegalArgumentException if content cannot be parsed into `LocalDate`.
+ */
+public fun TomlLiteral.toLocalDate(): LocalDate {
+    return LocalDate(content)
+}
+
+/**
+ * Returns content as `LocalDate` only if content can be parsed into it,
+ * otherwise null.
+ */
+public fun TomlLiteral.toLocalDateOrNull(): LocalDate? {
+    return try {
+        toLocalDate()
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}
+
+/**
+ * Returns content as parsed `LocalTime`.
+ *
+ * @throws IllegalArgumentException if content cannot be parsed into `LocalTime`.
+ */
+public fun TomlLiteral.toLocalTime(): LocalTime {
+    return LocalTime(content)
+}
+
+/**
+ * Returns content as `LocalTime` only if content can be parsed into it,
+ * otherwise null.
+ */
+public fun TomlLiteral.toLocalTimeOrNull(): LocalTime? {
+    return try {
+        toLocalTime()
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}
+
+/**
  * Returns content as enum with given enum class context.
  *
  * @param E the enum class which [this] converts to.
- * @param serializersModule in most case could be ignored, but for contextual it should be present.
+ * @param serializersModule in most case could be ignored, but for contextual it
+ * should be present.
  *
  * @throws IllegalStateException if content cannot be converted into [E].
  */
@@ -347,10 +470,12 @@ public inline fun <reified E : Enum<E>> TomlLiteral.toEnum(
 }
 
 /**
- * Returns content as enum with given enum class context only if content suits in, otherwise null.
+ * Returns content as enum with given enum class context only if content suits
+ * in, otherwise null.
  *
  * @param E the enum class which [this] converts to.
- * @param serializersModule in most case could be ignored, but for contextual it should be present.
+ * @param serializersModule in most case could be ignored, but for contextual it
+ * should be present.
  */
 public inline fun <reified E : Enum<E>> TomlLiteral.toEnumOrNull(
     serializersModule: SerializersModule = EmptySerializersModule()
@@ -366,7 +491,7 @@ public inline fun <reified E : Enum<E>> TomlLiteral.toEnumOrNull(
     }
 }
 
-// TomlArray
+// -------- TomlArray --------
 
 /**
  * Represents array in TOML, which values are [TomlElement].
@@ -390,7 +515,7 @@ public class TomlArray internal constructor(
     }
 }
 
-// To TomlArray
+// ---- To TomlArray ----
 
 /**
  * Convert [this] to TomlArray.
@@ -408,7 +533,7 @@ public fun TomlArray(value: Iterable<*>): TomlArray {
     return TomlArray(value.map(Any?::toTomlElement))
 }
 
-// TomlTable
+// -------- TomlTable --------
 
 /**
  * Represents table in TOML, which keys are strings and values are [TomlElement].
@@ -420,7 +545,8 @@ public class TomlTable internal constructor(
     override val content: Map<String, TomlElement>
 ) : TomlElement(), Map<String, TomlElement> by content {
     /**
-     * More convenient than [Map.get] if this TomlTable is originally a map with **primitive** keys
+     * More convenient than [Map.get] if this TomlTable is originally a map with
+     * **primitive** keys
      *
      * @throws NonPrimitiveKeyException if provide non-primitive key
      */
@@ -431,12 +557,11 @@ public class TomlTable internal constructor(
     override fun toString(): String {
         return content.entries.joinToString(
             prefix = "{ ",
-            postfix = " }",
-            transform = { (key, value) ->
-                val convertedKey = key.escape().doubleQuotedIfNotPure()
-                "$convertedKey = $value"
-            }
-        )
+            postfix = " }"
+        ) { (key, value) ->
+            val convertedKey = key.escape().doubleQuotedIfNotPure()
+            "$convertedKey = $value"
+        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -448,7 +573,7 @@ public class TomlTable internal constructor(
     }
 }
 
-// To TomlTable
+// ---- To TomlTable ----
 
 /**
  * Convert [this] to TomlTable.
@@ -471,7 +596,7 @@ public fun TomlTable(value: Map<*, *>): TomlTable {
     return TomlTable(content)
 }
 
-// Extensions for TomlTable
+// ---- Extensions for TomlTable ----
 
 /**
  * Get value along with path constructed by [keys].
@@ -484,7 +609,7 @@ public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
     return getByPathRecursively(keys, 0)
 }
 
-// Internal
+// ======== Internal ========
 
 internal fun TomlTable(value: KeyNode): TomlTable {
     val content = buildMap(value.children.size) {
@@ -493,6 +618,14 @@ internal fun TomlTable(value: KeyNode): TomlTable {
         }
     }
     return TomlTable(content)
+}
+
+private fun TreeNode.toTomlElement(): TomlElement {
+    return when (this) {
+        is KeyNode -> TomlTable(this)
+        is ArrayNode -> TomlArray(array)
+        is ValueNode -> value
+    }
 }
 
 private tailrec fun TomlTable.getByPathRecursively(
@@ -530,6 +663,10 @@ private fun Any?.toTomlElement(): TomlElement {
         is Double -> TomlLiteral(this)
         is Char -> TomlLiteral(this)
         is String -> TomlLiteral(this)
+        is LocalDateTime -> TomlLiteral(this)
+        is OffsetDateTime -> TomlLiteral(this)
+        is LocalDate -> TomlLiteral(this)
+        is LocalTime -> TomlLiteral(this)
         is BooleanArray -> TomlArray(this.asIterable())
         is ByteArray -> TomlArray(this.asIterable())
         is ShortArray -> TomlArray(this.asIterable())
@@ -541,9 +678,6 @@ private fun Any?.toTomlElement(): TomlElement {
         is Array<*> -> TomlArray(this.asIterable())
         is Iterable<*> -> TomlArray(this)
         is Map<*, *> -> TomlTable(this)
-        is KeyNode -> TomlTable(this)
-        is ArrayNode -> TomlArray(array)
-        is ValueNode -> value
         else -> error("Unsupported class: ${this::class.simpleName}")
     }
 }

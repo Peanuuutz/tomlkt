@@ -32,7 +32,8 @@ import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
 /**
  * The main entry point to use TOML.
  *
- * User could simply use [Default] instance or customize by using creator function with the same name.
+ * User could simply use [Default] instance or customize by using creator
+ * function with the same name.
  *
  * Basic usage:
  *
@@ -143,9 +144,11 @@ public sealed class Toml(
     /**
      * Deserializes [string] into a value of type [T] using [deserializer].
      *
-     * @param string **MUST** be a TOML file, as this method delegates parsing to [parseToTomlTable].
+     * @param string **MUST** be a TOML file, as this method delegates parsing
+     * to [parseToTomlTable].
      *
-     * @throws TomlDecodingException when [string] cannot be parsed into [TomlTable] or cannot be deserialized.
+     * @throws TomlDecodingException when [string] cannot be parsed into
+     * [TomlTable] or cannot be deserialized.
      */
     @Suppress("OutdatedDocumentation")
     override fun <T> decodeFromString(
@@ -176,7 +179,8 @@ public sealed class Toml(
     /**
      * Parses [string] into equivalent representation of [TomlTable].
      *
-     * @throws TomlDecodingException when [string] cannot be parsed into [TomlTable].
+     * @throws TomlDecodingException when [string] cannot be parsed into
+     * [TomlTable].
      */
     public fun parseToTomlTable(string: String): TomlTable {
         return TomlFileParser(string).parse()
@@ -195,7 +199,8 @@ public inline fun Toml(
 ): Toml = TomlImpl(TomlConfigBuilder(from.config).apply(config).build())
 
 /**
- * Serializes [value] into [writer] using serializer retrieved from reified type parameter.
+ * Serializes [value] into [writer] using serializer retrieved from reified type
+ * parameter.
  *
  * @throws TomlEncodingException when [value] cannot be serialized.
  */
@@ -211,7 +216,8 @@ public inline fun <reified T> Toml.encodeToWriter(
 }
 
 /**
- * Serializes [value] into [TomlElement] using serializer retrieved from reified type parameter.
+ * Serializes [value] into [TomlElement] using serializer retrieved from reified
+ * type parameter.
  *
  * @throws TomlEncodingException when [value] cannot be serialized.
  */
@@ -220,7 +226,8 @@ public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
 }
 
 /**
- * Deserializes [element] into a value of type [T] using serializer retrieved from reified type parameter.
+ * Deserializes [element] into a value of type [T] using serializer retrieved
+ * from reified type parameter.
  *
  * @throws TomlDecodingException when [element] cannot be deserialized.
  */
@@ -228,7 +235,7 @@ public inline fun <reified T> Toml.decodeFromTomlElement(element: TomlElement): 
     return decodeFromTomlElement(serializersModule.serializer(), element)
 }
 
-// Internal
+// ======== Internal ========
 
 @PublishedApi
 internal class TomlImpl(config: TomlConfig) : Toml(config)

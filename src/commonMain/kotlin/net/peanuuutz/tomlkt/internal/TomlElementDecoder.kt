@@ -49,7 +49,7 @@ import net.peanuuutz.tomlkt.toTomlTable
 @OptIn(TomlSpecific::class)
 internal class TomlElementDecoder(
     private val config: TomlConfig,
-    override val serializersModule: SerializersModule = config.serializersModule,
+    override val serializersModule: SerializersModule,
     private val element: TomlElement
 ) : Decoder, TomlDecoder {
     override fun decodeBoolean(): Boolean {

@@ -20,7 +20,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialKind
 import net.peanuuutz.tomlkt.internal.parser.Path
 
-// Encoding
+// -------- Encoding --------
 
 internal sealed class TomlEncodingException : SerializationException {
     constructor()
@@ -42,7 +42,7 @@ internal class EmptyArrayOfTableInMapException : TomlEncodingException(
     message = "Empty array of table can only be the first in map"
 )
 
-// Decoding
+// -------- Decoding --------
 
 internal sealed class TomlDecodingException : SerializationException {
     constructor()
@@ -50,7 +50,10 @@ internal sealed class TomlDecodingException : SerializationException {
 }
 
 internal class UnexpectedTokenException(token: Char, line: Int) : TomlDecodingException(
-    message = "'${if (token != '\'') token.escape() else "\\'" }' (L$line)"
+    message = run {
+        val tokenRepresentation = if (token != '\'') token.escape() else "\\'"
+        "'$tokenRepresentation' (L$line)"
+    }
 )
 
 internal class IncompleteException(line: Int) : TomlDecodingException(
@@ -58,10 +61,7 @@ internal class IncompleteException(line: Int) : TomlDecodingException(
 )
 
 internal class ConflictEntryException(path: Path) : TomlDecodingException(
-    message = path.joinToString(
-        separator = ".",
-        transform = { it.escape().doubleQuotedIfNotPure() }
-    )
+    message = path.joinToString(".") { it.escape().doubleQuotedIfNotPure() }
 )
 
 internal class UnknownKeyException(key: String) : TomlDecodingException(

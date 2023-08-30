@@ -42,26 +42,27 @@ kotlin {
 
     sourceSets {
         val serializationVersion: String by project
+        val datetimeVersion: String by project
 
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
             languageSettings.optIn("kotlinx.serialization.ExperimentalSerializationApi")
         }
 
-        getByName("commonMain") {
+        val commonMain by getting {
             dependencies {
                 api("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
             }
         }
 
-        getByName("commonTest") {
+        val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
 
-        getByName("jvmTest") {
+        val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
                 implementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
@@ -70,10 +71,42 @@ kotlin {
             }
         }
 
-        getByName("jsTest") {
+        val kotlinxMain by creating {
+            dependsOn(commonMain)
+
+            dependencies {
+                compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:$datetimeVersion")
+            }
+        }
+
+        val jsMain by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val jsTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
             }
+        }
+
+        val mingwX64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val macosArm64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val macosX64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val iosMain by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val linuxX64Main by getting {
+            dependsOn(kotlinxMain)
         }
     }
 }

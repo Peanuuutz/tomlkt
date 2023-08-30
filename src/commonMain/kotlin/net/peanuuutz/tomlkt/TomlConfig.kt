@@ -26,7 +26,8 @@ import kotlin.jvm.JvmInline
  */
 public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConfig) {
     /**
-     * SerializersModule with contextual serializers to be used in the Toml instance.
+     * SerializersModule with contextual serializers to be used in the Toml
+     * instance.
      *
      * [EmptySerializersModule] by default.
      */
@@ -48,23 +49,17 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
      */
     public var itemsPerLineInBlockArray: Int = from.itemsPerLineInBlockArray
 
-    @Deprecated(
-        message = "Empty array of table in map will be handled properly. " +
-                "Users can safely remove this property",
-        level = DeprecationLevel.HIDDEN
-    )
-    public var checkArrayInMap: Boolean = false
-
     // -------- Deserialization --------
 
     /**
-     * Specifies whether encounters of unknown keys should be ignored instead of throwing [UnknownKeyException].
+     * Specifies whether encounters of unknown keys should be ignored instead
+     * of throwing [UnknownKeyException].
      *
      * `false` by default.
      */
     public var ignoreUnknownKeys: Boolean = from.ignoreUnknownKeys
 
-    // -------- Internal --------
+    // ======== Internal ========
 
     @PublishedApi
     internal fun build(): TomlConfig = TomlConfig(
@@ -112,7 +107,7 @@ public value class TomlIndentation(public val representation: String) {
     }
 }
 
-// Internal
+// ======== Internal ========
 
 internal class TomlConfig(
     val serializersModule: SerializersModule,

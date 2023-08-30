@@ -19,8 +19,9 @@ package net.peanuuutz.tomlkt
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * A special [Encoder] which is used internally by encoding process of [Toml], providing an extra
- * [encodeTomlElement] to encode [TomlElement] to the current position.
+ * A special [Encoder] which is used internally by encoding process of [Toml],
+ * providing an extra [encodeTomlElement] to encode [TomlElement] to the current
+ * position.
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlEncoder : Encoder {

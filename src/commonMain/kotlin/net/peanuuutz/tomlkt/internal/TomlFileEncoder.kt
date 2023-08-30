@@ -282,22 +282,22 @@ internal class TomlFileEncoder(
         }
 
         final override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-            encodeTomlIntegerElement(descriptor, index, value, ::encodeByte, ::encodeByteWithBase)
+            encodeTomlIntegerElement(descriptor, index, value, this::encodeByte, this::encodeByteWithBase)
         }
 
         final override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) {
-            encodeTomlIntegerElement(descriptor, index, value, ::encodeShort, ::encodeShortWithBase)
+            encodeTomlIntegerElement(descriptor, index, value, this::encodeShort, this::encodeShortWithBase)
         }
 
         final override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-            encodeTomlIntegerElement(descriptor, index, value, ::encodeInt, ::encodeIntWithBase)
+            encodeTomlIntegerElement(descriptor, index, value, this::encodeInt, this::encodeIntWithBase)
         }
 
         final override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-            encodeTomlIntegerElement(descriptor, index, value, ::encodeLong, ::encodeLongWithBase)
+            encodeTomlIntegerElement(descriptor, index, value, this::encodeLong, this::encodeLongWithBase)
         }
 
-        private inline fun <T> encodeTomlIntegerElement(
+        private fun <T> encodeTomlIntegerElement(
             descriptor: SerialDescriptor,
             index: Int,
             value: T,
@@ -350,7 +350,7 @@ internal class TomlFileEncoder(
             serializer: SerializationStrategy<T>,
             value: T?
         ) {
-            when (value) { // Revisit type-specific encoding
+            when (value) { // Revisit type-specific encoding.
                 null -> encodeSerializableElement(descriptor, index, TomlNullSerializer, TomlNull)
                 is Byte -> encodeByteElement(descriptor, index, value)
                 is Short -> encodeShortElement(descriptor, index, value)
@@ -719,7 +719,7 @@ internal class TomlFileEncoder(
                 if (value.isNullLike) {
                     appendKeyDirectly()
                 } else if (valueDescriptor.kind != LIST && valueDescriptor.kind != MAP) {
-                    appendKey() // For non-null collections, defer to beginCollection() below
+                    appendKey() // For non-null collections, defer to beginCollection() below.
                 }
                 serializer.serialize(this, value)
             }
