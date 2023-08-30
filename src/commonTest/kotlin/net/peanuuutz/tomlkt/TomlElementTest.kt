@@ -19,6 +19,10 @@ class TomlElementTest {
         printIfDebug(tomlString) // Since '\n' will be converted to "\\n".
         assertEquals(TomlLiteral(Maintainability.HIGH).content, "HIGH")
         assertEquals(TomlLiteral("LOW").toEnum(), Maintainability.LOW)
+        printIfDebug("-----")
+        val dateTime = OffsetDateTime("2023-08-30T17:25-07:00")
+        val tomlStringWithDateTime = Toml.encodeToString(TomlLiteral(dateTime))
+        printIfDebug(tomlStringWithDateTime)
     }
 
     @Test

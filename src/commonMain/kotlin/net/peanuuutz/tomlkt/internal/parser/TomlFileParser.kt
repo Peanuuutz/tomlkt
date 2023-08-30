@@ -43,44 +43,44 @@ internal class TomlFileParser(source: String) {
 
     private val lastIndex: Int = this.source.lastIndex
 
-    private var currentLine: Int = 1
+    private var currentLineNumber: Int = 1
 
-    private var currentPosition: Int = -1
+    private var currentIndex: Int = -1
 
     // region Utils
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun getChar(): Char {
-        return source[currentPosition]
+        return source[currentIndex]
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun getChar(offset: Int): Char {
-        return source[currentPosition + offset]
+        return source[currentIndex + offset]
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun lastOrEOF(): Boolean {
-        return currentPosition >= lastIndex
+        return currentIndex >= lastIndex
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun lastOrEOF(offset: Int): Boolean {
-        return currentPosition >= lastIndex + offset
+        return currentIndex >= lastIndex + offset
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun beforeLast(): Boolean {
-        return currentPosition < lastIndex
+        return currentIndex < lastIndex
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun beforeLast(offset: Int): Boolean {
-        return currentPosition < lastIndex + offset
+        return currentIndex < lastIndex + offset
     }
 
     private fun incomplete(): Nothing {
-        throw IncompleteException(currentLine)
+        throw IncompleteException(currentLineNumber)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -93,7 +93,7 @@ internal class TomlFileParser(source: String) {
     }
 
     private fun unexpectedToken(token: Char): Nothing {
-        throw UnexpectedTokenException(token, currentLine)
+        throw UnexpectedTokenException(token, currentLineNumber)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -107,7 +107,7 @@ internal class TomlFileParser(source: String) {
 
     private fun expectNext(testChar: Char) {
         incompleteIf(lastOrEOF())
-        currentPosition++
+        currentIndex++
         val currentChar = getChar()
         currentChar.unexpectedIf(currentChar != testChar)
     }
@@ -117,7 +117,7 @@ internal class TomlFileParser(source: String) {
         val requiredOffset = -(testString.length - 1)
         incompleteIf(lastOrEOF(requiredOffset))
         for (i in testString.indices) {
-            currentPosition++
+            currentIndex++
             val currentChar = getChar()
             currentChar.unexpectedIf(currentChar != testString[i])
         }
@@ -129,24 +129,30 @@ internal class TomlFileParser(source: String) {
         val tree = KeyNode("")
         val arrayOfTableIndices = mutableMapOf<Path, Int>()
         var tablePath: Path? = null
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> currentLine++
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    currentLineNumber++
+                }
                 in BARE_KEY_REGEX, '"', '\'' -> {
-                    currentPosition--
+                    currentIndex--
                     val localPath = parsePath()
                     expectNext(KEY_VALUE_DELIMITER)
                     val path = if (tablePath != null) tablePath + localPath else localPath
                     val node = ValueNode(path.last(), parseValue(inStructure = false))
                     tree.addByPath(path, node, arrayOfTableIndices)
                 }
-                COMMENT -> parseComment()
+                COMMENT -> {
+                    parseComment()
+                }
                 START_ARRAY -> {
                     incompleteIf(lastOrEOF())
                     val isArrayOfTable = getChar(1) == START_ARRAY
                     if (isArrayOfTable) {
-                        currentPosition++
+                        currentIndex++
                     }
                     val path = parseTableHead(isArrayOfTable)
                     if (isArrayOfTable) {
@@ -173,7 +179,9 @@ internal class TomlFileParser(source: String) {
                     }
                     tablePath = path
                 }
-                else -> unexpectedToken(current)
+                else -> {
+                    unexpectedToken(current)
+                }
             }
         }
         return TomlTable(tree)
@@ -183,21 +191,25 @@ internal class TomlFileParser(source: String) {
     private fun parseTableHead(isArrayOfTable: Boolean): Path {
         var path: Path? = null
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> incomplete()
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    incomplete()
+                }
                 END_ARRAY -> {
                     if (isArrayOfTable) {
                         incompleteIf(lastOrEOF() || getChar(1) != END_ARRAY)
-                        currentPosition++
+                        currentIndex++
                     }
                     justEnded = true
                     break
                 }
                 else -> {
                     current.unexpectedIf(path != null)
-                    currentPosition--
+                    currentIndex--
                     path = parsePath()
                 }
             }
@@ -211,10 +223,14 @@ internal class TomlFileParser(source: String) {
         val path = mutableListOf<String>()
         var justEnded = false
         var expectKey = true
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> incomplete()
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    incomplete()
+                }
                 in BARE_KEY_REGEX -> {
                     current.unexpectedIf(!expectKey)
                     path.add(parseBareKey())
@@ -237,10 +253,12 @@ internal class TomlFileParser(source: String) {
                 KEY_VALUE_DELIMITER, END_ARRAY -> {
                     current.unexpectedIf(expectKey)
                     justEnded = true
-                    currentPosition--
+                    currentIndex--
                     break
                 }
-                else -> unexpectedToken(current)
+                else -> {
+                    unexpectedToken(current)
+                }
             }
         }
         incompleteIf(!justEnded)
@@ -250,21 +268,26 @@ internal class TomlFileParser(source: String) {
     // Start right on the actual token, end right before ' ' or '\t' or '\n' or '=' or '.' or ']'.
     private fun parseBareKey(): String {
         val builder = StringBuilder().append(getChar())
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t', '.', KEY_VALUE_DELIMITER, END_ARRAY -> break
-                '\n' -> incomplete()
-                else -> builder.append(current)
+                ' ', '\t', '.', KEY_VALUE_DELIMITER, END_ARRAY -> {
+                    break
+                }
+                '\n' -> {
+                    incomplete()
+                }
+                else -> {
+                    builder.append(current)
+                }
             }
         }
         val result = builder.toString()
-        if (BARE_KEY_REGEX matches result) { // Lazy check.
-            currentPosition--
-            return result
-        } else {
+        if (BARE_KEY_REGEX.matches(result).not()) { // Lazy check.
             val unexpectedTokens = result.filterNot(BARE_KEY_REGEX::contains)
             unexpectedToken(unexpectedTokens[0])
         }
+        currentIndex--
+        return result
     }
 
     // Start right on the first '"', end on the last '"'.
@@ -280,14 +303,18 @@ internal class TomlFileParser(source: String) {
     // Start right before the actual token, end right before '\n' or ',' or ']' or '}'.
     private fun parseValue(inStructure: Boolean): TomlElement {
         var element: TomlElement? = null
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
+                ' ', '\t' -> {
+                    continue
+                }
                 '\n' -> {
                     incompleteIf(element == null)
                     break
                 }
-                COMMENT -> parseComment()
+                COMMENT -> {
+                    parseComment()
+                }
                 ',', END_ARRAY, END_TABLE -> {
                     current.unexpectedIf(!inStructure)
                     break
@@ -308,7 +335,7 @@ internal class TomlFileParser(source: String) {
                         }
                         '+', '-' -> {
                             incompleteIf(lastOrEOF())
-                            currentPosition++
+                            currentIndex++
                             when (val next = getChar()) {
                                 in DEC_CHARS -> parseNumberValue(current == '+')
                                 'i', 'n' -> parseSpecialNumberValue(current == '+')
@@ -325,7 +352,7 @@ internal class TomlFileParser(source: String) {
             }
         }
         incompleteIf(element == null)
-        currentPosition--
+        currentIndex--
         return element
     }
 
@@ -381,33 +408,39 @@ internal class TomlFileParser(source: String) {
                 isString = false
             )
         }
-        val radix = if (first != '0') {
-            10
+        val radix: Int
+        if (first != '0') {
+            radix = 10
         } else {
-            when (val next = getChar(1)) {
+            when (getChar(1)) {
                 'x' -> {
-                    currentPosition++
-                    16
+                    radix = 16
+                    currentIndex++
                 }
                 'o' -> {
-                    currentPosition++
-                    8
+                    radix = 8
+                    currentIndex++
                 }
                 'b' -> {
-                    currentPosition++
-                    2
+                    radix = 2
+                    currentIndex++
                 }
-                in DEC_CHARS -> unexpectedToken(next)
-                else -> 10 // Others are checked in the loop.
+                else -> { // Others are checked in the loop.
+                    radix = 10
+                }
             }
         }
         val builder = StringBuilder().append(first)
         var isDouble = false
         var isExponent = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t', '\n', ',', COMMENT, END_ARRAY, END_TABLE -> break
-                '0', '1' -> builder.append(current)
+                ' ', '\t', '\n', ',', COMMENT, END_ARRAY, END_TABLE -> {
+                    break
+                }
+                '0', '1' -> {
+                    builder.append(current)
+                }
                 '2', '3', '4', '5', '6', '7' -> {
                     current.unexpectedIf(radix == 2)
                     builder.append(current)
@@ -460,10 +493,12 @@ internal class TomlFileParser(source: String) {
                     isDouble = true
                     builder.append(current)
                 }
-                else -> unexpectedToken(current)
+                else -> {
+                    unexpectedToken(current)
+                }
             }
         }
-        currentPosition--
+        currentIndex--
         val number = builder.toString().toNumber(positive, radix, isDouble, isExponent)
         return TomlLiteral(number)
     }
@@ -471,26 +506,30 @@ internal class TomlFileParser(source: String) {
     // Start right on the first '"', end on the last '"'.
     private fun parseStringValue(): TomlLiteral {
         incompleteIf(lastOrEOF())
-        val initialNext = getChar(1)
+        var next = getChar(1)
         val multiline: Boolean
-        if (initialNext != '"') {
-            multiline = false
-        } else if (beforeLast(-1) && getChar(2) == '"') {
-            multiline = true
-            currentPosition += 2
-            incompleteIf(lastOrEOF())
-            if (initialNext == '\n') {
-                // Consume the initial line feed.
-                currentPosition++
+        when {
+            next != '"' -> {
+                multiline = false
             }
-        } else {
-            currentPosition++
-            return TomlLiteral("")
+            beforeLast(-1) && getChar(2) == '"' -> {
+                multiline = true
+                currentIndex += 2
+                incompleteIf(lastOrEOF())
+                if (next == '\n') {
+                    // Consume the initial line feed.
+                    currentIndex++
+                }
+            }
+            else -> {
+                currentIndex++
+                return TomlLiteral("")
+            }
         }
         val builder = StringBuilder()
         var trim = false
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
                     if (!trim) {
@@ -502,7 +541,7 @@ internal class TomlFileParser(source: String) {
                     if (!trim) {
                         builder.append(current)
                     }
-                    currentLine++
+                    currentLineNumber++
                 }
                 '"' -> {
                     if (!multiline) {
@@ -513,7 +552,7 @@ internal class TomlFileParser(source: String) {
                     } else {
                         incompleteIf(lastOrEOF())
                         if (getChar(1) == '"' && getChar(2) == '"') {
-                            currentPosition += 2
+                            currentIndex += 2
                             justEnded = true
                             break
                         }
@@ -522,14 +561,15 @@ internal class TomlFileParser(source: String) {
                 }
                 '\\' -> {
                     incompleteIf(lastOrEOF())
-                    when (val next = getChar(1)) {
+                    next = getChar(1)
+                    when (next) {
                         ' ', '\t', '\n' -> {
                             current.unexpectedIf(!multiline)
                             trim = true
                         }
                         'u', 'b', 't', 'n', 'f', 'r', '"', '\\' -> {
                             builder.append(current).append(next)
-                            currentPosition++
+                            currentIndex++
                         }
                         else -> unexpectedToken(current)
                     }
@@ -548,30 +588,35 @@ internal class TomlFileParser(source: String) {
     // Start right on '\'', end on the last '\''.
     private fun parseLiteralStringValue(): TomlLiteral {
         incompleteIf(lastOrEOF())
-        val initialNext = getChar(1)
+        val next = getChar(1)
         val multiline: Boolean
-        if (initialNext != '\'') {
-            multiline = false
-        } else if (beforeLast(-1) && getChar(2) == '\'') {
-            multiline = true
-            currentPosition += 2
-            incompleteIf(lastOrEOF())
-            if (initialNext == '\n') {
-                currentPosition++
+        when {
+            next != '\'' -> {
+                multiline = false
             }
-        } else {
-            currentPosition++
-            return TomlLiteral("")
+            beforeLast(-1) && getChar(2) == '\'' -> {
+                multiline = true
+                currentIndex += 2
+                incompleteIf(lastOrEOF())
+                if (next == '\n') {
+                    // Consume the initial line feed.
+                    currentIndex++
+                }
+            }
+            else -> {
+                currentIndex++
+                return TomlLiteral("")
+            }
         }
         val builder = StringBuilder()
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> builder.append(current)
                 '\n' -> {
                     incompleteIf(!multiline)
                     builder.append(current)
-                    currentLine++
+                    currentLineNumber++
                 }
                 '\'' -> {
                     if (!multiline) {
@@ -580,7 +625,7 @@ internal class TomlFileParser(source: String) {
                     }
                     incompleteIf(lastOrEOF())
                     if (getChar(1) == '\'' && getChar(2) == '\'') {
-                        currentPosition += 2
+                        currentIndex += 2
                         justEnded = true
                         break
                     }
@@ -599,10 +644,10 @@ internal class TomlFileParser(source: String) {
         val builder = mutableListOf<TomlElement>()
         var expectValue = true
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> continue
-                '\n' -> currentLine++
+                '\n' -> currentLineNumber++
                 END_ARRAY -> {
                     justEnded = true
                     break
@@ -613,7 +658,7 @@ internal class TomlFileParser(source: String) {
                 }
                 COMMENT -> parseComment()
                 else -> {
-                    currentPosition--
+                    currentIndex--
                     builder.add(parseValue(inStructure = true))
                     expectValue = false
                 }
@@ -629,7 +674,7 @@ internal class TomlFileParser(source: String) {
         var expectEntry = true
         var justStarted = true
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> continue
                 '\n' -> incomplete()
@@ -644,7 +689,7 @@ internal class TomlFileParser(source: String) {
                 }
                 COMMENT -> unexpectedToken(current)
                 else -> {
-                    currentPosition--
+                    currentIndex--
                     val path = parsePath()
                     expectNext(KEY_VALUE_DELIMITER)
                     val node = ValueNode(path.last(), parseValue(inStructure = true))
@@ -666,11 +711,11 @@ internal class TomlFileParser(source: String) {
 
     // Start right on '#', end right before '\n'.
     private fun parseComment() {
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             if (getChar() == '\n') {
                 break
             }
         }
-        currentPosition--
+        currentIndex--
     }
 }

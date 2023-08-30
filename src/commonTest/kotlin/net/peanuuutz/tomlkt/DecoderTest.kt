@@ -19,6 +19,28 @@ class DecoderTest {
     }
 
     @Test
+    fun parseDateTime() {
+        val dateTimes = Toml.parseToTomlTable(dateTimes)
+        printIfDebug(dateTimes)
+        assertEquals(
+            expected = dateTimes["local-date-time"]?.toTomlLiteral()?.toLocalDateTimeOrNull(),
+            actual = LocalDateTime("2020-01-01T20:00.5")
+        )
+        assertEquals(
+            expected = dateTimes["offset-date-time"]?.toTomlLiteral()?.toOffsetDateTimeOrNull(),
+            actual = OffsetDateTime("1999-09-09T09:09:09.999999-09:00")
+        )
+        assertEquals(
+            expected = dateTimes["local-date"]?.toTomlLiteral()?.toLocalDateOrNull(),
+            actual = LocalDate("2020-01-01")
+        )
+        assertEquals(
+            expected = dateTimes["local-time"]?.toTomlLiteral()?.toLocalTimeOrNull(),
+            actual = LocalTime("09:09:09.999999")
+        )
+    }
+
+    @Test
     fun parseHugeConfig() {
         val table = Toml.parseToTomlTable(cargo)
         printIfDebug(table)

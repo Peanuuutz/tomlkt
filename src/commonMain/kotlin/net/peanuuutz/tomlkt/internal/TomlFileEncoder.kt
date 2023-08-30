@@ -94,8 +94,8 @@ internal class TomlFileEncoder(
         when (value) {
             TomlNull -> writer.writeNull()
             is TomlLiteral -> writer.writeString(value.toString())
-            is TomlArray -> TomlArraySerializer.serialize(this, value)
-            is TomlTable -> TomlTableSerializer.serialize(this, value)
+            is TomlArray -> TomlArray.serializer().serialize(this, value)
+            is TomlTable -> TomlTable.serializer().serialize(this, value)
         }
     }
 
@@ -115,7 +115,7 @@ internal class TomlFileEncoder(
         descriptor: SerialDescriptor,
         forceInline: Boolean
     ): CompositeEncoder {
-        return when (descriptor.kind) {
+        return when (val kind = descriptor.kind) {
             CLASS -> {
                 if (forceInline) {
                     FlowClassEncoder()
@@ -128,7 +128,7 @@ internal class TomlFileEncoder(
                 }
             }
             OBJECT -> FlowClassEncoder()
-            else -> throw UnsupportedSerialKindException(descriptor.kind)
+            else -> throw UnsupportedSerialKindException(kind)
         }
     }
 
@@ -141,7 +141,7 @@ internal class TomlFileEncoder(
         collectionSize: Int,
         forceInline: Boolean
     ): CompositeEncoder {
-        return when (descriptor.kind) {
+        return when (val kind = descriptor.kind) {
             LIST -> {
                 if (forceInline || collectionSize == 0) {
                     FlowArrayEncoder(collectionSize)
@@ -161,7 +161,7 @@ internal class TomlFileEncoder(
                     )
                 }
             }
-            else -> throw UnsupportedSerialKindException(descriptor.kind)
+            else -> throw UnsupportedSerialKindException(kind)
         }
     }
 
@@ -178,7 +178,9 @@ internal class TomlFileEncoder(
         }
 
         private fun encodeByteWithBase(value: Byte, base: TomlInteger.Base) {
-            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            require(value > 0) {
+                "Negative integer cannot be represented by other bases"
+            }
             writer.writeString(base.prefix)
             writer.writeString(value.toString(base.value))
         }
@@ -188,7 +190,9 @@ internal class TomlFileEncoder(
         }
 
         private fun encodeShortWithBase(value: Short, base: TomlInteger.Base) {
-            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            require(value > 0) {
+                "Negative integer cannot be represented by other bases"
+            }
             writer.writeString(base.prefix)
             writer.writeString(value.toString(base.value))
         }
@@ -198,7 +202,9 @@ internal class TomlFileEncoder(
         }
 
         private fun encodeIntWithBase(value: Int, base: TomlInteger.Base) {
-            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            require(value > 0) {
+                "Negative integer cannot be represented by other bases"
+            }
             writer.writeString(base.prefix)
             writer.writeString(value.toString(base.value))
         }
@@ -208,7 +214,9 @@ internal class TomlFileEncoder(
         }
 
         private fun encodeLongWithBase(value: Long, base: TomlInteger.Base) {
-            require(value > 0) { "Negative integer cannot be represented by other bases" }
+            require(value > 0) {
+                "Negative integer cannot be represented by other bases"
+            }
             writer.writeString(base.prefix)
             writer.writeString(value.toString(base.value))
         }
@@ -297,7 +305,7 @@ internal class TomlFileEncoder(
             encodeTomlIntegerElement(descriptor, index, value, this::encodeLong, this::encodeLongWithBase)
         }
 
-        private fun <T> encodeTomlIntegerElement(
+        private inline fun <T> encodeTomlIntegerElement(
             descriptor: SerialDescriptor,
             index: Int,
             value: T,
@@ -351,13 +359,27 @@ internal class TomlFileEncoder(
             value: T?
         ) {
             when (value) { // Revisit type-specific encoding.
-                null -> encodeSerializableElement(descriptor, index, TomlNullSerializer, TomlNull)
-                is Byte -> encodeByteElement(descriptor, index, value)
-                is Short -> encodeShortElement(descriptor, index, value)
-                is Int -> encodeIntElement(descriptor, index, value)
-                is Long -> encodeLongElement(descriptor, index, value)
-                is String -> encodeStringElement(descriptor, index, value)
-                else -> encodeSerializableElement(descriptor, index, serializer, value)
+                null -> {
+                    encodeSerializableElement(descriptor, index, TomlNull.serializer(), TomlNull)
+                }
+                is Byte -> {
+                    encodeByteElement(descriptor, index, value)
+                }
+                is Short -> {
+                    encodeShortElement(descriptor, index, value)
+                }
+                is Int -> {
+                    encodeIntElement(descriptor, index, value)
+                }
+                is Long -> {
+                    encodeLongElement(descriptor, index, value)
+                }
+                is String -> {
+                    encodeStringElement(descriptor, index, value)
+                }
+                else -> {
+                    encodeSerializableElement(descriptor, index, serializer, value)
+                }
             }
         }
 
@@ -512,7 +534,7 @@ internal class TomlFileEncoder(
         }
 
         override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
-            return when (descriptor.kind) {
+            return when (val kind = descriptor.kind) {
                 CLASS -> {
                     if (inlineChild) {
                         FlowClassEncoder()
@@ -530,44 +552,48 @@ internal class TomlFileEncoder(
                     }
                 }
                 OBJECT -> FlowClassEncoder()
-                else -> throw UnsupportedSerialKindException(descriptor.kind)
+                else -> throw UnsupportedSerialKindException(kind)
             }
         }
 
         override fun beginCollection(
             descriptor: SerialDescriptor,
             collectionSize: Int
-        ): CompositeEncoder = when (descriptor.kind) {
-            LIST -> {
-                if (inlineChild || collectionSize == 0) {
-                    FlowArrayEncoder(collectionSize)
-                } else if (structuredChild && descriptor.isArrayOfTables && blockArrayAnnotation == null) {
-                    ArrayOfTableEncoder(
-                        collectionSize = collectionSize,
-                        path = currentChildPath
-                    )
-                } else {
-                    val itemsPerLine = blockArrayAnnotation?.itemsPerLine
-                        ?: config.itemsPerLineInBlockArray
-                    BlockArrayEncoder(
-                        collectionSize = collectionSize,
-                        itemsPerLine = itemsPerLine
-                    )
+        ): CompositeEncoder {
+            return when (val kind = descriptor.kind) {
+                LIST -> {
+                    when {
+                        inlineChild || collectionSize == 0 -> FlowArrayEncoder(collectionSize)
+                        structuredChild && descriptor.isArrayOfTables && blockArrayAnnotation == null -> {
+                            ArrayOfTableEncoder(
+                                collectionSize = collectionSize,
+                                path = currentChildPath
+                            )
+                        }
+                        else -> {
+                            val itemsPerLine = blockArrayAnnotation?.itemsPerLine
+                                ?: config.itemsPerLineInBlockArray
+                            BlockArrayEncoder(
+                                collectionSize = collectionSize,
+                                itemsPerLine = itemsPerLine
+                            )
+                        }
+                    }
                 }
-            }
-            MAP -> {
-                if (inlineChild || collectionSize == 0) {
-                    FlowMapEncoder(collectionSize)
-                } else {
-                    MapEncoder(
-                        collectionSize = collectionSize,
-                        valueDescriptor = descriptor.getElementDescriptor(1),
-                        structured = structuredChild,
-                        path = currentChildPath
-                    )
+                MAP -> {
+                    if (inlineChild || collectionSize == 0) {
+                        FlowMapEncoder(collectionSize)
+                    } else {
+                        MapEncoder(
+                            collectionSize = collectionSize,
+                            valueDescriptor = descriptor.getElementDescriptor(1),
+                            structured = structuredChild,
+                            path = currentChildPath
+                        )
+                    }
                 }
+                else -> throw UnsupportedSerialKindException(kind)
             }
-            else -> throw UnsupportedSerialKindException(descriptor.kind)
         }
 
         protected open val blockArrayAnnotation: TomlBlockArray?
@@ -597,22 +623,27 @@ internal class TomlFileEncoder(
             structuredChild = structured && index >= structuredIndex
             val key = if (structured) elementName else currentChildPath
             val elementDescriptor = descriptor.getElementDescriptor(index)
-            if (inlineChild) {
-                writer.writeKey(key)
-            } else if (structuredChild) {
-                if (elementDescriptor.isTable) {
-                    writer.writeLineFeed()
-                    writer.writeString("[$currentChildPath]")
-                    writer.writeLineFeed()
-                } else if (elementDescriptor.isArrayOfTables) {
-                    val annotations = descriptor.getElementAnnotations(index).filterIsInstance<TomlBlockArray>()
-                    if (annotations.isNotEmpty()) {
-                        writer.writeKey(key)
-                        blockArrayAnnotation = annotations[0]
+            when {
+                inlineChild -> {
+                    writer.writeKey(key)
+                }
+                structuredChild -> {
+                    if (elementDescriptor.isTable) {
+                        writer.writeLineFeed()
+                        writer.writeString("[$currentChildPath]")
+                        writer.writeLineFeed()
+                    } else if (elementDescriptor.isArrayOfTables) {
+                        val annotations = descriptor.getElementAnnotations(index)
+                            .filterIsInstance<TomlBlockArray>()
+                        if (annotations.isNotEmpty()) {
+                            writer.writeKey(key)
+                            blockArrayAnnotation = annotations[0]
+                        }
                     }
                 }
-            } else if (!elementDescriptor.isTable) {
-                writer.writeKey(key)
+                elementDescriptor.isTable.not() -> {
+                    writer.writeKey(key)
+                }
             }
         }
 
@@ -716,9 +747,10 @@ internal class TomlFileEncoder(
             if (isKey) {
                 storeKey(value)
             } else {
+                val valueKind = valueDescriptor.kind
                 if (value.isNullLike) {
                     appendKeyDirectly()
-                } else if (valueDescriptor.kind != LIST && valueDescriptor.kind != MAP) {
+                } else if (valueKind != LIST && valueKind != MAP) {
                     appendKey() // For non-null collections, defer to beginCollection() below.
                 }
                 serializer.serialize(this, value)
@@ -736,7 +768,7 @@ internal class TomlFileEncoder(
         }
 
         override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
-            if (!descriptor.isArrayOfTables) {
+            if (descriptor.isArrayOfTables.not()) {
                 appendKey()
             } else if (collectionSize == 0) {
                 if (currentElementIndex != 1) {
@@ -748,18 +780,22 @@ internal class TomlFileEncoder(
         }
 
         private fun appendKey() {
-            if (inlineChild) {
-                appendKeyDirectly()
-            } else if (structuredChild) {
-                if (valueDescriptor.isTable) {
-                    writer.writeLineFeed()
-                    writer.writeString("[$currentChildPath]")
-                    writer.writeLineFeed()
-                } else {
-                    writer.writeKey(key)
+            when {
+                inlineChild -> {
+                    appendKeyDirectly()
                 }
-            } else if (!valueDescriptor.isTable) {
-                writer.writeKey(currentChildPath)
+                structuredChild -> {
+                    if (valueDescriptor.isTable) {
+                        writer.writeLineFeed()
+                        writer.writeString("[$currentChildPath]")
+                        writer.writeLineFeed()
+                    } else {
+                        writer.writeKey(key)
+                    }
+                }
+                valueDescriptor.isTable.not() -> {
+                    writer.writeKey(currentChildPath)
+                }
             }
         }
 
@@ -780,13 +816,16 @@ private val SerialDescriptor.isTableLike: Boolean
     get() = isTable || isArrayOfTables
 
 private val SerialDescriptor.isTable: Boolean
-    get() = kind == CLASS || kind == MAP
+    get() {
+        val kind = kind
+        return kind == CLASS || kind == MAP
+    }
 
 private val SerialDescriptor.isArrayOfTables: Boolean
     get() = kind == LIST && getElementDescriptor(0).isTable
 
 private val SerialDescriptor.isExactlyTomlTable: Boolean
-    get() = serialName.removeSuffix("?") == TomlTableSerializer.descriptor.serialName
+    get() = serialName.removeSuffix("?") == TomlTable.serializer().descriptor.serialName
 
 private val Any?.isNullLike: Boolean
     get() = this == null || this == TomlNull
@@ -795,7 +834,7 @@ private fun calculateStructuredIndex(descriptor: SerialDescriptor): Int {
     var structuredIndex = 0
     for (i in descriptor.elementsCount - 1 downTo 0) {
         val elementDescriptor = descriptor.getElementDescriptor(i)
-        if (descriptor.forceInlineAt(i) || !elementDescriptor.isTableLike) {
+        if (descriptor.forceInlineAt(i) || elementDescriptor.isTableLike.not()) {
             structuredIndex = i + 1
             break
         }

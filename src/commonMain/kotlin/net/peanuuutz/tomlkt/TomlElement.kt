@@ -633,12 +633,10 @@ private tailrec fun TomlTable.getByPathRecursively(
     index: Int
 ): TomlElement? {
     val value = get(keys[index])
-    return if (index == keys.lastIndex) {
-        value
-    } else if (value is TomlTable) {
-        value.getByPathRecursively(keys, index + 1)
-    } else {
-        null
+    return when {
+        index == keys.lastIndex -> value
+        value is TomlTable -> value.getByPathRecursively(keys, index + 1)
+        else -> null
     }
 }
 

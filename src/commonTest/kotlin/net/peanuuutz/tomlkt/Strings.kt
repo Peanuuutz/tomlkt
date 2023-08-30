@@ -208,3 +208,10 @@ internal const val externalModule: String = """
     name = "example"
     id = 4321234
 """
+
+internal const val dateTimes: String = """
+    local-date-time = 2020-01-01T20:00.5
+    offset-date-time = 1999-09-09T09:09:09.999999-09:00
+    local-date = 2020-01-01
+    local-time = 09:09:09.999999
+"""

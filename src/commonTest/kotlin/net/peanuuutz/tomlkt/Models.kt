@@ -131,10 +131,9 @@ object StringOrColorSerializer : KSerializer<Any> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor("SOC", SerialKind.CONTEXTUAL)
 
     override fun serialize(encoder: Encoder, value: Any) {
-        if (value is String) {
-            String.serializer().serialize(encoder, value)
-        } else if (value is Color) {
-            Color.serializer().serialize(encoder, value)
+        when (value) {
+            is String -> String.serializer().serialize(encoder, value)
+            is Color -> Color.serializer().serialize(encoder, value)
         }
     }
 
