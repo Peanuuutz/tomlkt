@@ -88,7 +88,9 @@ private tailrec fun KeyNode.addByPathRecursively(
                 add(intermediate)
                 intermediate.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
             }
-            is KeyNode -> child.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
+            is KeyNode -> {
+                child.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
+            }
             is ArrayNode -> {
                 require(arrayOfTableIndices != null)
                 val currentPath = path.subList(0, index + 1)
@@ -96,7 +98,9 @@ private tailrec fun KeyNode.addByPathRecursively(
                 val grandChild = child[childIndex]
                 grandChild.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
             }
-            is ValueNode -> throw ConflictEntryException(path)
+            is ValueNode -> {
+                throw ConflictEntryException(path)
+            }
         }
     }
 }
@@ -104,7 +108,9 @@ private tailrec fun KeyNode.addByPathRecursively(
 internal fun <N : TreeNode> KeyNode.getByPath(
     path: Path,
     arrayOfTableIndices: Map<Path, Int>?
-): N = getByPathRecursively(path, arrayOfTableIndices, 0)
+): N {
+    return getByPathRecursively(path, arrayOfTableIndices, 0)
+}
 
 private tailrec fun <N : TreeNode> KeyNode.getByPathRecursively(
     path: Path,
@@ -117,8 +123,12 @@ private tailrec fun <N : TreeNode> KeyNode.getByPathRecursively(
         child as? N ?: error("Node on $path not found")
     } else {
         when (child) {
-            null, is ValueNode -> error("Node on $path not found")
-            is KeyNode -> child.getByPathRecursively<N>(path, arrayOfTableIndices, index + 1)
+            null, is ValueNode -> {
+                error("Node on $path not found")
+            }
+            is KeyNode -> {
+                child.getByPathRecursively<N>(path, arrayOfTableIndices, index + 1)
+            }
             is ArrayNode -> {
                 require(arrayOfTableIndices != null)
                 val currentPath = path.subList(0, index + 1)
