@@ -1,0 +1,25 @@
+name: Publish
+
+on: workflow_dispatch
+
+env:
+  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_USERNAME }}
+  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_PASSWORD }}
+  ORG_GRADLE_PROJECT_inMemorySigningKey: ${{ secrets.SIGNING_KEY }}
+  ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: corretto
+      - name: Grant Gradle Wrapper Permission
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew publish --stacktrace
