@@ -180,10 +180,16 @@ You can use both annotations to get multiline literal string.
 
 TOML supports several date time formats, so does tomlkt. tomlkt declares `TomlLocalDateTime`,
 `TomlOffsetDateTime`, `TomlLocalDate`, `TomlLocalTime` as expect types with builtin support for
-serialization (`@Serializable`). For JVM, these are aliases to those from `java.time` package,
-named `LocalDateTime`, `OffsetDateTime`, `LocalDate`, `LocalTime` respectively. For other
-platforms, `kotlinx.datetime` dependency is required, and these types are mapped to
-`LocalDateTime`, `Instant`, `LocalDate`, `LocalTime`.
+serialization (`@Serializable`).
+
+The mapping of these expect types are as follows:
+
+| tomlkt             | java.time      | kotlinx.datetime |
+|--------------------|----------------|------------------|
+| TomlLocalDateTime  | LocalDateTime  | LocalDateTime    |
+| TomlOffsetDateTime | OffsetDateTime | Instant          |
+| TomlLocalDate      | LocalDate      | LocalDate        |
+| TomlLocalTime      | LocalTime      | LocalTime        |
 
 [TomlLiteral](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt) is the default intermediate representation of a date time. For conversion,
 simply use `TomlLiteral(TomlLocalDateTime)` to create a `TomlLiteral` from a `TomlLocalDateTime`
