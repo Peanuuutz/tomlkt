@@ -19,7 +19,7 @@ package net.peanuuutz.tomlkt
 import kotlinx.serialization.SerialInfo
 
 /**
- * Add comments to corresponding property.
+ * Adds comments to corresponding property.
  *
  * ```kotlin
  * class IntData(
@@ -40,14 +40,14 @@ import kotlinx.serialization.SerialInfo
  * int = 10086
  * ```
  *
- * @property text the comment texts.
+ * @property text the comment text.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlComment(val text: String)
 
 /**
- * Force inline the corresponding array-like or table-like property.
+ * Forces the corresponding array-like or table-like property to be a one-liner.
  *
  * ```kotlin
  * class Data(
@@ -69,17 +69,17 @@ public annotation class TomlComment(val text: String)
  * b = "another thing"
  * ```
  *
- * Without @TomlInline, both of the two properties will act like how
- * noInlineProperty behaves.
+ * Without `@TomlInline`, both of these two properties will act like how
+ * `noInlineProperty` behaves.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInline
 
 /**
- * Modify the encoding of corresponding array-like property, either to force
- * array of tables to be encoded as block array, or to change how many items
- * will be encoded per line (will override
+ * Modifies the encoding process of corresponding array-like property, either to
+ * force array of tables to be encoded as block array, or to change how many
+ * items will be encoded per line (will override
  * [TomlConfig][TomlConfigBuilder.itemsPerLineInBlockArray]).
  *
  * Note: If the corresponding property is marked [TomlInline], this annotation
@@ -107,7 +107,7 @@ public annotation class TomlInline
 public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 
 /**
- * Mark the corresponding [String] property as multiline when encoded.
+ * Marks the corresponding [String] property as multiline when encoded.
  *
  * ```kotlin
  * class MultilineStringData(
@@ -133,7 +133,7 @@ public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 public annotation class TomlMultilineString
 
 /**
- * Mark the corresponding [String] property as literal when encoded.
+ * Marks the corresponding [String] property as literal when encoded.
  *
  * ```kotlin
  * class LiteralStringData(
@@ -154,7 +154,7 @@ public annotation class TomlMultilineString
 public annotation class TomlLiteralString
 
 /**
- * Set the representation of the corresponding [Byte], [Short], [Int], [Long]
+ * Sets the representation of the corresponding [Byte], [Short], [Int], [Long]
  * property.
  *
  * ```kotlin
@@ -175,7 +175,7 @@ public annotation class TomlLiteralString
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInteger(val base: Base) {
     /**
-     * Representation of a [TOML integer](https://toml.io/en/v1.0.0#integer).
+     * The representation of a [TOML integer](https://toml.io/en/v1.0.0#integer).
      */
     public enum class Base(
         public val value: Int,

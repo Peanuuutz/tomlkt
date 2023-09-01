@@ -29,7 +29,7 @@ public interface TomlEncoder : Encoder {
 }
 
 /**
- * More convenient approach to cast [this] Decoder to [TomlEncoder].
+ * More convenient approach to cast [this] Encoder to [TomlEncoder].
  */
 public fun Encoder.asTomlEncoder(): TomlEncoder {
     return this as? TomlEncoder ?: error("Expect TomlEncoder, but found ${this::class.simpleName}")

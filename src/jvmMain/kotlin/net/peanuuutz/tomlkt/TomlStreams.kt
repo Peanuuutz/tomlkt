@@ -8,7 +8,7 @@ import java.io.OutputStream
 /**
  * Serializes [value] into [outputStream] using [serializer].
  *
- * @throws TomlEncodingException when [value] cannot be serialized.
+ * @throws TomlEncodingException if `value` cannot be serialized.
  *
  * @see TomlStreamWriter
  */
@@ -29,7 +29,7 @@ public fun <T> Toml.encodeToStream(
  * Serializes [value] into [outputStream] using serializer retrieved from
  * reified type parameter.
  *
- * @throws TomlEncodingException when [value] cannot be serialized.
+ * @throws TomlEncodingException if `value` cannot be serialized.
  *
  * @see TomlStreamWriter
  */

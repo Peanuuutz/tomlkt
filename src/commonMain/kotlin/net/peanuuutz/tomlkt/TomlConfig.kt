@@ -22,12 +22,11 @@ import net.peanuuutz.tomlkt.internal.UnknownKeyException
 import kotlin.jvm.JvmInline
 
 /**
- * Builder provided for `Toml { ... }` factory function.
+ * The builder for `Toml { ... }` factory function.
  */
 public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConfig) {
     /**
-     * SerializersModule with contextual serializers to be used in the Toml
-     * instance.
+     * The [SerializersModule] to be used in the [Toml] instance.
      *
      * [EmptySerializersModule] by default.
      */
@@ -36,14 +35,14 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     // -------- Serialization --------
 
     /**
-     * Specifies how indentation presents in string output.
+     * Specifies the indentation representation in string output.
      *
      * [4 spaces][TomlIndentation.Space4] by default.
      */
     public var indentation: TomlIndentation = from.indentation
 
     /**
-     * Specifies how many items are encoded per line in block array.
+     * Specifies how many items are encoded per line in block array by default.
      *
      * 1 by default.
      */
@@ -73,9 +72,9 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
 /**
  * Indicates indentation representation in string output.
  *
- * Ideally, users are supposed to use only spaces or tabs as representation.
+ * Ideally, programmer is supposed to use only spaces or tabs.
  *
- * @property representation the string form of this TomlIndentation.
+ * @property representation the string form of this `TomlIndentation`.
  */
 @JvmInline
 public value class TomlIndentation(public val representation: String) {

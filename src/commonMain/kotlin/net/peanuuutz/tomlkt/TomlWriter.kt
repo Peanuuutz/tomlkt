@@ -17,7 +17,7 @@
 package net.peanuuutz.tomlkt
 
 /**
- * A custom writer used when encoding Model class or [TomlElement] to the output.
+ * A custom writer used when encoding model class or [TomlElement].
  *
  * @see [TomlStringWriter]
  */
