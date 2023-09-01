@@ -1,11 +1,12 @@
-# Tomlkt
+# tomlkt
 
 [![Maven Central](https://img.shields.io/maven-central/v/net.peanuuutz.tomlkt/tomlkt)](https://search.maven.org/artifact/net.peanuuutz.tomlkt/tomlkt)
 [![License](https://img.shields.io/github/license/Peanuuutz/tomlkt)](http://www.apache.org/licenses/LICENSE-2.0)
 
-Lightweight and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML](https://toml.io/) serialization and deserialization.
+Lightweight and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML](https://toml.io/) serialization and
+deserialization.
 
-*This project is in alpha state. If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt/issues).* :wink:
+*If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt/issues).* :wink:
 
 ## Setup
 
@@ -18,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.peanuuutz.tomlkt:tomlkt:0.2.0")
+    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.0")
 }
 ```
 </details>
@@ -32,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.peanuuutz.tomlkt:tomlkt:0.2.0"
+    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.0"
 }
 ```
 </details>
@@ -44,12 +45,13 @@ dependencies {
 <dependency>
   <groupId>net.peanuuutz.tomlkt</groupId>
   <artifactId>tomlkt-jvm</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 </details>
 
-*Note: If your project is Kotlin Multiplatform, you can simply add this into commonMain dependencies.*
+*Note: If your project is Kotlin Multiplatform, you can simply add this into commonMain
+dependencies.*
 
 ## Quick Start
 
@@ -79,43 +81,43 @@ data class Account(
 )
 
 fun main() {
-    // Here we use JVM
+    // Here we use JVM.
     val tomlString = Paths.get("...").readText()
-    // Either is OK, but to explicitly pass a serializer is faster
+    // Either is OK, but to explicitly pass a serializer is faster.
     val user = Toml.decodeFromString(User.serializer(), tomlString)
     val user = Toml.decodeFromString<User>(tomlString)
     // That's it!
 
-    // By the way if you need some configuration
+    // By the way if you need some configuration.
     val toml = Toml {
         ignoreUnknownKeys = true
     }
-    // Use toml instead of Toml.Default to apply the change
+    // Use toml to apply the change.
 
-    // Serialization
+    // Serialization.
     val anotherUser = User("Anonymous", null)
-    // Again, better to explicitly pass a serializer
+    // Again, better to explicitly pass a serializer.
     val config = Toml.encodeToString(User.serializer(), anotherUser)
     Paths.get("...").writeText(config)
-    // Done
+    // Done.
 }
 ```
 
 ## Features
 
-|TOML format|Serialization|Deserialization|
-|---|---|---|
-|[Comment](#Comment)|:heavy_check_mark:|:heavy_check_mark:|
-|Key|:heavy_check_mark:|:heavy_check_mark:|
-|[String](#String)|:heavy_check_mark:|:heavy_check_mark:|
-|Integer|:heavy_check_mark:|:heavy_check_mark:|
-|Float|:heavy_check_mark:|:heavy_check_mark:|
-|Boolean|:heavy_check_mark:|:heavy_check_mark:|
-|[Date Time](#Date-Time)|:x:|:x:|
-|Array|:heavy_check_mark:|:heavy_check_mark:|
-|[Table](#Table)|:heavy_check_mark::grey_question:|:heavy_check_mark::grey_question:|
-|Inline Table|:heavy_check_mark:|:heavy_check_mark:|
-|Array of Tables|:heavy_check_mark:|:heavy_check_mark:|
+| TOML format             | Serialization                     | Deserialization                   |
+|-------------------------|-----------------------------------|-----------------------------------|
+| [Comment](#Comment)     | :heavy_check_mark:                | :heavy_check_mark:                |
+| Key                     | :heavy_check_mark:                | :heavy_check_mark:                |
+| [String](#String)       | :heavy_check_mark:                | :heavy_check_mark:                |
+| Integer                 | :heavy_check_mark:                | :heavy_check_mark:                |
+| Float                   | :heavy_check_mark:                | :heavy_check_mark:                |
+| Boolean                 | :heavy_check_mark:                | :heavy_check_mark:                |
+| [Date Time](#Date-Time) | :heavy_check_mark:                | :heavy_check_mark:                |
+| Array                   | :heavy_check_mark:                | :heavy_check_mark:                |
+| [Table](#Table)         | :heavy_check_mark::grey_question: | :heavy_check_mark::grey_question: |
+| Inline Table            | :heavy_check_mark:                | :heavy_check_mark:                |
+| Array of Tables         | :heavy_check_mark:                | :heavy_check_mark:                |
 
 ### Comment
 
@@ -142,7 +144,8 @@ int = 10086
 
 ### String
 
-Basic strings are encoded as `"<content>"`. For multilines and literals, put an annotation as below:
+Basic strings are encoded as `"<content>"`. For multilines and literals, put an annotation as
+below:
 
 ```kotlin
 class MultilineStringData(
@@ -175,15 +178,25 @@ You can use both annotations to get multiline literal string.
 
 ### Date Time
 
-_**Because Kotlin Multiplatform doesn't support this without [additional library](https://github.com/Kotlin/kotlinx-datetime), currently tomlkt doesn't support as well.**_
+TOML supports several date time formats, so does tomlkt. tomlkt declares `TomlLocalDateTime`,
+`TomlOffsetDateTime`, `TomlLocalDate`, `TomlLocalTime` as expect types with builtin support for
+serialization (`@Serializable`). For JVM, these are aliases to those from `java.time` package,
+named `LocalDateTime`, `OffsetDateTime`, `LocalDate`, `LocalTime` respectively. For other
+platforms, `kotlinx.datetime` dependency is required, and these types are mapped to
+`LocalDateTime`, `Instant`, `LocalDate`, `LocalTime`.
 
-<font color = 'gray'>*Maybe some day we'll support it for JVM.*</font>:thinking:
+[TomlLiteral](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt) is the default intermediate representation of a date time. For conversion,
+simply use `TomlLiteral(TomlLocalDateTime)` to create a `TomlLiteral` from a `TomlLocalDateTime`
+(true for other types), and `TomlLiteral.toLocalDateTime()` for the other way.
+
+If you'd like to provide a custom serializer, use `NativeLocalDateTime` and the like as raw types.
 
 ### Table
 
 :grey_question:: **Currently `PolymorphicKind`s are NOT supported.**
 
-<font color = 'gray'>*(Anyway, to flatten it is better because TOML is actually not for serialization but for configuration)*</font>
+<font color = 'gray'>*(Anyway, to flatten it is better because TOML is actually not for
+serialization but for configuration)*</font>
 
 :grey_question:: There's an internal issue. When you define super-table **before** the sub-table:
 
@@ -199,17 +212,22 @@ It will be successfully parsed, but if you define after that:
 [x]
 ```
 
-It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the reading process of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into the whole [Tree](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined. :face_with_head_bandage:
+It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the reading process
+of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into
+the whole [Tree](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined. :face_with_head_bandage:
 
 ### Extra features
 
 The working process of tomlkt:
 
-* Serialization: Model / TomlElement → (TomlFileEncoder) → File(String); Model → (TomlElementEncoder) → TomlElement
+* Serialization: Model / TomlElement → (TomlFileEncoder) → File(String); Model →
+(TomlElementEncoder) → TomlElement
 * Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model
 
-As you see, if you already have a TOML file, you can have no model class, but still gain access to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
+As you see, if you already have a TOML file, you can have no model class, but still gain access
+to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
 
-*Note: Due to no context of values in TomlTable(see TomlElement.kt), all of those are encoded as inline(meaning you can't get the same serialized structure between model class and TomlTable).*
+*Note: Due to no context of values in TomlTable(see TomlElement.kt), all of those are encoded as
+inline(meaning you can't get the same serialized structure between model class and TomlTable).*
 
 For other information, view [API docs](https://peanuuutz.github.io/tomlkt/).

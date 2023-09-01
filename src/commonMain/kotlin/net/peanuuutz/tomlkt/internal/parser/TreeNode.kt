@@ -46,14 +46,14 @@ internal class KeyNode(key: String) : TreeNode(key) {
 }
 
 internal class ArrayNode(key: String) : TreeNode(key) {
-    val array: MutableList<KeyNode> = mutableListOf()
+    val children: MutableList<KeyNode> = mutableListOf()
 
     fun add(node: KeyNode): Boolean {
-        return array.add(node)
+        return children.add(node)
     }
 
     operator fun get(index: Int): KeyNode {
-        return array[index]
+        return children[index]
     }
 }
 

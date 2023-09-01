@@ -6,11 +6,11 @@ import java.time.LocalDateTime as JvmLocalDateTime
 import java.time.LocalTime as JvmLocalTime
 import java.time.OffsetDateTime as JvmOffsetDateTime
 
-// -------- LocalDateTime --------
+// -------- NativeLocalDateTime --------
 
-public actual typealias LocalDateTime = JvmLocalDateTime
+public actual typealias NativeLocalDateTime = JvmLocalDateTime
 
-public actual fun LocalDateTime(text: String): LocalDateTime {
+public actual fun NativeLocalDateTime(text: String): NativeLocalDateTime {
     return try {
         JvmLocalDateTime.parse(text)
     } catch (e: DateTimeParseException) {
@@ -18,11 +18,11 @@ public actual fun LocalDateTime(text: String): LocalDateTime {
     }
 }
 
-// -------- OffsetDateTime --------
+// -------- NativeOffsetDateTime --------
 
-public actual typealias OffsetDateTime = JvmOffsetDateTime
+public actual typealias NativeOffsetDateTime = JvmOffsetDateTime
 
-public actual fun OffsetDateTime(text: String): OffsetDateTime {
+public actual fun NativeOffsetDateTime(text: String): NativeOffsetDateTime {
     return try {
         JvmOffsetDateTime.parse(text)
     } catch (e: DateTimeParseException) {
@@ -30,11 +30,11 @@ public actual fun OffsetDateTime(text: String): OffsetDateTime {
     }
 }
 
-// -------- LocalDate --------
+// -------- NativeLocalDate --------
 
-public actual typealias LocalDate = JvmLocalDate
+public actual typealias NativeLocalDate = JvmLocalDate
 
-public actual fun LocalDate(text: String): LocalDate {
+public actual fun NativeLocalDate(text: String): NativeLocalDate {
     return try {
         JvmLocalDate.parse(text)
     } catch (e: DateTimeParseException) {
@@ -42,11 +42,11 @@ public actual fun LocalDate(text: String): LocalDate {
     }
 }
 
-// -------- LocalTime --------
+// -------- NativeLocalTime --------
 
-public actual typealias LocalTime = JvmLocalTime
+public actual typealias NativeLocalTime = JvmLocalTime
 
-public actual fun LocalTime(text: String): LocalTime {
+public actual fun NativeLocalTime(text: String): NativeLocalTime {
     return try {
         JvmLocalTime.parse(text)
     } catch (e: DateTimeParseException) {

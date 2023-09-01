@@ -159,7 +159,7 @@ public annotation class TomlLiteralString
  *
  * ```kotlin
  * class ByteCode(
- *     @TomlInteger(TomlInteger.Base.BIN)
+ *     @TomlInteger(TomlInteger.Base.Bin)
  *     val code: Byte
  * )
  * ByteCode(0b1101)
@@ -181,9 +181,33 @@ public annotation class TomlInteger(val base: Base) {
         public val value: Int,
         public val prefix: String
     ) {
+        Dec(10, ""),
+        Hex(16, "0x"),
+        Bin(2, "0b"),
+        Oct(8, "0o"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Dec")
+        )
         DEC(10, ""),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Hex")
+        )
         HEX(16, "0x"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Bin")
+        )
         BIN(2, "0b"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Oct")
+        )
         OCT(8, "0o");
     }
 }

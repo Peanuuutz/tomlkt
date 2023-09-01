@@ -27,7 +27,6 @@ import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.toTomlKey
 import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlBlockArray
 import net.peanuuutz.tomlkt.TomlComment
@@ -43,6 +42,7 @@ import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlSpecific
 import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.TomlWriter
+import net.peanuuutz.tomlkt.toTomlKey
 
 @OptIn(TomlSpecific::class)
 internal class TomlFileEncoder(

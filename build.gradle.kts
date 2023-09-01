@@ -75,7 +75,7 @@ kotlin {
             dependsOn(commonMain)
 
             dependencies {
-                compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:$datetimeVersion")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$datetimeVersion")
             }
         }
 

@@ -1,6 +1,6 @@
 package net.peanuuutz.tomlkt
 
-import net.peanuuutz.tomlkt.internal.LINE_FEED_CODE
+import net.peanuuutz.tomlkt.internal.LineFeedCode
 import java.io.OutputStream
 
 /**
@@ -29,6 +29,6 @@ public class TomlStreamWriter(
     }
 
     override fun writeLineFeed() {
-        outputStream.write(LINE_FEED_CODE)
+        outputStream.write(LineFeedCode)
     }
 }

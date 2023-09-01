@@ -174,30 +174,30 @@ public fun TomlLiteral(value: String): TomlLiteral {
 }
 
 /**
- * Creates [TomlLiteral] from the given `LocalDateTime` [value].
+ * Creates [TomlLiteral] from the given `TomlLocalDateTime` [value].
  */
-public fun TomlLiteral(value: LocalDateTime): TomlLiteral {
+public fun TomlLiteral(value: TomlLocalDateTime): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates [TomlLiteral] from the given `OffsetDateTime` [value].
+ * Creates [TomlLiteral] from the given `TomlOffsetDateTime` [value].
  */
-public fun TomlLiteral(value: OffsetDateTime): TomlLiteral {
+public fun TomlLiteral(value: TomlOffsetDateTime): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates [TomlLiteral] from the given `LocalDate` [value].
+ * Creates [TomlLiteral] from the given `TomlLocalDate` [value].
  */
-public fun TomlLiteral(value: LocalDate): TomlLiteral {
+public fun TomlLiteral(value: TomlLocalDate): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates [TomlLiteral] from the given `LocalTime` [value].
+ * Creates [TomlLiteral] from the given `TomlLocalTime` [value].
  */
-public fun TomlLiteral(value: LocalTime): TomlLiteral {
+public fun TomlLiteral(value: TomlLocalTime): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
@@ -369,20 +369,20 @@ public fun TomlLiteral.toCharOrNull(): Char? {
 }
 
 /**
- * Returns content as parsed `LocalDateTime`.
+ * Returns content as parsed [TomlLocalDateTime].
  *
  * @throws IllegalArgumentException if content cannot be parsed into
- * `LocalDateTime`.
+ * `TomlLocalDateTime`.
  */
-public fun TomlLiteral.toLocalDateTime(): LocalDateTime {
-    return LocalDateTime(content)
+public fun TomlLiteral.toLocalDateTime(): TomlLocalDateTime {
+    return NativeLocalDateTime(content)
 }
 
 /**
- * Returns content as `LocalDateTime` only if content can be parsed into it,
+ * Returns content as [TomlLocalDateTime] only if content can be parsed into it,
  * otherwise null.
  */
-public fun TomlLiteral.toLocalDateTimeOrNull(): LocalDateTime? {
+public fun TomlLiteral.toLocalDateTimeOrNull(): TomlLocalDateTime? {
     return try {
         toLocalDateTime()
     } catch (e: IllegalArgumentException) {
@@ -391,20 +391,20 @@ public fun TomlLiteral.toLocalDateTimeOrNull(): LocalDateTime? {
 }
 
 /**
- * Returns content as parsed `OffsetDateTime`.
+ * Returns content as parsed [TomlOffsetDateTime].
  *
  * @throws IllegalArgumentException if content cannot be parsed into
- * `OffsetDateTime`.
+ * `TomlOffsetDateTime`.
  */
-public fun TomlLiteral.toOffsetDateTime(): OffsetDateTime {
-    return OffsetDateTime(content)
+public fun TomlLiteral.toOffsetDateTime(): TomlOffsetDateTime {
+    return NativeOffsetDateTime(content)
 }
 
 /**
- * Returns content as `OffsetDateTime` only if content can be parsed into it,
+ * Returns content as [TomlOffsetDateTime] only if content can be parsed into it,
  * otherwise null.
  */
-public fun TomlLiteral.toOffsetDateTimeOrNull(): OffsetDateTime? {
+public fun TomlLiteral.toOffsetDateTimeOrNull(): TomlOffsetDateTime? {
     return try {
         toOffsetDateTime()
     } catch (e: IllegalArgumentException) {
@@ -413,19 +413,19 @@ public fun TomlLiteral.toOffsetDateTimeOrNull(): OffsetDateTime? {
 }
 
 /**
- * Returns content as parsed `LocalDate`.
+ * Returns content as parsed [TomlLocalDate].
  *
- * @throws IllegalArgumentException if content cannot be parsed into `LocalDate`.
+ * @throws IllegalArgumentException if content cannot be parsed into `TomlLocalDate`.
  */
-public fun TomlLiteral.toLocalDate(): LocalDate {
-    return LocalDate(content)
+public fun TomlLiteral.toLocalDate(): TomlLocalDate {
+    return NativeLocalDate(content)
 }
 
 /**
- * Returns content as `LocalDate` only if content can be parsed into it,
+ * Returns content as [TomlLocalDate] only if content can be parsed into it,
  * otherwise null.
  */
-public fun TomlLiteral.toLocalDateOrNull(): LocalDate? {
+public fun TomlLiteral.toLocalDateOrNull(): TomlLocalDate? {
     return try {
         toLocalDate()
     } catch (e: IllegalArgumentException) {
@@ -434,19 +434,19 @@ public fun TomlLiteral.toLocalDateOrNull(): LocalDate? {
 }
 
 /**
- * Returns content as parsed `LocalTime`.
+ * Returns content as parsed [TomlLocalTime].
  *
- * @throws IllegalArgumentException if content cannot be parsed into `LocalTime`.
+ * @throws IllegalArgumentException if content cannot be parsed into `TomlLocalTime`.
  */
-public fun TomlLiteral.toLocalTime(): LocalTime {
-    return LocalTime(content)
+public fun TomlLiteral.toLocalTime(): TomlLocalTime {
+    return NativeLocalTime(content)
 }
 
 /**
- * Returns content as `LocalTime` only if content can be parsed into it,
+ * Returns content as [TomlLocalTime] only if content can be parsed into it,
  * otherwise null.
  */
-public fun TomlLiteral.toLocalTimeOrNull(): LocalTime? {
+public fun TomlLiteral.toLocalTimeOrNull(): TomlLocalTime? {
     return try {
         toLocalTime()
     } catch (e: IllegalArgumentException) {
@@ -530,7 +530,8 @@ public fun TomlElement.toTomlArray(): TomlArray {
  * Creates [TomlArray] from the given iterable [value].
  */
 public fun TomlArray(value: Iterable<*>): TomlArray {
-    return TomlArray(value.map(Any?::toTomlElement))
+    val content = value.map(Any?::toTomlElement)
+    return TomlArray(content)
 }
 
 // -------- TomlTable --------
@@ -611,11 +612,14 @@ public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
 
 // ======== Internal ========
 
+internal fun TomlArray(value: ArrayNode): TomlArray {
+    val content = value.children.map(TreeNode::toTomlElement)
+    return TomlArray(content)
+}
+
 internal fun TomlTable(value: KeyNode): TomlTable {
-    val content = buildMap(value.children.size) {
-        for (node in value.children) {
-            put(node.key, node.toTomlElement())
-        }
+    val content = value.children.associate { node ->
+        node.key to node.toTomlElement()
     }
     return TomlTable(content)
 }
@@ -623,7 +627,7 @@ internal fun TomlTable(value: KeyNode): TomlTable {
 private fun TreeNode.toTomlElement(): TomlElement {
     return when (this) {
         is KeyNode -> TomlTable(this)
-        is ArrayNode -> TomlArray(array)
+        is ArrayNode -> TomlArray(this)
         is ValueNode -> value
     }
 }
@@ -661,10 +665,10 @@ private fun Any?.toTomlElement(): TomlElement {
         is Double -> TomlLiteral(this)
         is Char -> TomlLiteral(this)
         is String -> TomlLiteral(this)
-        is LocalDateTime -> TomlLiteral(this)
-        is OffsetDateTime -> TomlLiteral(this)
-        is LocalDate -> TomlLiteral(this)
-        is LocalTime -> TomlLiteral(this)
+        is NativeLocalDateTime -> TomlLiteral(this)
+        is NativeOffsetDateTime -> TomlLiteral(this)
+        is NativeLocalDate -> TomlLiteral(this)
+        is NativeLocalTime -> TomlLiteral(this)
         is BooleanArray -> TomlArray(this.asIterable())
         is ByteArray -> TomlArray(this.asIterable())
         is ShortArray -> TomlArray(this.asIterable())
