@@ -36,7 +36,7 @@ import net.peanuuutz.tomlkt.toTomlKey
 @OptIn(TomlSpecific::class)
 internal class TomlElementEncoder(
     private val config: TomlConfig,
-    override val serializersModule: SerializersModule = config.serializersModule
+    override val serializersModule: SerializersModule
 ) : Encoder, TomlEncoder {
     lateinit var element: TomlElement
 
@@ -99,23 +99,25 @@ internal class TomlElementEncoder(
     private inline fun beginStructure(
         descriptor: SerialDescriptor,
         elementConsumer: (TomlElement) -> Unit
-    ) : CompositeEncoder = when (descriptor.kind) {
-        StructureKind.CLASS, StructureKind.OBJECT -> {
-            val builder = mutableMapOf<String, TomlElement>()
-            elementConsumer(TomlTable(builder))
-            ClassEncoder(builder)
+    ) : CompositeEncoder {
+        return when (descriptor.kind) {
+            StructureKind.CLASS, StructureKind.OBJECT -> {
+                val builder = mutableMapOf<String, TomlElement>()
+                elementConsumer(TomlTable(builder))
+                ClassEncoder(builder)
+            }
+            StructureKind.LIST -> {
+                val builder = mutableListOf<TomlElement>()
+                elementConsumer(TomlArray(builder))
+                ArrayEncoder(builder)
+            }
+            StructureKind.MAP -> {
+                val builder = mutableMapOf<String, TomlElement>()
+                elementConsumer(TomlTable(builder))
+                MapEncoder(builder)
+            }
+            else -> throw UnsupportedSerialKindException(descriptor.kind)
         }
-        StructureKind.LIST -> {
-            val builder = mutableListOf<TomlElement>()
-            elementConsumer(TomlArray(builder))
-            ArrayEncoder(builder)
-        }
-        StructureKind.MAP -> {
-            val builder = mutableMapOf<String, TomlElement>()
-            elementConsumer(TomlTable(builder))
-            MapEncoder(builder)
-        }
-        else -> throw UnsupportedSerialKindException(descriptor.kind)
     }
 
     internal abstract inner class AbstractEncoder : Encoder, CompositeEncoder, TomlEncoder {

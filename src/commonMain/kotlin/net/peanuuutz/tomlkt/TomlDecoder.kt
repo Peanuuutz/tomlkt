@@ -19,8 +19,9 @@ package net.peanuuutz.tomlkt
 import kotlinx.serialization.encoding.Decoder
 
 /**
- * A special [Decoder] which is used internally by decoding process of [Toml], providing an extra
- * [decodeTomlElement] to decode [TomlElement] from the current position.
+ * A special [Decoder] which is used internally by decoding process of [Toml],
+ * providing an extra [decodeTomlElement] to decode [TomlElement] from the
+ * current position.
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlDecoder : Decoder {

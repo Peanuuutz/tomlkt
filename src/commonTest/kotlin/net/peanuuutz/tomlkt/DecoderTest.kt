@@ -4,14 +4,14 @@ import kotlinx.serialization.builtins.serializer
 import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 class DecoderTest {
     @Test
     fun parseTomlInteger() {
-        val integers = Toml.parseToTomlTable(integers)
+        val (integers, time) = measureTimedValue { Toml.parseToTomlTable(integers) }
         printIfDebug(integers)
+        printIfDebug(time)
         assertEquals(integers["two"]?.toTomlLiteral()?.toIntOrNull(), 4)
         assertEquals(integers["eight"]?.toTomlLiteral()?.toIntOrNull(), 64)
         assertEquals(integers["ten"]?.toTomlLiteral()?.toIntOrNull(), -100)
@@ -19,9 +19,33 @@ class DecoderTest {
     }
 
     @Test
+    fun parseDateTime() {
+        val (dateTimes, time) = measureTimedValue { Toml.parseToTomlTable(dateTimes) }
+        printIfDebug(dateTimes)
+        printIfDebug(time)
+        assertEquals(
+            expected = dateTimes["local-date-time"]?.toTomlLiteral()?.toLocalDateTimeOrNull(),
+            actual = TomlLocalDateTime("2020-01-01T20:00:00.5")
+        )
+        assertEquals(
+            expected = dateTimes["offset-date-time"]?.toTomlLiteral()?.toOffsetDateTimeOrNull(),
+            actual = TomlOffsetDateTime("1999-09-09T09:09:09.999999-09:00")
+        )
+        assertEquals(
+            expected = dateTimes["local-date"]?.toTomlLiteral()?.toLocalDateOrNull(),
+            actual = TomlLocalDate("2020-01-01")
+        )
+        assertEquals(
+            expected = dateTimes["local-time"]?.toTomlLiteral()?.toLocalTimeOrNull(),
+            actual = TomlLocalTime("09:09:09.999999")
+        )
+    }
+
+    @Test
     fun parseHugeConfig() {
-        val table = Toml.parseToTomlTable(cargo)
+        val (table, time) = measureTimedValue { Toml.parseToTomlTable(cargo) }
         printIfDebug(table)
+        printIfDebug(time)
         assertEquals(table["package", "version"]?.toTomlLiteral()?.content, "0.0.1")
     }
 
@@ -54,6 +78,13 @@ class DecoderTest {
         val score = Toml.decodeFromString(Score.serializer(), score)
         printIfDebug(score)
         assertEquals(score.scores["Listening"]?.equals(91), true)
+    }
+
+    @Test
+    fun decodeDateTime() {
+        val randomTask = Toml.decodeFromString(Task.serializer(), randomTask)
+        printIfDebug(randomTask)
+        assertEquals(randomTask, task)
     }
 
     @Test

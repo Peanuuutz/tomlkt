@@ -23,23 +23,23 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.SerialKind
-import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.buildSerialDescriptor
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.peanuuutz.tomlkt.TomlElement
-import net.peanuuutz.tomlkt.TomlNull
-import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.asTomlDecoder
 import net.peanuuutz.tomlkt.asTomlEncoder
-import net.peanuuutz.tomlkt.toTomlNull
-import net.peanuuutz.tomlkt.toTomlLiteral
 import net.peanuuutz.tomlkt.toTomlArray
+import net.peanuuutz.tomlkt.toTomlLiteral
+import net.peanuuutz.tomlkt.toTomlNull
 import net.peanuuutz.tomlkt.toTomlTable
 
 internal object TomlElementSerializer : KSerializer<TomlElement> {
@@ -89,7 +89,7 @@ internal object TomlLiteralSerializer : KSerializer<TomlLiteral> {
 
 internal object TomlArraySerializer : KSerializer<TomlArray> {
     private val delegate: KSerializer<List<TomlElement>> = ListSerializer(
-        elementSerializer = TomlElementSerializer
+        elementSerializer = TomlElement.serializer()
     )
 
     override val descriptor: SerialDescriptor = object : SerialDescriptor by delegate.descriptor {
@@ -108,7 +108,7 @@ internal object TomlArraySerializer : KSerializer<TomlArray> {
 internal object TomlTableSerializer : KSerializer<TomlTable> {
     private val delegate: KSerializer<Map<String, TomlElement>> = MapSerializer(
         keySerializer = String.serializer(),
-        valueSerializer = TomlElementSerializer
+        valueSerializer = TomlElement.serializer()
     )
 
     override val descriptor: SerialDescriptor = object : SerialDescriptor by delegate.descriptor {

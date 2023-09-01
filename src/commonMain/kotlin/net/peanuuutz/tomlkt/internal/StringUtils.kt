@@ -18,25 +18,32 @@ package net.peanuuutz.tomlkt.internal
 
 import kotlin.math.pow
 
-internal const val COMMENT = '#'
+internal const val Comment = '#'
 
-internal const val KEY_VALUE_DELIMITER = '='
+internal const val KeyValueDelimiter = '='
 
-internal const val START_ARRAY = '['
+internal const val StartArray = '['
 
-internal const val END_ARRAY = ']'
+internal const val EndArray = ']'
 
-internal const val START_TABLE = '{'
+internal const val StartTable = '{'
 
-internal const val END_TABLE = '}'
+internal const val EndTable = '}'
 
-internal val BARE_KEY_REGEX: Regex = Regex("[A-Za-z0-9_-]+")
+internal const val DecimalConstraints: String = "0123456789"
 
-internal const val DEC_CHARS: String = "0123456789"
+internal const val DecimalOrSignConstraints: String = "0123456789+-"
 
-internal const val DEC_CHARS_AND_SIGN: String = "$DEC_CHARS+-"
+internal const val BareKeyConstraints: String =
+    "abcdefghijklmnopqrstuvwxyz" + "-_" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789"
 
-internal val ASCII_MAPPING: List<String> = buildList(128) {
+internal const val DefiniteDateTimeConstraints: String = "Tt:Zz"
+
+internal const val DefiniteNumberConstraints: String = "xob.acdefABCDEF_"
+
+internal val BareKeyRegex: Regex = Regex("[A-Za-z0-9_-]+")
+
+internal val AsciiMapping: List<String> = buildList(128) {
     for (i in 0x00..0x0f) {
         add(i, "\\u000$i")
     }
@@ -54,7 +61,7 @@ internal val ASCII_MAPPING: List<String> = buildList(128) {
     set('\\'.code, "\\\\")
 }
 
-internal const val LINE_FEED_CODE: Int = '\n'.code
+internal const val LineFeedCode: Int = '\n'.code
 
 internal inline val String.singleQuoted: String
     get() = "'$this'"
@@ -63,22 +70,18 @@ internal inline val String.doubleQuoted: String
     get() = "\"$this\""
 
 internal fun String.doubleQuotedIfNotPure(): String {
-    return if (BARE_KEY_REGEX matches this) this else doubleQuoted
-}
-
-internal operator fun Regex.contains(char: Char): Boolean {
-    return this matches char.toString()
+    return if (BareKeyRegex matches this) this else doubleQuoted
 }
 
 internal fun Char.escape(multiline: Boolean = false): String {
     return when {
         code >= 128 -> toString()
-        !multiline -> ASCII_MAPPING[code]
+        !multiline -> AsciiMapping[code]
         this == '\\' -> "\\\\"
         this == '\n' -> "\n"
         this == '\t' -> "\t"
         this == '\r' -> "\r"
-        else -> ASCII_MAPPING[code]
+        else -> AsciiMapping[code]
     }
 }
 
@@ -132,7 +135,7 @@ internal fun String.unescape(): String {
             }
             'u' -> {
                 require(lastIndex >= i + 5) { "Unexpected end in $this" }
-                val index = ASCII_MAPPING.indexOf(substring(i, i + 6))
+                val index = AsciiMapping.indexOf(substring(i, i + 6))
                 if (index == -1) {
                     builder.append("\\u")
                     i++

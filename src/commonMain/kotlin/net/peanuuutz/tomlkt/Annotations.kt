@@ -22,7 +22,7 @@ import kotlinx.serialization.SerialInfo
  * Add comments to corresponding property.
  *
  * ```kotlin
- * data class IntData(
+ * class IntData(
  *     @TomlComment("""
  *         An integer,
  *         but is decoded into Long originally
@@ -46,23 +46,11 @@ import kotlinx.serialization.SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlComment(val text: String)
 
-@Deprecated(
-    message = "Multiline string is now supported",
-    replaceWith = ReplaceWith(
-        expression = "TomlComment",
-        imports = [ "net.peanuuutz.tomlkt.TomlComment" ]
-    ),
-    level = DeprecationLevel.HIDDEN
-)
-@SerialInfo
-@Target(AnnotationTarget.PROPERTY)
-public annotation class Comment(vararg val texts: String)
-
 /**
  * Force inline the corresponding array-like or table-like property.
  *
  * ```kotlin
- * data class Data(
+ * class Data(
  *     @TomlInline
  *     val inlineProperty: Map<String, String>,
  *     val noInlineProperty: Map<String, String>
@@ -81,21 +69,24 @@ public annotation class Comment(vararg val texts: String)
  * b = "another thing"
  * ```
  *
- * Without @TomlInline, both of the two properties will act like how noInlineProperty behaves.
+ * Without @TomlInline, both of the two properties will act like how
+ * noInlineProperty behaves.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInline
 
 /**
- * Modify the encoding of corresponding array-like property, either to force array of tables
- * to be encoded as block array, or to change how many items will be encoded per line
- * (will override [TomlConfig][TomlConfigBuilder.itemsPerLineInBlockArray]).
+ * Modify the encoding of corresponding array-like property, either to force
+ * array of tables to be encoded as block array, or to change how many items
+ * will be encoded per line (will override
+ * [TomlConfig][TomlConfigBuilder.itemsPerLineInBlockArray]).
  *
- * Note: If the corresponding property is marked [TomlInline], this annotation will not take effect.
+ * Note: If the corresponding property is marked [TomlInline], this annotation
+ * will not take effect.
  *
  * ```kotlin
- * data class NullablePairList<F, S>(
+ * class NullablePairList<F, S>(
  *     @TomlBlockArray(2)
  *     val list: List<Pair<F, S>?>
  * )
@@ -114,16 +105,6 @@ public annotation class TomlInline
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
-
-@Deprecated(
-    message = "Name changed",
-    replaceWith = ReplaceWith(
-        expression = "TomlInline",
-        imports = [ "net.peanuuutz.tomlkt.TomlInline" ]
-    ),
-    level = DeprecationLevel.HIDDEN
-)
-public typealias Fold = TomlInline
 
 /**
  * Mark the corresponding [String] property as multiline when encoded.
@@ -151,16 +132,6 @@ public typealias Fold = TomlInline
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlMultilineString
 
-@Deprecated(
-    message = "Name changed",
-    replaceWith = ReplaceWith(
-        expression = "TomlMultilineString",
-        imports = [ "net.peanuuutz.tomlkt.TomlMultilineString" ]
-    ),
-    level = DeprecationLevel.HIDDEN
-)
-public typealias Multiline = TomlMultilineString
-
 /**
  * Mark the corresponding [String] property as literal when encoded.
  *
@@ -182,22 +153,13 @@ public typealias Multiline = TomlMultilineString
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlLiteralString
 
-@Deprecated(
-    message = "Name changed",
-    replaceWith = ReplaceWith(
-        expression = "TomlLiteralString",
-        imports = [ "net.peanuuutz.tomlkt.TomlLiteralString" ]
-    ),
-    level = DeprecationLevel.HIDDEN
-)
-public typealias Literal = TomlLiteralString
-
 /**
- * Set the representation of the corresponding [Byte], [Short], [Int], [Long] property.
+ * Set the representation of the corresponding [Byte], [Short], [Int], [Long]
+ * property.
  *
  * ```kotlin
  * class ByteCode(
- *     @TomlInteger(TomlInteger.Base.BIN)
+ *     @TomlInteger(TomlInteger.Base.Bin)
  *     val code: Byte
  * )
  * ByteCode(0b1101)
@@ -219,9 +181,33 @@ public annotation class TomlInteger(val base: Base) {
         public val value: Int,
         public val prefix: String
     ) {
+        Dec(10, ""),
+        Hex(16, "0x"),
+        Bin(2, "0b"),
+        Oct(8, "0o"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Dec")
+        )
         DEC(10, ""),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Hex")
+        )
         HEX(16, "0x"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Bin")
+        )
         BIN(2, "0b"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Oct")
+        )
         OCT(8, "0o");
     }
 }

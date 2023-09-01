@@ -16,65 +16,77 @@
 
 package net.peanuuutz.tomlkt.internal.parser
 
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
-import net.peanuuutz.tomlkt.TomlElement
-import net.peanuuutz.tomlkt.TomlNull
-import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.NativeLocalDate
+import net.peanuuutz.tomlkt.NativeLocalDateTime
+import net.peanuuutz.tomlkt.NativeLocalTime
+import net.peanuuutz.tomlkt.NativeOffsetDateTime
 import net.peanuuutz.tomlkt.TomlArray
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.internal.BareKeyConstraints
+import net.peanuuutz.tomlkt.internal.BareKeyRegex
+import net.peanuuutz.tomlkt.internal.Comment
+import net.peanuuutz.tomlkt.internal.DecimalConstraints
+import net.peanuuutz.tomlkt.internal.DecimalOrSignConstraints
+import net.peanuuutz.tomlkt.internal.DefiniteDateTimeConstraints
+import net.peanuuutz.tomlkt.internal.DefiniteNumberConstraints
+import net.peanuuutz.tomlkt.internal.EndArray
+import net.peanuuutz.tomlkt.internal.EndTable
 import net.peanuuutz.tomlkt.internal.IncompleteException
+import net.peanuuutz.tomlkt.internal.KeyValueDelimiter
+import net.peanuuutz.tomlkt.internal.StartArray
+import net.peanuuutz.tomlkt.internal.StartTable
 import net.peanuuutz.tomlkt.internal.UnexpectedTokenException
-import net.peanuuutz.tomlkt.internal.BARE_KEY_REGEX
-import net.peanuuutz.tomlkt.internal.COMMENT
-import net.peanuuutz.tomlkt.internal.contains
-import net.peanuuutz.tomlkt.internal.DEC_CHARS
-import net.peanuuutz.tomlkt.internal.DEC_CHARS_AND_SIGN
-import net.peanuuutz.tomlkt.internal.END_ARRAY
-import net.peanuuutz.tomlkt.internal.END_TABLE
-import net.peanuuutz.tomlkt.internal.KEY_VALUE_DELIMITER
-import net.peanuuutz.tomlkt.internal.START_ARRAY
-import net.peanuuutz.tomlkt.internal.START_TABLE
 import net.peanuuutz.tomlkt.internal.toNumber
 import net.peanuuutz.tomlkt.internal.unescape
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal class TomlFileParser(source: String) {
     private val source: String = source.replace("\r\n", "\n")
 
     private val lastIndex: Int = this.source.lastIndex
 
-    private var currentLine: Int = 1
+    private var currentLineNumber: Int = 1
 
-    private var currentPosition: Int = -1
+    private var currentIndex: Int = -1
 
     // region Utils
 
+    @Suppress("NOTHING_TO_INLINE")
     private inline fun getChar(): Char {
-        return source[currentPosition]
+        return source[currentIndex]
     }
 
+    @Suppress("NOTHING_TO_INLINE")
     private inline fun getChar(offset: Int): Char {
-        return source[currentPosition + offset]
+        return source[currentIndex + offset]
     }
 
-    private inline fun lastOrEOF(): Boolean {
-        return currentPosition >= lastIndex
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun isEof(): Boolean {
+        return currentIndex >= lastIndex
     }
 
-    private inline fun lastOrEOF(offset: Int): Boolean {
-        return currentPosition >= lastIndex + offset
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun isEof(offset: Int): Boolean {
+        return currentIndex >= lastIndex + offset
     }
 
-    private inline fun beforeLast(): Boolean {
-        return currentPosition < lastIndex
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun beforeEof(): Boolean {
+        return currentIndex < lastIndex
     }
 
-    private inline fun beforeLast(offset: Int): Boolean {
-        return currentPosition < lastIndex + offset
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun beforeEof(offset: Int): Boolean {
+        return currentIndex < lastIndex + offset
     }
 
     private fun incomplete(): Nothing {
-        throw IncompleteException(currentLine)
+        throw IncompleteException(currentLineNumber)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -87,7 +99,7 @@ internal class TomlFileParser(source: String) {
     }
 
     private fun unexpectedToken(token: Char): Nothing {
-        throw UnexpectedTokenException(token, currentLine)
+        throw UnexpectedTokenException(token, currentLineNumber)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -100,18 +112,18 @@ internal class TomlFileParser(source: String) {
     }
 
     private fun expectNext(testChar: Char) {
-        incompleteIf(lastOrEOF())
-        currentPosition++
+        incompleteIf(isEof())
+        currentIndex++
         val currentChar = getChar()
         currentChar.unexpectedIf(currentChar != testChar)
     }
 
-    // Start right before [testString], end on the last token
+    // Start right before [testString], end on the last token.
     private fun expectNext(testString: String) {
         val requiredOffset = -(testString.length - 1)
-        incompleteIf(lastOrEOF(requiredOffset))
+        incompleteIf(isEof(requiredOffset))
         for (i in testString.indices) {
-            currentPosition++
+            currentIndex++
             val currentChar = getChar()
             currentChar.unexpectedIf(currentChar != testString[i])
         }
@@ -123,32 +135,37 @@ internal class TomlFileParser(source: String) {
         val tree = KeyNode("")
         val arrayOfTableIndices = mutableMapOf<Path, Int>()
         var tablePath: Path? = null
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> currentLine++
-                in BARE_KEY_REGEX, '"', '\'' -> {
-                    currentPosition--
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    currentLineNumber++
+                }
+                in BareKeyConstraints, '"', '\'' -> {
+                    currentIndex--
                     val localPath = parsePath()
-                    expectNext(KEY_VALUE_DELIMITER)
+                    expectNext(KeyValueDelimiter)
                     val path = if (tablePath != null) tablePath + localPath else localPath
                     val node = ValueNode(path.last(), parseValue(inStructure = false))
                     tree.addByPath(path, node, arrayOfTableIndices)
                 }
-                COMMENT -> parseComment()
-                START_ARRAY -> {
-                    incompleteIf(lastOrEOF())
-                    val isArrayOfTable = getChar(1) == START_ARRAY
+                Comment -> {
+                    parseComment()
+                }
+                StartArray -> {
+                    incompleteIf(isEof())
+                    val isArrayOfTable = getChar(1) == StartArray
                     if (isArrayOfTable) {
-                        currentPosition++
+                        currentIndex++
                     }
                     val path = parseTableHead(isArrayOfTable)
                     if (isArrayOfTable) {
-                        // Copied from official codebase because theirs is not inline
+                        // Copied from official codebase because theirs is not inline.
                         val iterator = arrayOfTableIndices.keys.iterator()
-                        while (iterator.hasNext()) {
-                            val next = iterator.next()
-                            if (next != path && next.containsAll(path)) {
+                        for (item in iterator) {
+                            if (item != path && item.containsAll(path)) {
                                 iterator.remove()
                             }
                         }
@@ -168,31 +185,37 @@ internal class TomlFileParser(source: String) {
                     }
                     tablePath = path
                 }
-                else -> unexpectedToken(current)
+                else -> {
+                    unexpectedToken(current)
+                }
             }
         }
         return TomlTable(tree)
     }
 
-    // Start right on the last '[', end on the last ']'
+    // Start right on the last '[', end on the last ']'.
     private fun parseTableHead(isArrayOfTable: Boolean): Path {
         var path: Path? = null
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> incomplete()
-                END_ARRAY -> {
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    incomplete()
+                }
+                EndArray -> {
                     if (isArrayOfTable) {
-                        incompleteIf(lastOrEOF() || getChar(1) != END_ARRAY)
-                        currentPosition++
+                        incompleteIf(isEof() || getChar(1) != EndArray)
+                        currentIndex++
                     }
                     justEnded = true
                     break
                 }
                 else -> {
                     current.unexpectedIf(path != null)
-                    currentPosition--
+                    currentIndex--
                     path = parsePath()
                 }
             }
@@ -201,16 +224,20 @@ internal class TomlFileParser(source: String) {
         return path
     }
 
-    // Start right before the actual token, end right before '=' or ']'
+    // Start right before the actual token, end right before '=' or ']'.
     private fun parsePath(): Path {
         val path = mutableListOf<String>()
         var justEnded = false
         var expectKey = true
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> incomplete()
-                in BARE_KEY_REGEX -> {
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    incomplete()
+                }
+                in BareKeyConstraints -> {
                     current.unexpectedIf(!expectKey)
                     path.add(parseBareKey())
                     expectKey = false
@@ -229,102 +256,141 @@ internal class TomlFileParser(source: String) {
                     current.unexpectedIf(expectKey)
                     expectKey = true
                 }
-                KEY_VALUE_DELIMITER, END_ARRAY -> {
+                KeyValueDelimiter, EndArray -> {
                     current.unexpectedIf(expectKey)
                     justEnded = true
-                    currentPosition--
+                    currentIndex--
                     break
                 }
-                else -> unexpectedToken(current)
+                else -> {
+                    unexpectedToken(current)
+                }
             }
         }
         incompleteIf(!justEnded)
         return path
     }
 
-    // Start right on the actual token, end right before ' ' or '\t' or '\n' or '=' or '.' or ']'
+    // Start right on the actual token, end right before ' ' or '\t' or '\n' or '=' or '.' or ']'.
     private fun parseBareKey(): String {
         val builder = StringBuilder().append(getChar())
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t', '.', KEY_VALUE_DELIMITER, END_ARRAY -> break
-                '\n' -> incomplete()
-                else -> builder.append(current)
+                ' ', '\t', '.', KeyValueDelimiter, EndArray -> {
+                    break
+                }
+                '\n' -> {
+                    incomplete()
+                }
+                else -> {
+                    builder.append(current)
+                }
             }
         }
         val result = builder.toString()
-        if (BARE_KEY_REGEX matches result) { // Lazy check
-            currentPosition--
-            return result
-        } else {
-            val unexpectedTokens = result.filterNot(BARE_KEY_REGEX::contains)
+        if (BareKeyRegex.matches(result).not()) { // Lazy check.
+            val unexpectedTokens = result.filterNot(BareKeyConstraints::contains)
             unexpectedToken(unexpectedTokens[0])
         }
+        currentIndex--
+        return result
     }
 
-    // Start right on the first '"', end on the last '"'
+    // Start right on the first '"', end on the last '"'.
     private fun parseStringKey(): String {
         return parseStringValue().content
     }
 
-    // Start right on the first '\'', end on the last '\''
+    // Start right on the first '\'', end on the last '\''.
     private fun parseLiteralStringKey(): String {
         return parseLiteralStringValue().content
     }
 
-    // Start right before the actual token, end right before '\n' or ',' or ']' or '}'
+    // Start right before the actual token, end right before '\n' or ',' or ']' or '}'.
     private fun parseValue(inStructure: Boolean): TomlElement {
         var element: TomlElement? = null
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
+                ' ', '\t' -> {
+                    continue
+                }
                 '\n' -> {
                     incompleteIf(element == null)
                     break
                 }
-                COMMENT -> parseComment()
-                ',', END_ARRAY, END_TABLE -> {
+                Comment -> {
+                    parseComment()
+                }
+                ',', EndArray, EndTable -> {
                     current.unexpectedIf(!inStructure)
                     break
                 }
                 else -> {
                     current.unexpectedIf(element != null)
                     element = when (current) {
-                        't', 'f' -> parseBooleanValue()
-                        in DEC_CHARS -> parseNumberValue(positive = true)
-                        'i' -> parseNonNumberValue(positive = true)
+                        't', 'f' -> {
+                            parseBooleanValue()
+                        }
+                        in DecimalConstraints -> {
+                            parseNumberOrDateTimeValue()
+                        }
+                        'i' -> {
+                            parseSpecialNumberValue(positive = true)
+                        }
                         'n' -> {
-                            incompleteIf(lastOrEOF())
+                            incompleteIf(isEof())
                             when (val next = getChar(1)) {
-                                'a' -> parseNonNumberValue(positive = true)
-                                'u' -> parseNullValue()
-                                else -> unexpectedToken(next)
+                                'a' -> {
+                                    parseSpecialNumberValue(positive = true)
+                                }
+                                'u' -> {
+                                    parseNullValue()
+                                }
+                                else -> {
+                                    unexpectedToken(next)
+                                }
                             }
                         }
                         '+', '-' -> {
-                            incompleteIf(lastOrEOF())
-                            currentPosition++
+                            incompleteIf(isEof())
+                            currentIndex++
                             when (val next = getChar()) {
-                                in DEC_CHARS -> parseNumberValue(current == '+')
-                                'i', 'n' -> parseNonNumberValue(current == '+')
-                                else -> unexpectedToken(next)
+                                in DecimalConstraints -> {
+                                    parseNumberValue(current == '+')
+                                }
+                                'i', 'n' -> {
+                                    parseSpecialNumberValue(current == '+')
+                                }
+                                else -> {
+                                    unexpectedToken(next)
+                                }
                             }
                         }
-                        '"' -> parseStringValue()
-                        '\'' -> parseLiteralStringValue()
-                        START_ARRAY -> parseArrayValue()
-                        START_TABLE -> parseInlineTableValue()
-                        else -> unexpectedToken(current)
+                        '"' -> {
+                            parseStringValue()
+                        }
+                        '\'' -> {
+                            parseLiteralStringValue()
+                        }
+                        StartArray -> {
+                            parseArrayValue()
+                        }
+                        StartTable -> {
+                            parseInlineTableValue()
+                        }
+                        else -> {
+                            unexpectedToken(current)
+                        }
                     }
                 }
             }
         }
         incompleteIf(element == null)
-        currentPosition--
+        currentIndex--
         return element
     }
 
-    // Start right on 't' or 'f', ends on the last token
+    // Start right on 't' or 'f', ends on the last token.
     private fun parseBooleanValue(): TomlLiteral {
         return when (val current = getChar()) {
             't' -> {
@@ -335,12 +401,14 @@ internal class TomlFileParser(source: String) {
                 expectNext("alse")
                 TomlLiteral(false)
             }
-            else -> unexpectedToken(current)
+            else -> {
+                unexpectedToken(current)
+            }
         }
     }
 
-    // Start right on 'i' or 'n', end on the last token
-    private fun parseNonNumberValue(positive: Boolean): TomlLiteral {
+    // Start right on 'i' or 'n', end on the last token.
+    private fun parseSpecialNumberValue(positive: Boolean): TomlLiteral {
         return when (val current = getChar()) {
             'i' -> {
                 expectNext("nf")
@@ -356,46 +424,101 @@ internal class TomlFileParser(source: String) {
                     isString = false
                 )
             }
-            else -> unexpectedToken(current)
+            else -> {
+                unexpectedToken(current)
+            }
         }
     }
 
-    // Start right on the actual token, end right before ' ' or '\t' or '\n' or '#' or ',' or ']' or '}'
+    // Start right on the actual token, end right before ' ' or '\t' or '\n' or '#' or ',' or ']' or
+    // '}'.
+    private fun parseNumberOrDateTimeValue(): TomlLiteral {
+        val maxOffset = lastIndex - currentIndex
+        var isNumber = true
+        var testOffset = -1
+        while (++testOffset <= maxOffset) {
+            when (val current = getChar(testOffset)) {
+                ' ' -> {
+                    if (beforeEof(-testOffset) && getChar(testOffset + 1) in DecimalConstraints) {
+                        isNumber = false
+                    }
+                    break
+                }
+                '\t', '\n', ',', Comment, EndArray, EndTable -> {
+                    break
+                }
+                in DecimalConstraints -> {
+                    continue
+                }
+                '-', '+' -> {
+                    val previous = getChar(testOffset - 1)
+                    if (previous != 'e' && previous != 'E') {
+                        isNumber = false
+                    }
+                    break
+                }
+                in DefiniteDateTimeConstraints -> {
+                    isNumber = false
+                    break
+                }
+                in DefiniteNumberConstraints -> {
+                    break
+                }
+                else -> {
+                    unexpectedToken(current)
+                }
+            }
+        }
+        return if (isNumber) {
+            parseNumberValue(positive = true)
+        } else {
+            parseDateTimeValue()
+        }
+    }
+
+    // Start right on the actual token, end right before ' ' or '\t' or '\n' or '#' or ',' or ']' or
+    // '}'.
     private fun parseNumberValue(positive: Boolean): TomlLiteral {
         val first = getChar()
-        if (lastOrEOF()) {
+        if (isEof()) {
             return TomlLiteral(
                 content = first.toString(),
                 isString = false
             )
         }
-        val radix = if (first != '0') {
-            10
+        val builder = StringBuilder()
+        var radix = 10
+        if (first != '0') {
+            builder.append(first)
         } else {
-            when (val next = getChar(1)) {
+            when (getChar(1)) {
                 'x' -> {
-                    currentPosition++
-                    16
+                    radix = 16
+                    currentIndex++
                 }
                 'o' -> {
-                    currentPosition++
-                    8
+                    radix = 8
+                    currentIndex++
                 }
                 'b' -> {
-                    currentPosition++
-                    2
+                    radix = 2
+                    currentIndex++
                 }
-                in DEC_CHARS -> unexpectedToken(next)
-                else -> 10
+                else -> { // Others are checked in the following loop.
+                    builder.append('0') // Pretend there's no error.
+                }
             }
         }
-        val builder = StringBuilder().append(first)
         var isDouble = false
         var isExponent = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t', '\n', ',', COMMENT, END_ARRAY, END_TABLE -> break
-                '0', '1' -> builder.append(current)
+                ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
+                    break
+                }
+                '0', '1' -> {
+                    builder.append(current)
+                }
                 '2', '3', '4', '5', '6', '7' -> {
                     current.unexpectedIf(radix == 2)
                     builder.append(current)
@@ -405,9 +528,9 @@ internal class TomlFileParser(source: String) {
                     builder.append(current)
                 }
                 '.' -> {
-                    val surroundedByNumber = getChar(-1) in DEC_CHARS &&
-                            beforeLast() &&
-                            getChar(1) in DEC_CHARS
+                    val surroundedByNumber = getChar(-1) in DecimalConstraints &&
+                            beforeEof() &&
+                            getChar(1) in DecimalConstraints
                     val unexpected = isExponent ||
                             isDouble ||
                             radix != 10 ||
@@ -419,9 +542,9 @@ internal class TomlFileParser(source: String) {
                 'e', 'E' -> {
                     current.unexpectedIf(radix <= 8)
                     if (radix == 10) {
-                        val surroundedByNumber = getChar(-1) in DEC_CHARS &&
-                                beforeLast() &&
-                                getChar(1) in DEC_CHARS_AND_SIGN
+                        val surroundedByNumber = getChar(-1) in DecimalConstraints &&
+                                beforeEof() &&
+                                getChar(1) in DecimalOrSignConstraints
                         val unexpected = isExponent || !surroundedByNumber
                         current.unexpectedIf(unexpected)
                         isExponent = true
@@ -433,9 +556,9 @@ internal class TomlFileParser(source: String) {
                     builder.append(current)
                 }
                 '_' -> {
-                    val surroundedByNumber = getChar(-1) in DEC_CHARS &&
-                            beforeLast() &&
-                            getChar(1) in DEC_CHARS
+                    val surroundedByNumber = getChar(-1) in DecimalConstraints &&
+                            beforeEof() &&
+                            getChar(1) in DecimalConstraints
                     current.unexpectedIf(!surroundedByNumber)
                 }
                 '+' -> {
@@ -448,37 +571,125 @@ internal class TomlFileParser(source: String) {
                     isDouble = true
                     builder.append(current)
                 }
-                else -> unexpectedToken(current)
+                else -> {
+                    unexpectedToken(current)
+                }
             }
         }
-        currentPosition--
+        currentIndex--
         val number = builder.toString().toNumber(positive, radix, isDouble, isExponent)
         return TomlLiteral(number)
     }
 
-    // Start right on the first '"', end on the last '"'
-    private fun parseStringValue(): TomlLiteral {
-        incompleteIf(lastOrEOF())
-        val initialNext = getChar(1)
-        val multiline: Boolean
-        if (initialNext != '"') {
-            multiline = false
-        } else if (beforeLast(-1) && getChar(2) == '"') {
-            multiline = true
-            currentPosition += 2
-            incompleteIf(lastOrEOF())
-            if (initialNext == '\n') {
-                // Consume the initial line feed
-                currentPosition++
+    // Start right on the actual token, end right before '\t' or '\n' or '#' or ',' or ']' or '}'.
+    private fun parseDateTimeValue(): TomlLiteral {
+        val builder = StringBuilder().append(getChar())
+        var hasDate = false
+        var hasTime = false
+        var hasOffset = false
+        var hasWhitespace = false
+        while (++currentIndex <= lastIndex) {
+            when (val current = getChar()) {
+                '\t', '\n', ',', Comment, EndArray, EndTable -> {
+                    break
+                }
+                ' ' -> {
+                    if (!hasWhitespace) {
+                        hasWhitespace = true
+                        builder.append('T')
+                    } else {
+                        break
+                    }
+                }
+                in DecimalConstraints -> {
+                    builder.append(current)
+                }
+                '-' -> {
+                    if (hasTime) {
+                        hasOffset = true
+                    } else {
+                        hasDate = true
+                    }
+                    builder.append('-')
+                }
+                'T', 't' -> {
+                    builder.append('T')
+                }
+                ':' -> {
+                    if (!hasOffset) {
+                        hasTime = true
+                    }
+                    builder.append(':')
+                }
+                '.' -> {
+                    builder.append('.')
+                }
+                'Z', 'z' -> {
+                    hasOffset = true
+                    builder.append('Z')
+                }
+                '+' -> {
+                    hasOffset = true
+                    builder.append('+')
+                }
+                else -> {
+                    unexpectedToken(current)
+                }
             }
-        } else {
-            currentPosition++
-            return TomlLiteral("")
+        }
+        currentIndex--
+        val result = builder.toString()
+        return when {
+            hasDate && hasTime -> {
+                if (!hasOffset) {
+                    val localDateTime = NativeLocalDateTime(result)
+                    TomlLiteral(localDateTime)
+                } else {
+                    val offsetDateTime = NativeOffsetDateTime(result)
+                    TomlLiteral(offsetDateTime)
+                }
+            }
+            hasDate -> {
+                val localDate = NativeLocalDate(result)
+                TomlLiteral(localDate)
+            }
+            hasTime -> {
+                val localTime = NativeLocalTime(result)
+                TomlLiteral(localTime)
+            }
+            else -> {
+                error("Unreachable code")
+            }
+        }
+    }
+
+    // Start right on the first '"', end on the last '"'.
+    private fun parseStringValue(): TomlLiteral {
+        incompleteIf(isEof())
+        var next = getChar(1)
+        val multiline: Boolean
+        when {
+            next != '"' -> {
+                multiline = false
+            }
+            beforeEof(-1) && getChar(2) == '"' -> {
+                multiline = true
+                currentIndex += 2
+                incompleteIf(isEof())
+                if (next == '\n') {
+                    // Consume the initial line feed.
+                    currentIndex++
+                }
+            }
+            else -> {
+                currentIndex++
+                return TomlLiteral("")
+            }
         }
         val builder = StringBuilder()
         var trim = false
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
                     if (!trim) {
@@ -490,7 +701,7 @@ internal class TomlFileParser(source: String) {
                     if (!trim) {
                         builder.append(current)
                     }
-                    currentLine++
+                    currentLineNumber++
                 }
                 '"' -> {
                     if (!multiline) {
@@ -499,9 +710,9 @@ internal class TomlFileParser(source: String) {
                             break
                         }
                     } else {
-                        incompleteIf(lastOrEOF())
+                        incompleteIf(isEof())
                         if (getChar(1) == '"' && getChar(2) == '"') {
-                            currentPosition += 2
+                            currentIndex += 2
                             justEnded = true
                             break
                         }
@@ -509,17 +720,20 @@ internal class TomlFileParser(source: String) {
                     builder.append(current)
                 }
                 '\\' -> {
-                    incompleteIf(lastOrEOF())
-                    when (val next = getChar(1)) {
+                    incompleteIf(isEof())
+                    next = getChar(1)
+                    when (next) {
                         ' ', '\t', '\n' -> {
                             current.unexpectedIf(!multiline)
                             trim = true
                         }
                         'u', 'b', 't', 'n', 'f', 'r', '"', '\\' -> {
                             builder.append(current).append(next)
-                            currentPosition++
+                            currentIndex++
                         }
-                        else -> unexpectedToken(current)
+                        else -> {
+                            unexpectedToken(current)
+                        }
                     }
                 }
                 else -> {
@@ -533,48 +747,57 @@ internal class TomlFileParser(source: String) {
         return TomlLiteral(content)
     }
 
-    // Start right on '\'', end on the last '\''
+    // Start right on '\'', end on the last '\''.
     private fun parseLiteralStringValue(): TomlLiteral {
-        incompleteIf(lastOrEOF())
-        val initialNext = getChar(1)
+        incompleteIf(isEof())
+        val next = getChar(1)
         val multiline: Boolean
-        if (initialNext != '\'') {
-            multiline = false
-        } else if (beforeLast(-1) && getChar(2) == '\'') {
-            multiline = true
-            currentPosition += 2
-            incompleteIf(lastOrEOF())
-            if (initialNext == '\n') {
-                currentPosition++
+        when {
+            next != '\'' -> {
+                multiline = false
             }
-        } else {
-            currentPosition++
-            return TomlLiteral("")
+            beforeEof(-1) && getChar(2) == '\'' -> {
+                multiline = true
+                currentIndex += 2
+                incompleteIf(isEof())
+                if (next == '\n') {
+                    // Consume the initial line feed.
+                    currentIndex++
+                }
+            }
+            else -> {
+                currentIndex++
+                return TomlLiteral("")
+            }
         }
         val builder = StringBuilder()
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> builder.append(current)
+                ' ', '\t' -> {
+                    builder.append(current)
+                }
                 '\n' -> {
                     incompleteIf(!multiline)
                     builder.append(current)
-                    currentLine++
+                    currentLineNumber++
                 }
                 '\'' -> {
                     if (!multiline) {
                         justEnded = true
                         break
                     }
-                    incompleteIf(lastOrEOF())
+                    incompleteIf(isEof())
                     if (getChar(1) == '\'' && getChar(2) == '\'') {
-                        currentPosition += 2
+                        currentIndex += 2
                         justEnded = true
                         break
                     }
                     builder.append(current)
                 }
-                else -> builder.append(current)
+                else -> {
+                    builder.append(current)
+                }
             }
         }
         incompleteIf(!justEnded)
@@ -582,16 +805,20 @@ internal class TomlFileParser(source: String) {
         return TomlLiteral(content)
     }
 
-    // Start right on '[', end on ']'
+    // Start right on '[', end on ']'.
     private fun parseArrayValue(): TomlArray {
         val builder = mutableListOf<TomlElement>()
         var expectValue = true
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> currentLine++
-                END_ARRAY -> {
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    currentLineNumber++
+                }
+                EndArray -> {
                     justEnded = true
                     break
                 }
@@ -599,9 +826,11 @@ internal class TomlFileParser(source: String) {
                     current.unexpectedIf(expectValue)
                     expectValue = true
                 }
-                COMMENT -> parseComment()
+                Comment -> {
+                    parseComment()
+                }
                 else -> {
-                    currentPosition--
+                    currentIndex--
                     builder.add(parseValue(inStructure = true))
                     expectValue = false
                 }
@@ -611,17 +840,21 @@ internal class TomlFileParser(source: String) {
         return TomlArray(builder)
     }
 
-    // Start right on '{', end on '}'
+    // Start right on '{', end on '}'.
     private fun parseInlineTableValue(): TomlTable {
         val builder = KeyNode("")
         var expectEntry = true
         var justStarted = true
         var justEnded = false
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
-                ' ', '\t' -> continue
-                '\n' -> incomplete()
-                END_TABLE -> {
+                ' ', '\t' -> {
+                    continue
+                }
+                '\n' -> {
+                    incomplete()
+                }
+                EndTable -> {
                     current.unexpectedIf(expectEntry && !justStarted)
                     justEnded = true
                     break
@@ -630,11 +863,13 @@ internal class TomlFileParser(source: String) {
                     current.unexpectedIf(expectEntry)
                     expectEntry = true
                 }
-                COMMENT -> unexpectedToken(current)
+                Comment -> {
+                    unexpectedToken(current)
+                }
                 else -> {
-                    currentPosition--
+                    currentIndex--
                     val path = parsePath()
-                    expectNext(KEY_VALUE_DELIMITER)
+                    expectNext(KeyValueDelimiter)
                     val node = ValueNode(path.last(), parseValue(inStructure = true))
                     builder.addByPath(path, node, null)
                     expectEntry = false
@@ -646,19 +881,19 @@ internal class TomlFileParser(source: String) {
         return TomlTable(builder)
     }
 
-    // Start right on 'n', end on the second 'l'
+    // Start right on 'n', end on the second 'l'.
     private fun parseNullValue(): TomlNull {
         expectNext("ull")
         return TomlNull
     }
 
-    // Start right on '#', end right before '\n'
+    // Start right on '#', end right before '\n'.
     private fun parseComment() {
-        while (++currentPosition <= lastIndex) {
+        while (++currentIndex <= lastIndex) {
             if (getChar() == '\n') {
                 break
             }
         }
-        currentPosition--
+        currentIndex--
     }
 }

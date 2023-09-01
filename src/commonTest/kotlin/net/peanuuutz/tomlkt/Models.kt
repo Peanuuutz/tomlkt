@@ -88,10 +88,10 @@ class EmptyClass
 data class Box<T>(val content: T? = null)
 
 @Serializable
-data class ByteCode(@TomlInteger(TomlInteger.Base.BIN) val code: Byte)
+data class ByteCode(@TomlInteger(TomlInteger.Base.Bin) val code: Byte)
 
 @Serializable
-data class Color(@TomlInteger(TomlInteger.Base.HEX) val value: Long)
+data class Color(@TomlInteger(TomlInteger.Base.Hex) val value: Long)
 
 @Serializable
 data class NullablePairList<F, S>(
@@ -128,15 +128,28 @@ val module = Module(id = 1L.toULong(), name = "core")
 
 object StringOrColorSerializer : KSerializer<Any> {
     @OptIn(InternalSerializationApi::class)
-    override val descriptor: SerialDescriptor = buildSerialDescriptor("SOC", SerialKind.CONTEXTUAL)
+    override val descriptor: SerialDescriptor = buildSerialDescriptor(
+        serialName = "SOC",
+        kind = SerialKind.CONTEXTUAL
+    )
 
     override fun serialize(encoder: Encoder, value: Any) {
-        if (value is String) {
-            String.serializer().serialize(encoder, value)
-        } else if (value is Color) {
-            Color.serializer().serialize(encoder, value)
+        when (value) {
+            is String -> String.serializer().serialize(encoder, value)
+            is Color -> Color.serializer().serialize(encoder, value)
         }
     }
 
     override fun deserialize(decoder: Decoder): Any = Any()
 }
+
+@Serializable
+data class Task(
+    val name: String,
+    val date: TomlLocalDateTime
+)
+
+val task = Task(
+    name = "job",
+    date = TomlLocalDateTime("2000-01-01T12:00")
+)

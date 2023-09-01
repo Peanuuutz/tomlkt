@@ -17,8 +17,9 @@
 package net.peanuuutz.tomlkt
 
 /**
- * Indicates that the corresponding type is only stable to use, but shouldn't be subclassed
- * by any third party, otherwise unpredictable behavior may be observed.
+ * Indicates that the corresponding type is only stable to use, but shouldn't be
+ * subclassed by any third party, otherwise unpredictable behavior may be
+ * observed.
  */
 @RequiresOptIn(
     message = "This type should only be subclassed by Toml internally"

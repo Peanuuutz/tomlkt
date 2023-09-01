@@ -56,6 +56,12 @@ class EncoderTest {
     }
 
     @Test
+    fun encodeDateTime() {
+        val randomTask = Toml.encodeToString(Task.serializer(), task)
+        printIfDebug(randomTask)
+    }
+
+    @Test
     fun encodeEmptyClass() {
         printIfDebug(Toml.encodeToString(EmptyClass.serializer(), EmptyClass()))
     }
@@ -69,7 +75,6 @@ class EncoderTest {
     fun encodeToTomlLiteral() {
         val int = Toml.encodeToTomlElement(Int.serializer(), 2)
         val string = Toml.encodeToTomlElement(String.serializer(), "I\n&\nU")
-
         assertEquals(int.toTomlLiteral().toInt(), 2)
         assertEquals(string.toTomlLiteral().content, "I\n&\nU")
     }

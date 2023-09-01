@@ -1,8 +1,8 @@
 package net.peanuuutz.tomlkt
 
-import kotlin.test.Test
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlin.test.Test
 
 class ContextualTest {
     @Test

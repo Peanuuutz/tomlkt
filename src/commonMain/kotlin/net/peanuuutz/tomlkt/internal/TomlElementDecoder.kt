@@ -49,7 +49,7 @@ import net.peanuuutz.tomlkt.toTomlTable
 @OptIn(TomlSpecific::class)
 internal class TomlElementDecoder(
     private val config: TomlConfig,
-    override val serializersModule: SerializersModule = config.serializersModule,
+    override val serializersModule: SerializersModule,
     private val element: TomlElement
 ) : Decoder, TomlDecoder {
     override fun decodeBoolean(): Boolean {
@@ -288,23 +288,25 @@ internal class TomlElementDecoder(
         private val iterator: Iterator<Map.Entry<String, TomlElement>> = table.iterator()
 
         override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
-            return if (elementIndex < descriptor.elementsCount) {
-                if (iterator.hasNext()) {
-                    val entry = iterator.next()
-                    currentElement = entry.value
-                    val index = descriptor.getElementIndex(entry.key)
-                    if (index == UNKNOWN_NAME && config.ignoreUnknownKeys.not()) {
-                        throw UnknownKeyException(entry.key)
+            return when {
+                elementIndex < descriptor.elementsCount -> {
+                    if (iterator.hasNext()) {
+                        val entry = iterator.next()
+                        currentElement = entry.value
+                        val index = descriptor.getElementIndex(entry.key)
+                        if (index == UNKNOWN_NAME && config.ignoreUnknownKeys.not()) {
+                            throw UnknownKeyException(entry.key)
+                        }
+                        elementIndex++
+                        index
+                    } else {
+                        DECODE_DONE
                     }
-                    elementIndex++
-                    index
-                } else {
-                    DECODE_DONE
                 }
-            } else if (iterator.hasNext() && config.ignoreUnknownKeys.not()) {
-                throw UnknownKeyException(iterator.next().key)
-            } else {
-                DECODE_DONE
+                iterator.hasNext() && config.ignoreUnknownKeys.not() -> {
+                    throw UnknownKeyException(iterator.next().key)
+                }
+                else -> DECODE_DONE
             }
         }
     }
