@@ -4,7 +4,7 @@ import net.peanuuutz.tomlkt.internal.LineFeedCode
 import java.io.OutputStream
 
 /**
- * A [TomlWriter] that writes TOML to [outputStream].
+ * A [TomlWriter] that writes TOML string to [outputStream].
  *
  * Note that this writer only wraps the stream, so the following requirements
  * should be met:
@@ -14,7 +14,7 @@ import java.io.OutputStream
  * for short.
  *
  * Use with [Toml.encodeToWriter] to encode objects. This is useful for
- * concatenating two TOML streams. However, user should prefer
+ * concatenating two TOML streams. However, programmer should prefer
  * [Toml.encodeToStream] if only one object is being encoded.
  */
 public class TomlStreamWriter(

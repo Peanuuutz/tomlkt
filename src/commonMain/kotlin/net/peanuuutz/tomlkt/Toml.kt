@@ -32,8 +32,8 @@ import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
 /**
  * The main entry point to use TOML.
  *
- * User could simply use [Default] instance or customize by using creator
- * function with the same name.
+ * Programmer could simply use [Default] instance or customize configuration by
+ * using the factory function with the same name.
  *
  * Basic usage:
  *
@@ -41,7 +41,7 @@ import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
  * @Serializable
  * data class User(
  *     val name: String,
- *     val account: Account? // Nullability
+ *     val account: Account? // Nullable property.
  * )
  *
  * @Serializable
@@ -50,12 +50,12 @@ import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
  *     val password: String
  * )
  *
- * // Now with [Default] instance
  * val user = User("Peanuuutz", Account("Peanuuutz", "123456"))
- * // Either is OK, but to explicitly pass a serializer is faster
+ * // With [Default] instance.
+ * // Either is OK, but to explicitly pass a serializer is faster.
  * val tomlString = Toml.encodeToString(User.serializer(), user)
  * val tomlString = Toml.encodeToString<User>(user)
- * // Print it
+ * // Print it.
  * println(tomlString)
  * /*
  * name = "Peanuuutz"
@@ -65,16 +65,18 @@ import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
  * password = "123456"
  * */
  *
- * // And to reverse...
+ * // Vice versa.
  * val user = Toml.decodeFromString(User.serializer(), tomlString)
- * // Print it
+ * // Print it.
  * println(user)
- * // User(name=Peanuuutz,account=Account(username=Peanuuutz,password=123456))
+ * /*
+ * User(name=Peanuuutz,account=Account(username=Peanuuutz,password=123456))
+ * */
  *
- * // Or you're lazy to create model class, try [TomlElement]
+ * // If you don't have a model class, try [TomlElement].
  * val config = Toml.parseToTomlTable(tomlString)
- * // Now access to all entry (think you need getByPath)
- * val password: TomlLiteral = config["account", "password"]!!.toTomlLiteral()
+ * // Now you can access all the entries (this is an extension as "get by path").
+ * val password = config["account", "password"]!!.toTomlLiteral().content
  * ```
  *
  * @see TomlConfigBuilder
@@ -85,7 +87,7 @@ public sealed class Toml(
     override val serializersModule: SerializersModule = config.serializersModule
 ) : StringFormat {
     /**
-     * Default implementation of [Toml] with default config.
+     * The default implementation of [Toml] with default configuration.
      *
      * @see TomlConfigBuilder
      */
@@ -94,7 +96,7 @@ public sealed class Toml(
     /**
      * Serializes [value] into TOML string using [serializer].
      *
-     * @throws TomlEncodingException when [value] cannot be serialized.
+     * @throws TomlEncodingException if `value` cannot be serialized.
      */
     override fun <T> encodeToString(
         serializer: SerializationStrategy<T>,
@@ -112,7 +114,7 @@ public sealed class Toml(
     /**
      * Serializes [value] into [writer] using [serializer].
      *
-     * @throws TomlEncodingException when [value] cannot be serialized.
+     * @throws TomlEncodingException if `value` cannot be serialized.
      */
     public fun <T> encodeToWriter(
         serializer: SerializationStrategy<T>,
@@ -130,7 +132,7 @@ public sealed class Toml(
     /**
      * Serializes [value] into [TomlElement] using [serializer].
      *
-     * @throws TomlEncodingException when [value] cannot be serialized.
+     * @throws TomlEncodingException if `value` cannot be serialized.
      */
     public fun <T> encodeToTomlElement(
         serializer: SerializationStrategy<T>,
@@ -147,7 +149,7 @@ public sealed class Toml(
      * @param string **MUST** be a TOML file, as this method delegates parsing
      * to [parseToTomlTable].
      *
-     * @throws TomlDecodingException when [string] cannot be parsed into
+     * @throws TomlDecodingException if `string` cannot be parsed into
      * [TomlTable] or cannot be deserialized.
      */
     @Suppress("OutdatedDocumentation")
@@ -162,7 +164,7 @@ public sealed class Toml(
     /**
      * Deserializes [element] into a value of type [T] using [deserializer].
      *
-     * @throws TomlDecodingException when [element] cannot be deserialized.
+     * @throws TomlDecodingException if `element` cannot be deserialized.
      */
     public fun <T> decodeFromTomlElement(
         deserializer: DeserializationStrategy<T>,
@@ -179,7 +181,7 @@ public sealed class Toml(
     /**
      * Parses [string] into equivalent representation of [TomlTable].
      *
-     * @throws TomlDecodingException when [string] cannot be parsed into
+     * @throws TomlDecodingException if `string` cannot be parsed into
      * [TomlTable].
      */
     public fun parseToTomlTable(string: String): TomlTable {
@@ -188,10 +190,11 @@ public sealed class Toml(
 }
 
 /**
- * Factory function for creating custom instance of [Toml].
+ * Factory function for customizing [Toml].
  *
- * @param from the original Toml instance. [Toml.Default] by default.
- * @param config builder DSL with [TomlConfigBuilder].
+ * @param from the [Toml] instance from which the default values are read.
+ * [Toml.Default] by default.
+ * @param config builder DSL with `this` as [TomlConfigBuilder].
  */
 public inline fun Toml(
     from: Toml = Toml,
@@ -202,7 +205,7 @@ public inline fun Toml(
  * Serializes [value] into [writer] using serializer retrieved from reified type
  * parameter.
  *
- * @throws TomlEncodingException when [value] cannot be serialized.
+ * @throws TomlEncodingException if `value` cannot be serialized.
  */
 public inline fun <reified T> Toml.encodeToWriter(
     value: T,
@@ -219,7 +222,7 @@ public inline fun <reified T> Toml.encodeToWriter(
  * Serializes [value] into [TomlElement] using serializer retrieved from reified
  * type parameter.
  *
- * @throws TomlEncodingException when [value] cannot be serialized.
+ * @throws TomlEncodingException if `value` cannot be serialized.
  */
 public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
     return encodeToTomlElement(serializersModule.serializer(), value)
@@ -229,7 +232,7 @@ public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
  * Deserializes [element] into a value of type [T] using serializer retrieved
  * from reified type parameter.
  *
- * @throws TomlDecodingException when [element] cannot be deserialized.
+ * @throws TomlDecodingException if `element` cannot be deserialized.
  */
 public inline fun <reified T> Toml.decodeFromTomlElement(element: TomlElement): T {
     return decodeFromTomlElement(serializersModule.serializer(), element)

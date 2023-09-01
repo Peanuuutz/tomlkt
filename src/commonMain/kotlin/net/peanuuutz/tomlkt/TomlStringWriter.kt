@@ -20,7 +20,7 @@ package net.peanuuutz.tomlkt
  * A [TomlWriter] that writes TOML as string.
  *
  * Use with [Toml.encodeToWriter] to encode objects. This is useful for
- * concatenating two TOML strings. However, user should prefer
+ * concatenating two TOML strings. However, programmer should prefer
  * [Toml.encodeToString] if only one object is being encoded.
  *
  * When finished, simply call [toString] to get the result.
