@@ -22,7 +22,7 @@ import kotlinx.serialization.SerialInfo
  * Add comments to corresponding property.
  *
  * ```kotlin
- * data class IntData(
+ * class IntData(
  *     @TomlComment("""
  *         An integer,
  *         but is decoded into Long originally
@@ -50,7 +50,7 @@ public annotation class TomlComment(val text: String)
  * Force inline the corresponding array-like or table-like property.
  *
  * ```kotlin
- * data class Data(
+ * class Data(
  *     @TomlInline
  *     val inlineProperty: Map<String, String>,
  *     val noInlineProperty: Map<String, String>
@@ -86,7 +86,7 @@ public annotation class TomlInline
  * will not take effect.
  *
  * ```kotlin
- * data class NullablePairList<F, S>(
+ * class NullablePairList<F, S>(
  *     @TomlBlockArray(2)
  *     val list: List<Pair<F, S>?>
  * )
