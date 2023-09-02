@@ -1,5 +1,5 @@
 package net.peanuuutz.tomlkt
 
-class TomlElementTest {
+class TableTest {
 
 }

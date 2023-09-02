@@ -39,7 +39,7 @@ internal class NullInArrayOfTableException : TomlEncodingException(
 )
 
 internal class EmptyArrayOfTableInMapException : TomlEncodingException(
-    message = "Empty array of table can only be the first in map"
+    message = "At most one empty array of table is allowed in a map"
 )
 
 // -------- Decoding --------

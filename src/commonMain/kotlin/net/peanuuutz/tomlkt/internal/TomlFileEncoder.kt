@@ -614,7 +614,6 @@ internal class TomlFileEncoder(
         override var blockArrayAnnotation: TomlBlockArray? = null
 
         override fun head(descriptor: SerialDescriptor, index: Int) {
-            comment(descriptor, index)
             val elementName = descriptor.getElementName(index)
                 .escape()
                 .doubleQuotedIfNotPure()
@@ -623,6 +622,7 @@ internal class TomlFileEncoder(
             structuredChild = structured && index >= structuredIndex
             val key = if (structured) elementName else currentChildPath
             val elementDescriptor = descriptor.getElementDescriptor(index)
+            comment(descriptor, index)
             when {
                 inlineChild -> {
                     writer.writeKey(key)
@@ -653,10 +653,10 @@ internal class TomlFileEncoder(
             }
             val lines = mutableListOf<String>()
             val annotations = descriptor.getElementAnnotations(index)
-            var inline = false
+            var forceInline = !structuredChild
             for (annotation in annotations) {
                 when (annotation) {
-                    is TomlInline -> inline = true
+                    is TomlInline -> forceInline = true
                     is TomlComment -> {
                         annotation.text
                             .trimIndent()
@@ -668,7 +668,7 @@ internal class TomlFileEncoder(
             }
             if (lines.size > 0) {
                 val elementDescriptor = descriptor.getElementDescriptor(index)
-                if (elementDescriptor.isTableLike && !inline) {
+                if (elementDescriptor.isTableLike && !forceInline) {
                     writer.writeLineFeed()
                 }
                 for (line in lines) {

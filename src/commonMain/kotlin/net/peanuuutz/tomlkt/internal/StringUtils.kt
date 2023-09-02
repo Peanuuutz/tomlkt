@@ -32,14 +32,16 @@ internal const val EndTable = '}'
 
 internal const val DecimalConstraints: String = "0123456789"
 
-internal const val DecimalOrSignConstraints: String = "0123456789+-"
+internal const val HexadecimalConstraints: String = "0123456789" + "abcdef" + "ABCDEF"
+
+internal const val DecimalOrSignConstraints: String = "0123456789" + "-+"
 
 internal const val BareKeyConstraints: String =
     "abcdefghijklmnopqrstuvwxyz" + "-_" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789"
 
 internal const val DefiniteDateTimeConstraints: String = "Tt:Zz"
 
-internal const val DefiniteNumberConstraints: String = "xob.acdefABCDEF_"
+internal const val DefiniteNumberConstraints: String = "xob" + "." + "acdef" + "ABCDEF" + "_"
 
 internal val BareKeyRegex: Regex = Regex("[A-Za-z0-9_-]+")
 

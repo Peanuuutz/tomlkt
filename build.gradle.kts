@@ -1,5 +1,6 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
@@ -45,8 +46,12 @@ kotlin {
         val datetimeVersion: String by project
 
         all {
-            languageSettings.optIn("kotlin.RequiresOptIn")
-            languageSettings.optIn("kotlinx.serialization.ExperimentalSerializationApi")
+            languageSettings {
+                optIn("kotlin.RequiresOptIn")
+                optIn("kotlin.contracts.ExperimentalContracts")
+                optIn("kotlinx.serialization.ExperimentalSerializationApi")
+                optIn("kotlinx.serialization.InternalSerializationApi")
+            }
         }
 
         val commonMain by getting {
@@ -59,6 +64,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
             }
         }
 

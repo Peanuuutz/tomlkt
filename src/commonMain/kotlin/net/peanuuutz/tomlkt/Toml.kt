@@ -185,7 +185,8 @@ public sealed class Toml(
      * [TomlTable].
      */
     public fun parseToTomlTable(string: String): TomlTable {
-        return TomlFileParser(string).parse()
+        val refined = refine(string)
+        return TomlFileParser(refined).parse()
     }
 }
 
@@ -242,3 +243,7 @@ public inline fun <reified T> Toml.decodeFromTomlElement(element: TomlElement): 
 
 @PublishedApi
 internal class TomlImpl(config: TomlConfig) : Toml(config)
+
+private fun refine(raw: String): String {
+    return raw.replace("\r\n", "\n")
+}
