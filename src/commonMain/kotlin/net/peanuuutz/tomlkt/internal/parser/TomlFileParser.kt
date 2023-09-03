@@ -410,9 +410,8 @@ internal class TomlFileParser(private val source: String) {
             }
             'n' -> {
                 expectNext("an")
-                val content = if (sign == null) "nan" else sign.toString() + "nan"
                 TomlLiteral(
-                    content = content,
+                    content = "nan",
                     isString = false
                 )
             }

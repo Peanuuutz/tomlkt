@@ -1,5 +1,6 @@
 package net.peanuuutz.tomlkt
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import net.peanuuutz.tomlkt.internal.LocalDateSerializer
 import net.peanuuutz.tomlkt.internal.LocalDateTimeSerializer
@@ -13,6 +14,11 @@ import net.peanuuutz.tomlkt.internal.OffsetDateTimeSerializer
  *
  * For JVM, this is an alias of `java.time.LocalDateTime`. For other platforms,
  * this is `kotlinx.datetime.LocalDateTime`.
+ *
+ * This type has builtin support for
+ * [serialization][TomlLocalDateTimeSerializer].
+ *
+ * @see NativeLocalDateTime
  */
 public typealias TomlLocalDateTime = @Serializable(LocalDateTimeSerializer::class) NativeLocalDateTime
 
@@ -23,6 +29,14 @@ public fun TomlLocalDateTime(text: String): TomlLocalDateTime {
     return NativeLocalDateTime(text)
 }
 
+/**
+ * Retrieves the default [KSerializer] for [NativeLocalDateTime] in TOML.
+ */
+@Suppress("FunctionName")
+public fun TomlLocalDateTimeSerializer(): KSerializer<NativeLocalDateTime> {
+    return LocalDateTimeSerializer
+}
+
 // -------- TomlOffsetDateTime --------
 
 /**
@@ -30,6 +44,11 @@ public fun TomlLocalDateTime(text: String): TomlLocalDateTime {
  *
  * For JVM, this is an alias of `java.time.OffsetDateTime`. For other platforms,
  * this is `kotlinx.datetime.Instant`.
+ *
+ * This type has builtin support for
+ * [serialization][TomlOffsetDateTimeSerializer].
+ *
+ * @see NativeOffsetDateTime
  */
 public typealias TomlOffsetDateTime = @Serializable(OffsetDateTimeSerializer::class) NativeOffsetDateTime
 
@@ -40,6 +59,14 @@ public fun TomlOffsetDateTime(text: String): TomlOffsetDateTime {
     return NativeOffsetDateTime(text)
 }
 
+/**
+ * Retrieves the default [KSerializer] for [NativeOffsetDateTime] in TOML.
+ */
+@Suppress("FunctionName")
+public fun TomlOffsetDateTimeSerializer(): KSerializer<NativeOffsetDateTime> {
+    return OffsetDateTimeSerializer
+}
+
 // -------- TomlLocalDate --------
 
 /**
@@ -47,6 +74,10 @@ public fun TomlOffsetDateTime(text: String): TomlOffsetDateTime {
  *
  * For JVM, this is an alias of `java.time.LocalDate`. For other platforms, this
  * is `kotlinx.datetime.LocalDate`.
+ *
+ * This type has builtin support for [serialization][TomlLocalDateSerializer].
+ *
+ * @see NativeLocalDate
  */
 public typealias TomlLocalDate = @Serializable(LocalDateSerializer::class) NativeLocalDate
 
@@ -57,6 +88,14 @@ public fun TomlLocalDate(text: String): TomlLocalDate {
     return NativeLocalDate(text)
 }
 
+/**
+ * Retrieves the default [KSerializer] for [NativeLocalDate] in TOML.
+ */
+@Suppress("FunctionName")
+public fun TomlLocalDateSerializer(): KSerializer<NativeLocalDate> {
+    return LocalDateSerializer
+}
+
 // -------- TomlLocalTime --------
 
 /**
@@ -64,6 +103,10 @@ public fun TomlLocalDate(text: String): TomlLocalDate {
  *
  * For JVM, this is an alias of `java.time.LocalTime`. For other platforms, this
  * is `kotlinx.datetime.LocalTime`.
+ *
+ * This type has builtin support for [serialization][TomlLocalTimeSerializer].
+ *
+ * @see NativeLocalTime
  */
 public typealias TomlLocalTime = @Serializable(LocalTimeSerializer::class) NativeLocalTime
 
@@ -72,4 +115,12 @@ public typealias TomlLocalTime = @Serializable(LocalTimeSerializer::class) Nativ
  */
 public fun TomlLocalTime(text: String): TomlLocalTime {
     return NativeLocalTime(text)
+}
+
+/**
+ * Retrieves the default [KSerializer] for [NativeLocalTime] in TOML.
+ */
+@Suppress("FunctionName")
+public fun TomlLocalTimeSerializer(): KSerializer<NativeLocalTime> {
+    return LocalTimeSerializer
 }

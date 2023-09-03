@@ -1,6 +1,7 @@
 package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 import kotlin.test.Test
 
 class ValueClassTest {

@@ -324,6 +324,7 @@ public fun TomlLiteral.toFloat(): Float {
 public fun TomlLiteral.toFloatOrNull(): Float? {
     return when (content) {
         "inf" -> Float.POSITIVE_INFINITY
+        "+inf" -> Float.POSITIVE_INFINITY
         "-inf" -> Float.NEGATIVE_INFINITY
         "nan" -> Float.NaN
         else -> content.toFloatOrNull()

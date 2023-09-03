@@ -16,6 +16,8 @@
 
 package net.peanuuutz.tomlkt
 
+import net.peanuuutz.tomlkt.internal.toStringModified
+
 /**
  * A custom writer used when encoding model class or [TomlElement].
  *
@@ -45,11 +47,11 @@ public interface TomlWriter {
     }
 
     public fun writeFloat(float: Float) {
-        writeString(float.toString())
+        writeString(float.toStringModified())
     }
 
     public fun writeDouble(double: Double) {
-        writeString(double.toString())
+        writeString(double.toStringModified())
     }
 
     public fun writeChar(char: Char) {

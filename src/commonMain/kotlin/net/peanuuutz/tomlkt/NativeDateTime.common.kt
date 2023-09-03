@@ -7,6 +7,9 @@ package net.peanuuutz.tomlkt
  *
  * For JVM, this is an alias of `java.time.LocalDateTime`. For other platforms,
  * this is `kotlinx.datetime.LocalDateTime`.
+ *
+ * This type only connects to platform-specific type, so is not serializable.
+ * See [TomlLocalDateTime] for the serializable one.
  */
 public expect class NativeLocalDateTime
 
@@ -22,6 +25,9 @@ public expect fun NativeLocalDateTime(text: String): NativeLocalDateTime
  *
  * For JVM, this is an alias of `java.time.OffsetDateTime`. For other platforms,
  * this is `kotlinx.datetime.Instant`.
+ *
+ * This type only connects to platform-specific type, so is not serializable.
+ * See [TomlOffsetDateTime] for the serializable one.
  */
 public expect class NativeOffsetDateTime
 
@@ -37,6 +43,9 @@ public expect fun NativeOffsetDateTime(text: String): NativeOffsetDateTime
  *
  * For JVM, this is an alias of `java.time.LocalDate`. For other platforms, this
  * is `kotlinx.datetime.LocalDate`.
+ *
+ * This type only connects to platform-specific type, so is not serializable.
+ * See [TomlLocalDate] for the serializable one.
  */
 public expect class NativeLocalDate
 
@@ -52,6 +61,9 @@ public expect fun NativeLocalDate(text: String): NativeLocalDate
  *
  * For JVM, this is an alias of `java.time.LocalTime`. For other platforms, this
  * is `kotlinx.datetime.LocalTime`.
+ *
+ * This type only connects to platform-specific type, so is not serializable.
+ * See [TomlLocalTime] for the serializable one.
  */
 public expect class NativeLocalTime
 

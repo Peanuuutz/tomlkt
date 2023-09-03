@@ -119,8 +119,6 @@ internal class TomlElementDecoder(
     }
 
     internal abstract inner class AbstractDecoder : Decoder, CompositeDecoder, TomlDecoder {
-        protected var elementIndex: Int = 0
-
         protected abstract val currentElement: TomlElement
 
         final override val serializersModule: SerializersModule
@@ -229,29 +227,7 @@ internal class TomlElementDecoder(
         }
 
         final override fun decodeInlineElement(descriptor: SerialDescriptor, index: Int): Decoder {
-            TODO("Not yet implemented")
-        }
-
-        final override fun <T : Any> decodeNullableSerializableElement(
-            descriptor: SerialDescriptor,
-            index: Int,
-            deserializer: DeserializationStrategy<T?>,
-            previousValue: T?
-        ): T? {
-            return if (currentElement == TomlNull) {
-                TomlNull.content
-            } else {
-                deserializer.deserialize(this)
-            }
-        }
-
-        final override fun <T> decodeSerializableElement(
-            descriptor: SerialDescriptor,
-            index: Int,
-            deserializer: DeserializationStrategy<T>,
-            previousValue: T?
-        ): T {
-            return deserializer.deserialize(this)
+            return this
         }
 
         final override fun endStructure(descriptor: SerialDescriptor) {}
@@ -260,15 +236,46 @@ internal class TomlElementDecoder(
     internal inner class ArrayDecoder(
         private val array: TomlArray
     ) : AbstractDecoder() {
-        override val currentElement: TomlElement
-            get() = array[elementIndex++]
+        private var elementIndex: Int = 0
+
+        override lateinit var currentElement: TomlElement
 
         override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
-            return if (elementIndex == array.size) {
-                DECODE_DONE
+            return if (elementIndex != array.size) {
+                elementIndex
             } else {
-                elementIndex++
+                DECODE_DONE
             }
+        }
+
+        override fun <T : Any> decodeNullableSerializableElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            deserializer: DeserializationStrategy<T?>,
+            previousValue: T?
+        ): T? {
+            val element = array[elementIndex]
+            if (element == TomlNull) {
+                elementIndex++
+                return null
+            }
+            currentElement = element
+            val value = deserializer.deserialize(this)
+            elementIndex++
+            return value
+        }
+
+        override fun <T> decodeSerializableElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            deserializer: DeserializationStrategy<T>,
+            previousValue: T?
+        ): T {
+            val element = array[elementIndex]
+            currentElement = element
+            val value = deserializer.deserialize(this)
+            elementIndex++
+            return value
         }
 
         override fun decodeCollectionSize(descriptor: SerialDescriptor): Int {
@@ -283,21 +290,22 @@ internal class TomlElementDecoder(
     internal inner class ClassDecoder(
         table: TomlTable
     ) : AbstractDecoder() {
-        override lateinit var currentElement: TomlElement
-
         private val iterator: Iterator<Map.Entry<String, TomlElement>> = table.iterator()
+
+        private var consumedElementCount: Int = 0
+
+        override lateinit var currentElement: TomlElement
 
         override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
             return when {
-                elementIndex < descriptor.elementsCount -> {
+                consumedElementCount < descriptor.elementsCount -> {
                     if (iterator.hasNext()) {
-                        val entry = iterator.next()
-                        currentElement = entry.value
-                        val index = descriptor.getElementIndex(entry.key)
+                        val (key, value) = iterator.next()
+                        currentElement = value
+                        val index = descriptor.getElementIndex(key)
                         if (index == UNKNOWN_NAME && config.ignoreUnknownKeys.not()) {
-                            throw UnknownKeyException(entry.key)
+                            throw UnknownKeyException(key)
                         }
-                        elementIndex++
                         index
                     } else {
                         DECODE_DONE
@@ -308,6 +316,32 @@ internal class TomlElementDecoder(
                 }
                 else -> DECODE_DONE
             }
+        }
+
+        override fun <T : Any> decodeNullableSerializableElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            deserializer: DeserializationStrategy<T?>,
+            previousValue: T?
+        ): T? {
+            if (currentElement == TomlNull) {
+                consumedElementCount++
+                return null
+            }
+            val value = deserializer.deserialize(this)
+            consumedElementCount++
+            return value
+        }
+
+        override fun <T> decodeSerializableElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            deserializer: DeserializationStrategy<T>,
+            previousValue: T?
+        ): T {
+            val value = deserializer.deserialize(this)
+            consumedElementCount++
+            return value
         }
     }
 
@@ -321,11 +355,46 @@ internal class TomlElementDecoder(
             }
         }
 
-        override val currentElement: TomlElement
-            get() = iterator.next()
+        private var elementIndex: Int = 0
+
+        override lateinit var currentElement: TomlElement
 
         override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
-            return if (iterator.hasNext()) elementIndex++ else DECODE_DONE
+            return if (iterator.hasNext()) {
+                elementIndex
+            } else {
+                DECODE_DONE
+            }
+        }
+
+        override fun <T : Any> decodeNullableSerializableElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            deserializer: DeserializationStrategy<T?>,
+            previousValue: T?
+        ): T? {
+            val element = iterator.next()
+            if (element == TomlNull) {
+                elementIndex++
+                return null
+            }
+            currentElement = element
+            val value = deserializer.deserialize(this)
+            elementIndex++
+            return value
+        }
+
+        override fun <T> decodeSerializableElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            deserializer: DeserializationStrategy<T>,
+            previousValue: T?
+        ): T {
+            val element = iterator.next()
+            currentElement = element
+            val value = deserializer.deserialize(this)
+            elementIndex++
+            return value
         }
 
         override fun decodeCollectionSize(descriptor: SerialDescriptor): Int {

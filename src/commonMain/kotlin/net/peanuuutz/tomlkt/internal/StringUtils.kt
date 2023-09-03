@@ -153,11 +153,26 @@ internal fun String.unescape(): String {
     return builder.toString()
 }
 
+internal fun Float.toStringModified(): String {
+    return when {
+        isNaN() -> "nan"
+        isInfinite() -> if (this > 0.0f) "inf" else "-inf"
+        else -> toString()
+    }
+}
+
+internal fun Double.toStringModified(): String {
+    return when {
+        isNaN() -> "nan"
+        isInfinite() -> if (this > 0.0f) "inf" else "-inf"
+        else -> toString()
+    }
+}
+
 internal fun Number.toStringModified(): String {
     return when (this) {
-        Double.POSITIVE_INFINITY, Float.POSITIVE_INFINITY -> "inf"
-        Double.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY -> "-inf"
-        Double.NaN, Float.NaN -> "nan"
+        is Float -> toStringModified()
+        is Double -> toStringModified()
         else -> toString()
     }
 }
