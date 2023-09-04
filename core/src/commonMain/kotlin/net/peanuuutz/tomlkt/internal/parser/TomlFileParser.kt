@@ -595,15 +595,15 @@ internal class TomlFileParser(private val source: String) {
         var hasDate = false
         var hasTime = false
         var hasOffset = false
-        var hasWhitespace = false
+        var hasDateTimeSeparator = false
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 '\t', '\n', ',', Comment, EndArray, EndTable -> {
                     break
                 }
                 ' ' -> {
-                    if (!hasWhitespace) {
-                        hasWhitespace = true
+                    if (!hasDateTimeSeparator) {
+                        hasDateTimeSeparator = true
                         builder.append('T')
                     } else {
                         break
@@ -621,6 +621,7 @@ internal class TomlFileParser(private val source: String) {
                     builder.append('-')
                 }
                 'T', 't' -> {
+                    hasDateTimeSeparator = true
                     builder.append('T')
                 }
                 ':' -> {
@@ -647,28 +648,29 @@ internal class TomlFileParser(private val source: String) {
         }
         currentIndex--
         val result = builder.toString()
-        return when {
+        when {
             hasDate && hasTime -> {
                 if (!hasOffset) {
-                    val localDateTime = NativeLocalDateTime(result)
-                    TomlLiteral(localDateTime)
+                    NativeLocalDateTime(result)
                 } else {
-                    val offsetDateTime = NativeOffsetDateTime(result)
-                    TomlLiteral(offsetDateTime)
+                    NativeOffsetDateTime(result)
                 }
             }
             hasDate -> {
-                val localDate = NativeLocalDate(result)
-                TomlLiteral(localDate)
+                NativeLocalDate(result)
             }
             hasTime -> {
-                val localTime = NativeLocalTime(result)
-                TomlLiteral(localTime)
+                NativeLocalTime(result)
             }
             else -> {
-                error("Unreachable code")
+                error("Malformed date time: $result")
             }
         }
+        // Keeps the original text.
+        return TomlLiteral(
+            content = result,
+            isString = false
+        )
     }
 
     // Start right on the first '"', end on the last '"'.
