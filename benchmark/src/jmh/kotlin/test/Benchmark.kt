@@ -27,6 +27,16 @@ object TomlObjects {
     }
 }
 
+/*
+    Benchmark                              Mode  Cnt      Score      Error  Units
+    Benchmark.jacksonWithType              avgt   10   7696.731 ±  112.218  ns/op
+    Benchmark.jacksonWithClass             avgt   10   8090.255 ±  420.727  ns/op
+    Benchmark.tomlktWithoutSerializer      avgt   10  10265.799 ±   72.684  ns/op
+    Benchmark.tomlktWithSerializer         avgt   10  10901.727 ± 1002.641  ns/op
+    Benchmark.toml4j                       avgt   10  20390.178 ±  251.729  ns/op
+    Benchmark.ktomlWithSerializer          avgt   10  46123.130 ± 1389.639  ns/op
+    Benchmark.ktomlWithoutSerializer       avgt   10  46555.647 ± 1047.836  ns/op
+ */
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 4)
 @Measurement(iterations = 5)
