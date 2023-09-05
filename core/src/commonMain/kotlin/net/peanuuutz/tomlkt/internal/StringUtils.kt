@@ -58,6 +58,7 @@ internal val AsciiMapping: List<String> = buildList(128) {
     set('\b'.code, "\\b")
     set('\t'.code, "\\t")
     set('\n'.code, "\\n")
+    set(12, "\\f")
     set('\r'.code, "\\r")
     set('"'.code, "\\\"")
     set('\\'.code, "\\\\")
@@ -80,8 +81,8 @@ internal fun Char.escape(multiline: Boolean = false): String {
         code >= 128 -> toString()
         !multiline -> AsciiMapping[code]
         this == '\\' -> "\\\\"
-        this == '\n' -> "\n"
         this == '\t' -> "\t"
+        this == '\n' -> "\n"
         this == '\r' -> "\r"
         else -> AsciiMapping[code]
     }
@@ -115,14 +116,6 @@ internal fun String.unescape(): String {
                 builder.append('\n')
                 i++
             }
-            't' -> {
-                builder.append('\t')
-                i++
-            }
-            'r' -> {
-                builder.append('\r')
-                i++
-            }
             '"' -> {
                 builder.append('\"')
                 i++
@@ -131,22 +124,39 @@ internal fun String.unescape(): String {
                 builder.append('\\')
                 i++
             }
+            'u' -> {
+                // \u0000.
+                require(lastIndex >= i + 5) { "Unexpected end in $this" }
+                val char = substring(i + 2, i + 6).toInt(16).toChar()
+                builder.append(char)
+                i += 5
+            }
+            'U' -> {
+                // \U00000000.
+                require(lastIndex >= i + 9) { "Unexpected end in $this" }
+                val char = substring(i + 2, i + 10).toInt(16).toChar()
+                builder.append(char)
+                i += 9
+            }
+            't' -> {
+                builder.append('\t')
+                i++
+            }
+            'r' -> {
+                builder.append('\r')
+                i++
+            }
             'b' -> {
                 builder.append('\b')
                 i++
             }
-            'u' -> {
-                require(lastIndex >= i + 5) { "Unexpected end in $this" }
-                val index = AsciiMapping.indexOf(substring(i, i + 6))
-                if (index == -1) {
-                    builder.append("\\u")
-                    i++
-                } else {
-                    builder.append(index.toChar())
-                    i += 5
-                }
+            'f' -> {
+                builder.append(12.toChar())
+                i++
             }
-            else -> error("Unknown escape $next")
+            else -> {
+                error("Unknown escape $next")
+            }
         }
         i++
     }

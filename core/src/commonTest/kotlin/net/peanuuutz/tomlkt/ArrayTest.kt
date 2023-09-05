@@ -60,12 +60,10 @@ class ArrayTest {
 
     @Serializable
     data class M2(
-        val d: Double,
         val ls: List<List<String>>
     )
 
     val m21 = M2(
-        d = 0.0,
         ls = listOf(
             listOf(
                 "0"
@@ -74,7 +72,6 @@ class ArrayTest {
     )
 
     val s21 = """
-        d = 0.0
         ls = [
             [ "0" ]
         ]
@@ -91,7 +88,6 @@ class ArrayTest {
     }
 
     val s22 = """
-        d = 0.0
         ls = [ [ "0" ] ]
     """.trimIndent()
 
@@ -101,12 +97,10 @@ class ArrayTest {
     }
 
     val m22 = M2(
-        d = -3.14,
         ls = listOf()
     )
 
     val s23 = """
-        d = -3.14
         ls = [  ]
     """.trimIndent()
 
@@ -118,5 +112,62 @@ class ArrayTest {
     @Test
     fun decodeEmptyCollectionLikeElement() {
         testDecode(M2.serializer(), s23, m22)
+    }
+
+    @Serializable
+    class M3(
+        @TomlInline
+        val fs: FloatArray
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is M3) return false
+            if (!fs.contentEquals(other.fs)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return fs.contentHashCode()
+        }
+
+        override fun toString(): String {
+            return "M3(fs=${fs.contentToString()})"
+        }
+    }
+
+    val m31 = M3(
+        fs = floatArrayOf(0.0f)
+    )
+
+    val s31 = """
+        fs = [ 0.0 ]
+    """.trimIndent()
+
+    @Test
+    fun encodePrimitiveElementInline() {
+        testEncode(M3.serializer(), m31, s31)
+    }
+
+    @Serializable
+    data class M4(
+        @TomlInline
+        val ls: List<List<String>>
+    )
+
+    val m41 = M4(
+        ls = listOf(
+            listOf(
+                "Hi"
+            )
+        )
+    )
+
+    val s41 = """
+        ls = [ [ "Hi" ] ]
+    """.trimIndent()
+
+    @Test
+    fun encodeCollectionLikeElementInline() {
+        testEncode(M4.serializer(), m41, s41)
     }
 }

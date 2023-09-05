@@ -716,17 +716,14 @@ internal class TomlFileParser(private val source: String) {
                 }
                 '"' -> {
                     if (!multiline) {
-                        if (getChar(-1) != '\\') {
-                            justEnded = true
-                            break
-                        }
-                    } else {
-                        throwIncompleteIf { isEof() }
-                        if (getChar(1) == '"' && getChar(2) == '"') {
-                            currentIndex += 2
-                            justEnded = true
-                            break
-                        }
+                        justEnded = true
+                        break
+                    }
+                    throwIncompleteIf { isEof() }
+                    if (getChar(1) == '"' && getChar(2) == '"') {
+                        currentIndex += 2
+                        justEnded = true
+                        break
                     }
                     builder.append(current)
                 }
@@ -738,7 +735,7 @@ internal class TomlFileParser(private val source: String) {
                             throwUnexpectedTokenIf(current) { !multiline }
                             trim = true
                         }
-                        'u', 'b', 't', 'n', 'f', 'r', '"', '\\' -> {
+                        'n', '"', '\\', 'u', 'U', 't', 'r', 'b', 'f' -> {
                             builder.append(current).append(next)
                             currentIndex++
                         }

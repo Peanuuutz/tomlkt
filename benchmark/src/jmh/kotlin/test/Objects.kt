@@ -1,14 +1,23 @@
 package test
 
+import kotlinx.datetime.Instant
 import kotlinx.datetime.serializers.InstantIso8601Serializer
+import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.peanuuutz.tomlkt.NativeOffsetDateTime
 import net.peanuuutz.tomlkt.TomlDecoder
+import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlOffsetDateTimeSerializer
 import org.intellij.lang.annotations.Language
+import java.time.ZoneOffset
+
+fun main() {
+
+}
 
 @Serializable
 data class Config(
@@ -74,7 +83,28 @@ object OffsetDateTimeSerializer : KSerializer<Any> {
         get() = InstantIso8601Serializer.descriptor
 
     override fun serialize(encoder: Encoder, value: Any) {
-        TODO("Not yet implemented")
+        if (encoder is TomlEncoder) {
+            when (value) {
+                is NativeOffsetDateTime -> {
+                    TomlOffsetDateTimeSerializer().serialize(encoder, value)
+                }
+                is Instant -> {
+                    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+                    val converted = value.value.atOffset(ZoneOffset.UTC)
+                    TomlOffsetDateTimeSerializer().serialize(encoder, converted)
+                }
+            }
+        } else {
+            when (value) {
+                is NativeOffsetDateTime -> {
+                    val converted = value.toInstant().toKotlinInstant()
+                    InstantIso8601Serializer.serialize(encoder, converted)
+                }
+                is Instant -> {
+                    InstantIso8601Serializer.serialize(encoder, value)
+                }
+            }
+        }
     }
 
     override fun deserialize(decoder: Decoder): Any {
