@@ -35,11 +35,11 @@ import net.peanuuutz.tomlkt.internal.DefiniteNumberConstraints
 import net.peanuuutz.tomlkt.internal.EndArray
 import net.peanuuutz.tomlkt.internal.EndTable
 import net.peanuuutz.tomlkt.internal.HexadecimalConstraints
-import net.peanuuutz.tomlkt.internal.IncompleteException
 import net.peanuuutz.tomlkt.internal.KeyValueDelimiter
 import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartTable
-import net.peanuuutz.tomlkt.internal.UnexpectedTokenException
+import net.peanuuutz.tomlkt.internal.throwIncomplete
+import net.peanuuutz.tomlkt.internal.throwUnexpectedToken
 import net.peanuuutz.tomlkt.internal.toNumber
 import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.contracts.InvocationKind
@@ -80,7 +80,7 @@ internal class TomlFileParser(private val source: String) {
     }
 
     private fun throwIncomplete(): Nothing {
-        throw IncompleteException(currentLineNumber)
+        throwIncomplete(currentLineNumber)
     }
 
     private inline fun throwIncompleteIf(predicate: () -> Boolean) {
@@ -92,7 +92,7 @@ internal class TomlFileParser(private val source: String) {
     }
 
     private fun throwUnexpectedToken(token: Char): Nothing {
-        throw UnexpectedTokenException(token, currentLineNumber)
+        throwUnexpectedToken(token, currentLineNumber)
     }
 
     private inline fun throwUnexpectedTokenIf(token: Char, predicate: (Char) -> Boolean) {

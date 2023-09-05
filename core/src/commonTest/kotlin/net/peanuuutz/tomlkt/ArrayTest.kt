@@ -22,12 +22,12 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun encodePrimitiveElement() {
+    fun encodeCollectionLikeWithPrimitiveElement() {
         testEncode(M1.serializer(), m11, s11)
     }
 
     @Test
-    fun decodePrimitiveElement() {
+    fun decodeCollectionLikeWithPrimitiveElement() {
         testDecode(M1.serializer(), s11, m11)
     }
 
@@ -36,7 +36,7 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun decodePrimitiveElementInline() {
+    fun decodeCollectionLikeWithPrimitiveElementInline() {
         testDecode(M1.serializer(), s12, m11)
     }
 
@@ -49,12 +49,12 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyPrimitiveElement() {
+    fun encodeEmptyCollectionLikeWithPrimitiveElement() {
         testEncode(M1.serializer(), m12, s13)
     }
 
     @Test
-    fun decodeEmptyPrimitiveElement() {
+    fun decodeEmptyCollectionLikeWithPrimitiveElement() {
         testDecode(M1.serializer(), s13, m12)
     }
 
@@ -78,12 +78,12 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun encodeCollectionLikeElement() {
+    fun encodeCollectionLikeWithCollectionLikeElement() {
         testEncode(M2.serializer(), m21, s21)
     }
 
     @Test
-    fun decodeCollectionLikeElement() {
+    fun decodeCollectionLikeWithCollectionLikeElement() {
         testDecode(M2.serializer(), s21, m21)
     }
 
@@ -92,26 +92,57 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun decodeCollectionLikeElementInline() {
+    fun decodeCollectionLikeWithCollectionLikeElementInline() {
         testDecode(M2.serializer(), s22, m21)
     }
 
     val m22 = M2(
-        ls = listOf()
+        ls = listOf(
+            emptyList()
+        )
     )
 
     val s23 = """
-        ls = [  ]
+        ls = [
+            [  ]
+        ]
     """.trimIndent()
 
     @Test
-    fun encodeEmptyCollectionLikeElement() {
+    fun encodeCollectionLikeWithEmptyCollectionLikeElement() {
         testEncode(M2.serializer(), m22, s23)
     }
 
     @Test
-    fun decodeEmptyCollectionLikeElement() {
+    fun decodeCollectionLikeWithEmptyCollectionLikeElement() {
         testDecode(M2.serializer(), s23, m22)
+    }
+
+    val s24 = """
+        ls = [ [  ] ]
+    """.trimIndent()
+
+    @Test
+    fun decodeCollectionLikeWithEmptyCollectionLikeElementInline() {
+        testDecode(M2.serializer(), s24, m22)
+    }
+
+    val m23 = M2(
+        ls = emptyList()
+    )
+
+    val s25 = """
+        ls = [  ]
+    """.trimIndent()
+
+    @Test
+    fun encodeEmptyCollectionLikeWithCollectionLikeElement() {
+        testEncode(M2.serializer(), m23, s25)
+    }
+
+    @Test
+    fun decodeEmptyCollectionLikeWithCollectionLikeElement() {
+        testDecode(M2.serializer(), s25, m23)
     }
 
     @Serializable
@@ -144,7 +175,7 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun encodePrimitiveElementInline() {
+    fun encodeCollectionLikeWithPrimitiveElementInline() {
         testEncode(M3.serializer(), m31, s31)
     }
 
@@ -167,7 +198,7 @@ class ArrayTest {
     """.trimIndent()
 
     @Test
-    fun encodeCollectionLikeElementInline() {
+    fun encodeCollectionLikeWithCollectionLikeElementInline() {
         testEncode(M4.serializer(), m41, s41)
     }
 }

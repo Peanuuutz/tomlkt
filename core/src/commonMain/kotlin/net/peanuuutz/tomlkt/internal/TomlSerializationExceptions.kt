@@ -22,48 +22,86 @@ import net.peanuuutz.tomlkt.internal.parser.Path
 
 // -------- Encoding --------
 
-internal sealed class TomlEncodingException : SerializationException {
-    constructor()
-    constructor(message: String) : super(message)
+internal sealed class TomlEncodingException(message: String) : SerializationException(message)
+
+// ---- NonPrimitiveKeyException ----
+
+internal class NonPrimitiveKeyException(message: String) : TomlEncodingException(message)
+
+internal fun throwNonPrimitiveKey(key: Any?): Nothing {
+    throw NonPrimitiveKeyException(key.toString())
 }
 
-internal class NonPrimitiveKeyException : TomlEncodingException()
+// ---- UnsupportedSerialKindException ----
 
-internal class UnsupportedSerialKindException(kind: SerialKind) : TomlEncodingException(
-    message = kind.toString()
-)
+internal class UnsupportedSerialKindException(message: String) : TomlEncodingException(message)
 
-internal class NullInArrayOfTableException : TomlEncodingException(
-    message = "Null is not allowed in array of table, " +
-            "please mark the corresponding property as @TomlBlockArray or @TomlInline"
-)
+internal fun throwUnsupportedSerialKind(kind: SerialKind): Nothing {
+    throw UnsupportedSerialKindException(kind.toString())
+}
 
-internal class EmptyArrayOfTableInMapException : TomlEncodingException(
-    message = "At most one empty array of table is allowed in a map"
-)
+internal fun throwUnsupportedSerialKind(message: String): Nothing {
+    throw UnsupportedSerialKindException(message)
+}
+
+// ---- NullInArrayOfTableException ----
+
+private const val NullInArrayOfTableMessage: String = "Null is not allowed in array of table, " +
+        "please mark the corresponding property as @TomlBlockArray or @TomlInline"
+
+internal class NullInArrayOfTableException : TomlEncodingException(NullInArrayOfTableMessage)
+
+internal fun throwNullInArrayOfTable(): Nothing {
+    throw NullInArrayOfTableException()
+}
+
+// ---- EmptyArrayOfTableInMapException ----
+
+private const val EmptyArrayOfTableInMap: String = "At most one empty array of table is allowed in a map"
+
+internal class EmptyArrayOfTableInMapException : TomlEncodingException(EmptyArrayOfTableInMap)
+
+internal fun throwEmptyArrayOfTableInMap(): Nothing {
+    throw EmptyArrayOfTableInMapException()
+}
 
 // -------- Decoding --------
 
-internal sealed class TomlDecodingException : SerializationException {
-    constructor()
-    constructor(message: String) : super(message)
+internal sealed class TomlDecodingException(message: String) : SerializationException(message)
+
+// ---- UnexpectedTokenException ----
+
+internal class UnexpectedTokenException(message: String) : TomlDecodingException(message)
+
+internal fun throwUnexpectedToken(token: Char, line: Int): Nothing {
+    val tokenRepresentation = if (token != '\'') token.escape() else "\\'"
+    val message = "'$tokenRepresentation' (L$line)"
+    throw UnexpectedTokenException(message)
 }
 
-internal class UnexpectedTokenException(token: Char, line: Int) : TomlDecodingException(
-    message = run {
-        val tokenRepresentation = if (token != '\'') token.escape() else "\\'"
-        "'$tokenRepresentation' (L$line)"
+// ---- IncompleteException ----
+
+internal class IncompleteException(message: String) : TomlDecodingException(message)
+
+internal fun throwIncomplete(line: Int): Nothing {
+    throw IncompleteException("(L$line)")
+}
+
+// ---- ConflictEntryException ----
+
+internal class ConflictEntryException(message: String) : TomlDecodingException(message)
+
+internal fun throwConflictEntry(path: Path): Nothing {
+    val message = path.joinToString(".") { segment ->
+        segment.escape().doubleQuotedIfNotPure()
     }
-)
+    throw ConflictEntryException(message)
+}
 
-internal class IncompleteException(line: Int) : TomlDecodingException(
-    message = "(L$line)"
-)
+// ---- UnknownKeyException ----
 
-internal class ConflictEntryException(path: Path) : TomlDecodingException(
-    message = path.joinToString(".") { it.escape().doubleQuotedIfNotPure() }
-)
+internal class UnknownKeyException(message: String) : TomlDecodingException(message)
 
-internal class UnknownKeyException(key: String) : TomlDecodingException(
-    message = key
-)
+internal fun throwUnknownKey(key: String): Nothing {
+    throw UnknownKeyException(key)
+}

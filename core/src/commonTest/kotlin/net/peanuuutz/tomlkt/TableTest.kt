@@ -1030,17 +1030,22 @@ class TableTest {
     @Serializable
     data class M14(
         @TomlInline
-        val c: C1
+        val c1: C1,
+        val c2: C2
     )
 
     val m141 = M14(
-        c = C1(
+        c1 = C1(
             s = "inline"
-        )
+        ),
+        c2 = C2()
     )
 
     val s141 = """
-        c = { s = "inline" }
+        c1 = { s = "inline" }
+        
+        [c2]
+        
     """.trimIndent()
 
     @Test
@@ -1051,17 +1056,24 @@ class TableTest {
     @Serializable
     data class M15(
         @TomlInline
-        val bm: Map<String, Boolean>
+        val bm1: Map<String, Boolean>,
+        val bm2: Map<String, Boolean>
     )
 
     val m151 = M15(
-        bm = mapOf(
+        bm1 = mapOf(
             "a" to true
+        ),
+        bm2 = mapOf(
+            "b" to false
         )
     )
 
     val s151 = """
-        bm = { a = true }
+        bm1 = { a = true }
+        
+        [bm2]
+        b = false
     """.trimIndent()
 
     @Test
@@ -1072,19 +1084,28 @@ class TableTest {
     @Serializable
     data class M16(
         @TomlInline
-        val cm: Map<String, C1>
+        val cm1: Map<String, C1>,
+        val cm2: Map<String, C2>
     )
 
     val m161 = M16(
-        cm = mapOf(
+        cm1 = mapOf(
             "a" to C1(
                 s = "no"
             )
+        ),
+        cm2 = mapOf(
+            "b" to C2()
         )
     )
 
     val s161 = """
-        cm = { a = { s = "no" } }
+        cm1 = { a = { s = "no" } }
+        
+        [cm2]
+        
+        [cm2.b]
+        
     """.trimIndent()
 
     @Test
@@ -1095,17 +1116,28 @@ class TableTest {
     @Serializable
     data class M17(
         @TomlInline
-        val cm: Map<String, C2>
+        val cm1: Map<String, C2>,
+        val cm2: Map<String, C1>
     )
 
     val m171 = M17(
-        cm = mapOf(
+        cm1 = mapOf(
             "a" to C2()
+        ),
+        cm2 = mapOf(
+            "b" to C1(
+                s = "false"
+            )
         )
     )
 
     val s171 = """
-        cm = { a = {  } }
+        cm1 = { a = {  } }
+        
+        [cm2]
+        
+        [cm2.b]
+        s = "false"
     """.trimIndent()
 
     @Test
@@ -1152,19 +1184,24 @@ class TableTest {
     @Serializable
     data class M19(
         @TomlInline
-        val mm: Map<String, Map<String, String>>
+        val mm1: Map<String, Map<String, String>>,
+        val mm2: Map<String, Map<String, String>>
     )
 
     val m191 = M19(
-        mm = mapOf(
+        mm1 = mapOf(
             "1" to mapOf(
                 "1" to "1"
             )
-        )
+        ),
+        mm2 = emptyMap()
     )
 
     val s191 = """
-        mm = { 1 = { 1 = "1" } }
+        mm1 = { 1 = { 1 = "1" } }
+        
+        [mm2]
+        
     """.trimIndent()
 
     @Test
@@ -1173,13 +1210,17 @@ class TableTest {
     }
 
     val m192 = M19(
-        mm = mapOf(
+        mm1 = mapOf(
             "2" to emptyMap()
-        )
+        ),
+        mm2 = emptyMap()
     )
 
     val s192 = """
-        mm = { 2 = {  } }
+        mm1 = { 2 = {  } }
+        
+        [mm2]
+        
     """.trimIndent()
 
     @Test

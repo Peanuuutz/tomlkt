@@ -19,7 +19,10 @@ package net.peanuuutz.tomlkt.internal
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.StructureKind.CLASS
+import kotlinx.serialization.descriptors.StructureKind.LIST
+import kotlinx.serialization.descriptors.StructureKind.MAP
+import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.UNKNOWN_NAME
@@ -109,12 +112,12 @@ internal class TomlElementDecoder(
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
-        return when (descriptor.kind) {
-            StructureKind.CLASS -> ClassDecoder(element.toTomlTable())
-            StructureKind.OBJECT -> ClassDecoder(element.toTomlTable())
-            StructureKind.LIST -> ArrayDecoder(element.toTomlArray())
-            StructureKind.MAP -> MapDecoder(element.toTomlTable())
-            else -> throw UnsupportedSerialKindException(descriptor.kind)
+        return when (val kind = descriptor.kind) {
+            CLASS -> ClassDecoder(element.toTomlTable())
+            OBJECT -> ClassDecoder(element.toTomlTable())
+            LIST -> ArrayDecoder(element.toTomlArray())
+            MAP -> MapDecoder(element.toTomlTable())
+            else -> throwUnsupportedSerialKind(kind)
         }
     }
 
@@ -181,12 +184,12 @@ internal class TomlElementDecoder(
         }
 
         override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
-            return when (descriptor.kind) {
-                StructureKind.CLASS -> ClassDecoder(currentElement.toTomlTable())
-                StructureKind.OBJECT -> ClassDecoder(currentElement.toTomlTable())
-                StructureKind.LIST -> ArrayDecoder(currentElement.toTomlArray())
-                StructureKind.MAP -> MapDecoder(currentElement.toTomlTable())
-                else -> throw UnsupportedSerialKindException(descriptor.kind)
+            return when (val kind = descriptor.kind) {
+                CLASS -> ClassDecoder(currentElement.toTomlTable())
+                OBJECT -> ClassDecoder(currentElement.toTomlTable())
+                LIST -> ArrayDecoder(currentElement.toTomlArray())
+                MAP -> MapDecoder(currentElement.toTomlTable())
+                else -> throwUnsupportedSerialKind(kind)
             }
         }
 
@@ -304,7 +307,7 @@ internal class TomlElementDecoder(
                         currentElement = value
                         val index = descriptor.getElementIndex(key)
                         if (index == UNKNOWN_NAME && config.ignoreUnknownKeys.not()) {
-                            throw UnknownKeyException(key)
+                            throwUnknownKey(key)
                         }
                         index
                     } else {
@@ -312,7 +315,7 @@ internal class TomlElementDecoder(
                     }
                 }
                 iterator.hasNext() && config.ignoreUnknownKeys.not() -> {
-                    throw UnknownKeyException(iterator.next().key)
+                    throwUnknownKey(iterator.next().key)
                 }
                 else -> DECODE_DONE
             }

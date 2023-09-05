@@ -19,7 +19,10 @@ package net.peanuuutz.tomlkt.internal
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.StructureKind.CLASS
+import kotlinx.serialization.descriptors.StructureKind.LIST
+import kotlinx.serialization.descriptors.StructureKind.MAP
+import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
@@ -100,23 +103,23 @@ internal class TomlElementEncoder(
         descriptor: SerialDescriptor,
         elementConsumer: (TomlElement) -> Unit
     ) : CompositeEncoder {
-        return when (descriptor.kind) {
-            StructureKind.CLASS, StructureKind.OBJECT -> {
+        return when (val kind = descriptor.kind) {
+            CLASS, OBJECT -> {
                 val builder = mutableMapOf<String, TomlElement>()
                 elementConsumer(TomlTable(builder))
                 ClassEncoder(builder)
             }
-            StructureKind.LIST -> {
+            LIST -> {
                 val builder = mutableListOf<TomlElement>()
                 elementConsumer(TomlArray(builder))
                 ArrayEncoder(builder)
             }
-            StructureKind.MAP -> {
+            MAP -> {
                 val builder = mutableMapOf<String, TomlElement>()
                 elementConsumer(TomlTable(builder))
                 MapEncoder(builder)
             }
-            else -> throw UnsupportedSerialKindException(descriptor.kind)
+            else -> throwUnsupportedSerialKind(kind)
         }
     }
 

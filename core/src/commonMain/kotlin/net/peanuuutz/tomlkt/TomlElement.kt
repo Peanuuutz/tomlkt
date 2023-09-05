@@ -34,6 +34,7 @@ import net.peanuuutz.tomlkt.internal.parser.ArrayNode
 import net.peanuuutz.tomlkt.internal.parser.KeyNode
 import net.peanuuutz.tomlkt.internal.parser.TreeNode
 import net.peanuuutz.tomlkt.internal.parser.ValueNode
+import net.peanuuutz.tomlkt.internal.throwNonPrimitiveKey
 import net.peanuuutz.tomlkt.internal.toStringModified
 
 // -------- TomlElement --------
@@ -657,7 +658,7 @@ internal fun Any?.toTomlKey(): String {
     return when (this) {
         is Boolean, is Number, is Char -> toString()
         is String -> this
-        else -> throw NonPrimitiveKeyException()
+        else -> throwNonPrimitiveKey(this)
     }
 }
 
