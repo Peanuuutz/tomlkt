@@ -345,7 +345,7 @@ class KeyTest {
     val m131 = M13(
         c = C4(
             i = 0,
-            f = 0.0f
+            f = 0.1f
         ),
         b = true
     )
@@ -353,7 +353,7 @@ class KeyTest {
     val s131 = """
         c.i = 0
         b = true
-        c.f = 0.0
+        c.f = 0.1
     """.trimIndent()
 
     @Test

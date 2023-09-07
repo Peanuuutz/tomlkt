@@ -11,13 +11,13 @@ class ArrayTest {
 
     val m11 = M1(
         fs = listOf(
-            0.0f
+            0.1f
         )
     )
 
     val s11 = """
         fs = [
-            0.0
+            0.1
         ]
     """.trimIndent()
 
@@ -32,7 +32,7 @@ class ArrayTest {
     }
 
     val s12 = """
-        fs = [ 0.0 ]
+        fs = [ 0.1 ]
     """.trimIndent()
 
     @Test
@@ -167,11 +167,11 @@ class ArrayTest {
     }
 
     val m31 = M3(
-        fs = floatArrayOf(0.0f)
+        fs = floatArrayOf(0.5f)
     )
 
     val s31 = """
-        fs = [ 0.0 ]
+        fs = [ 0.5 ]
     """.trimIndent()
 
     @Test
