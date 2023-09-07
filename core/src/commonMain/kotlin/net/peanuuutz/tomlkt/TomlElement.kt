@@ -160,6 +160,34 @@ public fun TomlLiteral(value: Number): TomlLiteral {
 }
 
 /**
+ * Creates a [TomlLiteral] from the given `UByte` [value].
+ */
+public fun TomlLiteral(value: UByte): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates a [TomlLiteral] from the given `UShort` [value].
+ */
+public fun TomlLiteral(value: UShort): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates a [TomlLiteral] from the given `UInt` [value].
+ */
+public fun TomlLiteral(value: UInt): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
+ * Creates a [TomlLiteral] from the given `ULong` [value].
+ */
+public fun TomlLiteral(value: ULong): TomlLiteral {
+    return TomlLiteral(value.toString(), isString = false)
+}
+
+/**
  * Creates a [TomlLiteral] from the given char [value].
  */
 public fun TomlLiteral(value: Char): TomlLiteral {

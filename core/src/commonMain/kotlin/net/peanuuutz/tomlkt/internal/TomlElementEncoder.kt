@@ -17,7 +17,6 @@
 package net.peanuuutz.tomlkt.internal
 
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind.CLASS
 import kotlinx.serialization.descriptors.StructureKind.LIST
@@ -40,7 +39,7 @@ import net.peanuuutz.tomlkt.toTomlKey
 internal class TomlElementEncoder(
     private val config: TomlConfig,
     override val serializersModule: SerializersModule
-) : Encoder, TomlEncoder {
+) : TomlEncoder {
     lateinit var element: TomlElement
 
     override fun encodeBoolean(value: Boolean) {
@@ -87,19 +86,26 @@ internal class TomlElementEncoder(
         element = value
     }
 
-    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
-        encodeString(enumDescriptor.getElementName(index))
+    override fun encodeInline(descriptor: SerialDescriptor): Encoder {
+        return if (descriptor.isUnsignedInteger) {
+            InlineEncoder(
+                elementConsumer = this::element::set,
+                delegate = this
+            )
+        } else {
+            this
+        }
     }
 
-    override fun encodeInline(descriptor: SerialDescriptor): Encoder {
-        return this
+    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+        encodeString(enumDescriptor.getElementName(index))
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         return beginStructure(descriptor, this::element::set)
     }
 
-    private inline fun beginStructure(
+    private fun beginStructure(
         descriptor: SerialDescriptor,
         elementConsumer: (TomlElement) -> Unit
     ) : CompositeEncoder {
@@ -123,7 +129,32 @@ internal class TomlElementEncoder(
         }
     }
 
-    internal abstract inner class AbstractEncoder : Encoder, CompositeEncoder, TomlEncoder {
+    private class InlineEncoder(
+        private val elementConsumer: (TomlElement) -> Unit,
+        private val delegate: TomlEncoder
+    ) : TomlEncoder by delegate {
+        override fun encodeByte(value: Byte) {
+            elementConsumer(TomlLiteral(value.toUByte()))
+        }
+
+        override fun encodeShort(value: Short) {
+            elementConsumer(TomlLiteral(value.toUShort()))
+        }
+
+        override fun encodeInt(value: Int) {
+            elementConsumer(TomlLiteral(value.toUInt()))
+        }
+
+        override fun encodeLong(value: Long) {
+            elementConsumer(TomlLiteral(value.toULong()))
+        }
+
+        override fun encodeInline(descriptor: SerialDescriptor): Encoder {
+            return if (descriptor.isUnsignedInteger) this else delegate
+        }
+    }
+
+    private abstract inner class AbstractEncoder : TomlEncoder, CompositeEncoder {
         lateinit var currentElement: TomlElement
 
         final override val serializersModule: SerializersModule
@@ -173,12 +204,19 @@ internal class TomlElementEncoder(
             currentElement = value
         }
 
-        final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
-            encodeString(enumDescriptor.getElementName(index))
+        final override fun encodeInline(descriptor: SerialDescriptor): Encoder {
+            return if (descriptor.isUnsignedInteger) {
+                InlineEncoder(
+                    elementConsumer = this::currentElement::set,
+                    delegate = this
+                )
+            } else {
+                this
+            }
         }
 
-        final override fun encodeInline(descriptor: SerialDescriptor): Encoder {
-            return this
+        final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+            encodeString(enumDescriptor.getElementName(index))
         }
 
         final override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
@@ -186,43 +224,68 @@ internal class TomlElementEncoder(
         }
 
         final override fun encodeBooleanElement(descriptor: SerialDescriptor, index: Int, value: Boolean) {
-            encodeSerializableElement(descriptor, index, Boolean.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeBoolean(value)
+            }
         }
 
         final override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-            encodeSerializableElement(descriptor, index, Byte.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeByte(value)
+            }
         }
 
         final override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) {
-            encodeSerializableElement(descriptor, index, Short.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeShort(value)
+            }
         }
 
         final override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-            encodeSerializableElement(descriptor, index, Int.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeInt(value)
+            }
         }
 
         final override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-            encodeSerializableElement(descriptor, index, Long.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeLong(value)
+            }
         }
 
         final override fun encodeFloatElement(descriptor: SerialDescriptor, index: Int, value: Float) {
-            encodeSerializableElement(descriptor, index, Float.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeFloat(value)
+            }
         }
 
         final override fun encodeDoubleElement(descriptor: SerialDescriptor, index: Int, value: Double) {
-            encodeSerializableElement(descriptor, index, Double.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeDouble(value)
+            }
         }
 
         final override fun encodeCharElement(descriptor: SerialDescriptor, index: Int, value: Char) {
-            encodeSerializableElement(descriptor, index, Char.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeChar(value)
+            }
         }
 
         final override fun encodeStringElement(descriptor: SerialDescriptor, index: Int, value: String) {
-            encodeSerializableElement(descriptor, index, String.serializer(), value)
+            encodeElement(descriptor, index) {
+                encodeString(value)
+            }
         }
 
         final override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder {
-            TODO("Not yet implemented")
+            return if (descriptor.getElementDescriptor(index).isUnsignedInteger) {
+                InlineElementEncoder(
+                    parentDescriptor = descriptor,
+                    elementIndex = index
+                )
+            } else {
+                this
+            }
         }
 
         final override fun <T : Any> encodeNullableSerializableElement(
@@ -232,50 +295,144 @@ internal class TomlElementEncoder(
             value: T?
         ) {
             if (value == null) {
-                currentElement = TomlNull
+                encodeSerializableElement(descriptor, index, TomlNull.serializer(), TomlNull)
             } else {
                 encodeSerializableElement(descriptor, index, serializer, value)
             }
         }
 
-        final override fun endStructure(descriptor: SerialDescriptor) {}
-    }
-
-    internal inner class ArrayEncoder(
-        private val builder: MutableList<TomlElement>
-    ) : AbstractEncoder() {
         override fun <T> encodeSerializableElement(
             descriptor: SerialDescriptor,
             index: Int,
             serializer: SerializationStrategy<T>,
             value: T
         ) {
-            serializer.serialize(this, value)
-            builder.add(currentElement)
+            encodeElement(descriptor, index) {
+                serializer.serialize(this, value)
+            }
+        }
+
+        protected inline fun encodeElement(
+            descriptor: SerialDescriptor,
+            index: Int,
+            block: () -> Unit
+        ) {
+            beginElement(descriptor, index)
+            block()
+            endElement(descriptor, index)
+        }
+
+        protected abstract fun beginElement(
+            descriptor: SerialDescriptor,
+            index: Int
+        )
+
+        protected abstract fun endElement(
+            descriptor: SerialDescriptor,
+            index: Int
+        )
+
+        final override fun endStructure(descriptor: SerialDescriptor) {}
+
+        private inner class InlineElementEncoder(
+            private val parentDescriptor: SerialDescriptor,
+            private val elementIndex: Int
+        ) : TomlEncoder {
+            override val serializersModule: SerializersModule
+                get() = this@AbstractEncoder.serializersModule
+
+            override fun encodeBoolean(value: Boolean) {
+                encodeBooleanElement(parentDescriptor, elementIndex, value)
+            }
+
+            override fun encodeByte(value: Byte) {
+                encodeElement(parentDescriptor, elementIndex) {
+                    currentElement = TomlLiteral(value.toUByte())
+                }
+            }
+
+            override fun encodeShort(value: Short) {
+                encodeElement(parentDescriptor, elementIndex) {
+                    currentElement = TomlLiteral(value.toUShort())
+                }
+            }
+
+            override fun encodeInt(value: Int) {
+                encodeElement(parentDescriptor, elementIndex) {
+                    currentElement = TomlLiteral(value.toUInt())
+                }
+            }
+
+            override fun encodeLong(value: Long) {
+                encodeElement(parentDescriptor, elementIndex) {
+                    currentElement = TomlLiteral(value.toULong())
+                }
+            }
+
+            override fun encodeFloat(value: Float) {
+                encodeFloatElement(parentDescriptor, elementIndex, value)
+            }
+
+            override fun encodeDouble(value: Double) {
+                encodeDoubleElement(parentDescriptor, elementIndex, value)
+            }
+
+            override fun encodeChar(value: Char) {
+                encodeCharElement(parentDescriptor, elementIndex, value)
+            }
+
+            override fun encodeString(value: String) {
+                encodeStringElement(parentDescriptor, elementIndex, value)
+            }
+
+            override fun encodeNull() {
+                encodeElement(parentDescriptor, elementIndex) {
+                    currentElement = TomlNull
+                }
+            }
+
+            override fun encodeTomlElement(value: TomlElement) {
+                encodeElement(parentDescriptor, elementIndex) {
+                    currentElement = value
+                }
+            }
+
+            override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+                encodeElement(parentDescriptor, elementIndex) {
+                    this@AbstractEncoder.encodeEnum(enumDescriptor, index)
+                }
+            }
+
+            override fun encodeInline(descriptor: SerialDescriptor): Encoder {
+                return if (descriptor.isUnsignedInteger) this else this@AbstractEncoder
+            }
+
+            override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
+                return this@AbstractEncoder.beginStructure(descriptor)
+            }
         }
     }
 
-    internal inner class ClassEncoder(
+    private inner class ClassEncoder(
         private val builder: MutableMap<String, TomlElement>
     ) : AbstractEncoder() {
-        override fun <T> encodeSerializableElement(
-            descriptor: SerialDescriptor,
-            index: Int,
-            serializer: SerializationStrategy<T>,
-            value: T
-        ) {
-            val key = descriptor.getElementName(index)
-            serializer.serialize(this, value)
-            builder[key] = currentElement
+        private lateinit var currentKey: String
+
+        override fun beginElement(descriptor: SerialDescriptor, index: Int) {
+            currentKey = descriptor.getElementName(index)
+        }
+
+        override fun endElement(descriptor: SerialDescriptor, index: Int) {
+            builder[currentKey] = currentElement
         }
     }
 
-    internal inner class MapEncoder(
+    private inner class MapEncoder(
         private val builder: MutableMap<String, TomlElement>
     ) : AbstractEncoder() {
         private var isKey: Boolean = true
 
-        private lateinit var key: String
+        private lateinit var currentKey: String
 
         override fun <T> encodeSerializableElement(
             descriptor: SerialDescriptor,
@@ -284,12 +441,28 @@ internal class TomlElementEncoder(
             value: T
         ) {
             if (isKey) {
-                key = value.toTomlKey()
+                currentKey = value.toTomlKey()
             } else {
                 serializer.serialize(this, value)
-                builder[key] = currentElement
+                builder[currentKey] = currentElement
             }
             isKey = !isKey
+        }
+
+        // This shouldn't be called.
+        override fun beginElement(descriptor: SerialDescriptor, index: Int) {}
+
+        // This shouldn't be called.
+        override fun endElement(descriptor: SerialDescriptor, index: Int) {}
+    }
+
+    private inner class ArrayEncoder(
+        private val builder: MutableList<TomlElement>
+    ) : AbstractEncoder() {
+        override fun beginElement(descriptor: SerialDescriptor, index: Int) {}
+
+        override fun endElement(descriptor: SerialDescriptor, index: Int) {
+            builder.add(currentElement)
         }
     }
 }

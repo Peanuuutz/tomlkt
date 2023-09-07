@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 import kotlin.test.Test
 
+@OptIn(ExperimentalUnsignedTypes::class)
 class ValueClassTest {
     @Serializable
     data class M1(
@@ -70,24 +71,89 @@ class ValueClassTest {
 
     @Serializable
     data class M3(
-        val u: UByte
+        val v: V3
     )
 
+    @Serializable
+    @JvmInline
+    value class V3(val ns: String?)
+
     val m31 = M3(
-        u = 1.toUByte()
+        v = V3(null)
     )
 
     val s31 = """
-        u = 1
+        v = null
     """.trimIndent()
 
     @Test
-    fun encodeUnsigned() {
+    fun encodeNullableBacked() {
         testEncode(M3.serializer(), m31, s31)
     }
 
     @Test
-    fun decodeUnsigned() {
+    fun decodeNullableBacked() {
         testDecode(M3.serializer(), s31, m31)
+    }
+
+    @Serializable
+    data class M4(
+        val u: UByte
+    )
+
+    val m41 = M4(
+        u = 255u
+    )
+
+    val s41 = """
+        u = 255
+    """.trimIndent()
+
+    @Test
+    fun encodeUnsigned() {
+        testEncode(M4.serializer(), m41, s41)
+    }
+
+    @Test
+    fun decodeUnsigned() {
+        testDecode(M4.serializer(), s41, m41)
+    }
+
+    @Serializable
+    class M5(
+        val ua: UByteArray
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is M5) return false
+            if (!ua.contentEquals(other.ua)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return ua.contentHashCode()
+        }
+    }
+
+    val m51 = M5(
+        ua = ubyteArrayOf(255u, 1u, 0u)
+    )
+
+    val s51 = """
+        ua = [
+            255,
+            1,
+            0
+        ]
+    """.trimIndent()
+
+    @Test
+    fun encodeUnsignedArray() {
+        testEncode(M5.serializer(), m51, s51)
+    }
+
+    @Test
+    fun decodeUnsignedArray() {
+        testDecode(M5.serializer(), s51, m51)
     }
 }
