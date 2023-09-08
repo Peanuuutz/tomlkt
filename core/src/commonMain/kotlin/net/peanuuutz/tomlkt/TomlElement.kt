@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Peanuuutz
+    Copyright 2023 Peanuuutz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import net.peanuuutz.tomlkt.internal.toStringModified
  * Represents anything in TOML, including and only including [TomlNull],
  * [TomlLiteral], [TomlArray], [TomlTable].
  *
- * **Warning: Only use [Toml] to serialize/deserialize any subclass.**
+ * **Warning: Only use [Toml] to serialize/deserialize this or any subclass.**
  */
 @Serializable(with = TomlElementSerializer::class)
 public sealed class TomlElement {
@@ -84,12 +84,25 @@ public object TomlNull : TomlElement() {
 // ---- To TomlNull ----
 
 /**
- * Converts [this] to [TomlNull].
+ * Casts [this] to [TomlNull].
  *
  * @throws IllegalStateException if `this` is not `TomlNull`.
  */
-public fun TomlElement.toTomlNull(): TomlNull {
+public fun TomlElement.asTomlNull(): TomlNull {
     return this as? TomlNull ?: failConversion("TomlNull")
+}
+
+@Deprecated(
+    message = "Use asTomlNull() instead to better reflect the intent.",
+    replaceWith = ReplaceWith(
+        expression = "asTomlNull()",
+        imports = [
+            "net.peanuuutz.tomlkt.asTomlNull"
+        ]
+    )
+)
+public fun TomlElement.toTomlNull(): TomlNull {
+    return asTomlNull()
 }
 
 // -------- TomlLiteral --------
@@ -135,23 +148,36 @@ public class TomlLiteral internal constructor(
 // ---- To TomlLiteral ----
 
 /**
- * Converts [this] to [TomlLiteral].
+ * Casts [this] to [TomlLiteral].
  *
  * @throws IllegalStateException if `this` is not `TomlLiteral`.
  */
-public fun TomlElement.toTomlLiteral(): TomlLiteral {
+public fun TomlElement.asTomlLiteral(): TomlLiteral {
     return this as? TomlLiteral ?: failConversion("TomlLiteral")
 }
 
+@Deprecated(
+    message = "Use asTomlLiteral() instead to better reflect the intent.",
+    replaceWith = ReplaceWith(
+        expression = "asTomlLiteral()",
+        imports = [
+            "net.peanuuutz.tomlkt.asTomlLiteral"
+        ]
+    )
+)
+public fun TomlElement.toTomlLiteral(): TomlLiteral {
+    return asTomlLiteral()
+}
+
 /**
- * Creates a [TomlLiteral] from the given boolean [value].
+ * Creates a [TomlLiteral] from given boolean [value].
  */
 public fun TomlLiteral(value: Boolean): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given numeric [value].
+ * Creates a [TomlLiteral] from given numeric [value].
  *
  * @see toStringModified
  */
@@ -160,77 +186,77 @@ public fun TomlLiteral(value: Number): TomlLiteral {
 }
 
 /**
- * Creates a [TomlLiteral] from the given `UByte` [value].
+ * Creates a [TomlLiteral] from given `UByte` [value].
  */
 public fun TomlLiteral(value: UByte): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `UShort` [value].
+ * Creates a [TomlLiteral] from given `UShort` [value].
  */
 public fun TomlLiteral(value: UShort): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `UInt` [value].
+ * Creates a [TomlLiteral] from given `UInt` [value].
  */
 public fun TomlLiteral(value: UInt): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `ULong` [value].
+ * Creates a [TomlLiteral] from given `ULong` [value].
  */
 public fun TomlLiteral(value: ULong): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given char [value].
+ * Creates a [TomlLiteral] from given char [value].
  */
 public fun TomlLiteral(value: Char): TomlLiteral {
     return TomlLiteral(value.toString(), isString = true)
 }
 
 /**
- * Creates a [TomlLiteral] from the given string [value].
+ * Creates a [TomlLiteral] from given string [value].
  */
 public fun TomlLiteral(value: String): TomlLiteral {
     return TomlLiteral(value, isString = true)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `TomlLocalDateTime` [value].
+ * Creates a [TomlLiteral] from given `TomlLocalDateTime` [value].
  */
 public fun TomlLiteral(value: TomlLocalDateTime): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `TomlOffsetDateTime` [value].
+ * Creates a [TomlLiteral] from given `TomlOffsetDateTime` [value].
  */
 public fun TomlLiteral(value: TomlOffsetDateTime): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `TomlLocalDate` [value].
+ * Creates a [TomlLiteral] from given `TomlLocalDate` [value].
  */
 public fun TomlLiteral(value: TomlLocalDate): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given `TomlLocalTime` [value].
+ * Creates a [TomlLiteral] from given `TomlLocalTime` [value].
  */
 public fun TomlLiteral(value: TomlLocalTime): TomlLiteral {
     return TomlLiteral(value.toString(), isString = false)
 }
 
 /**
- * Creates a [TomlLiteral] from the given enum [value]. Delegates to the factory
+ * Creates a [TomlLiteral] from given enum [value]. Delegates to the factory
  * function which consumes string.
  *
  * @param E the enum class which `value` belongs to.
@@ -553,16 +579,29 @@ public class TomlArray internal constructor(
 // ---- To TomlArray ----
 
 /**
- * Converts [this] to [TomlArray].
+ * Casts [this] to [TomlArray].
  *
  * @throws IllegalStateException if `this` is not `TomlArray`.
  */
-public fun TomlElement.toTomlArray(): TomlArray {
+public fun TomlElement.asTomlArray(): TomlArray {
     return this as? TomlArray ?: failConversion("TomlArray")
 }
 
+@Deprecated(
+    message = "Use asTomlArray() instead to better reflect the intent.",
+    replaceWith = ReplaceWith(
+        expression = "asTomlArray()",
+        imports = [
+            "net.peanuuutz.tomlkt.asTomlArray"
+        ]
+    )
+)
+public fun TomlElement.toTomlArray(): TomlArray {
+    return asTomlArray()
+}
+
 /**
- * Creates a [TomlArray] from the given `Iterable` [value].
+ * Creates a [TomlArray] from given `Iterable` [value].
  */
 public fun TomlArray(value: Iterable<*>): TomlArray {
     val content = value.map(Any?::toTomlElement)
@@ -614,16 +653,29 @@ public class TomlTable internal constructor(
 // ---- To TomlTable ----
 
 /**
- * Converts [this] to [TomlTable].
+ * Casts [this] to [TomlTable].
  *
  * @throws IllegalStateException if `this` is not `TomlTable`.
  */
-public fun TomlElement.toTomlTable(): TomlTable {
+public fun TomlElement.asTomlTable(): TomlTable {
     return this as? TomlTable ?: failConversion("TomlTable")
 }
 
+@Deprecated(
+    message = "Use asTomlTable() instead to better reflect the intent.",
+    replaceWith = ReplaceWith(
+        expression = "asTomlTable()",
+        imports = [
+            "net.peanuuutz.tomlkt.asTomlTable"
+        ]
+    )
+)
+public fun TomlElement.toTomlTable(): TomlTable {
+    return asTomlTable()
+}
+
 /**
- * Creates a [TomlTable] from the given map [value].
+ * Creates a [TomlTable] from given `Map` [value].
  */
 public fun TomlTable(value: Map<*, *>): TomlTable {
     val content = buildMap(value.size) {

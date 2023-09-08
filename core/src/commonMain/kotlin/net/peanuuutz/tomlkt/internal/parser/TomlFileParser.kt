@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Peanuuutz
+    Copyright 2023 Peanuuutz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -580,7 +580,8 @@ internal class TomlFileParser(private val source: String) {
             }
         }
         currentIndex--
-        val number = builder.toString().toNumber(
+        val result = builder.toString()
+        val number = result.toNumber(
             positive = sign != '-',
             radix = radix,
             isDouble = isDouble,
@@ -752,7 +753,8 @@ internal class TomlFileParser(private val source: String) {
             justStarted = true
         }
         throwIncompleteIf { !justEnded }
-        val content = builder.toString().unescape()
+        val result = builder.toString()
+        val content = result.unescape()
         return TomlLiteral(content)
     }
 
@@ -814,8 +816,8 @@ internal class TomlFileParser(private val source: String) {
             justStarted = true
         }
         throwIncompleteIf { !justEnded }
-        val content = builder.toString()
-        return TomlLiteral(content)
+        val result = builder.toString()
+        return TomlLiteral(result)
     }
 
     // Start right on '[', end on ']'.

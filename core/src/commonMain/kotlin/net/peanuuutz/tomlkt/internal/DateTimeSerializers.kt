@@ -1,3 +1,19 @@
+/*
+    Copyright 2023 Peanuuutz
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ */
+
 package net.peanuuutz.tomlkt.internal
 
 import kotlinx.serialization.KSerializer
@@ -13,11 +29,11 @@ import net.peanuuutz.tomlkt.NativeOffsetDateTime
 import net.peanuuutz.tomlkt.TomlDecoder
 import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.asTomlLiteral
 import net.peanuuutz.tomlkt.toLocalDate
 import net.peanuuutz.tomlkt.toLocalDateTime
 import net.peanuuutz.tomlkt.toLocalTime
 import net.peanuuutz.tomlkt.toOffsetDateTime
-import net.peanuuutz.tomlkt.toTomlLiteral
 
 internal object LocalDateTimeSerializer : KSerializer<NativeLocalDateTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
@@ -35,7 +51,7 @@ internal object LocalDateTimeSerializer : KSerializer<NativeLocalDateTime> {
 
     override fun deserialize(decoder: Decoder): NativeLocalDateTime {
         return if (decoder is TomlDecoder) {
-            decoder.decodeTomlElement().toTomlLiteral().toLocalDateTime()
+            decoder.decodeTomlElement().asTomlLiteral().toLocalDateTime()
         } else {
             NativeLocalDateTime(decoder.decodeString())
         }
@@ -58,7 +74,7 @@ internal object OffsetDateTimeSerializer : KSerializer<NativeOffsetDateTime> {
 
     override fun deserialize(decoder: Decoder): NativeOffsetDateTime {
         return if (decoder is TomlDecoder) {
-            decoder.decodeTomlElement().toTomlLiteral().toOffsetDateTime()
+            decoder.decodeTomlElement().asTomlLiteral().toOffsetDateTime()
         } else {
             NativeOffsetDateTime(decoder.decodeString())
         }
@@ -81,7 +97,7 @@ internal object LocalDateSerializer : KSerializer<NativeLocalDate> {
 
     override fun deserialize(decoder: Decoder): NativeLocalDate {
         return if (decoder is TomlDecoder) {
-            decoder.decodeTomlElement().toTomlLiteral().toLocalDate()
+            decoder.decodeTomlElement().asTomlLiteral().toLocalDate()
         } else {
             NativeLocalDate(decoder.decodeString())
         }
@@ -104,7 +120,7 @@ internal object LocalTimeSerializer : KSerializer<NativeLocalTime> {
 
     override fun deserialize(decoder: Decoder): NativeLocalTime {
         return if (decoder is TomlDecoder) {
-            decoder.decodeTomlElement().toTomlLiteral().toLocalTime()
+            decoder.decodeTomlElement().asTomlLiteral().toLocalTime()
         } else {
             NativeLocalTime(decoder.decodeString())
         }

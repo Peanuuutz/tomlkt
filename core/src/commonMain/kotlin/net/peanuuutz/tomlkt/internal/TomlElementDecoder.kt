@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Peanuuutz
+    Copyright 2023 Peanuuutz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@ import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlSpecific
 import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.asTomlArray
+import net.peanuuutz.tomlkt.asTomlLiteral
+import net.peanuuutz.tomlkt.asTomlNull
+import net.peanuuutz.tomlkt.asTomlTable
 import net.peanuuutz.tomlkt.toBoolean
 import net.peanuuutz.tomlkt.toByte
 import net.peanuuutz.tomlkt.toChar
@@ -43,10 +47,6 @@ import net.peanuuutz.tomlkt.toFloat
 import net.peanuuutz.tomlkt.toInt
 import net.peanuuutz.tomlkt.toLong
 import net.peanuuutz.tomlkt.toShort
-import net.peanuuutz.tomlkt.toTomlArray
-import net.peanuuutz.tomlkt.toTomlLiteral
-import net.peanuuutz.tomlkt.toTomlNull
-import net.peanuuutz.tomlkt.toTomlTable
 
 @OptIn(TomlSpecific::class)
 internal class TomlElementDecoder(
@@ -55,43 +55,43 @@ internal class TomlElementDecoder(
     private val element: TomlElement
 ) : TomlDecoder {
     override fun decodeBoolean(): Boolean {
-        return element.toTomlLiteral().toBoolean()
+        return element.asTomlLiteral().toBoolean()
     }
 
     override fun decodeByte(): Byte {
-        return element.toTomlLiteral().toByte()
+        return element.asTomlLiteral().toByte()
     }
 
     override fun decodeShort(): Short {
-        return element.toTomlLiteral().toShort()
+        return element.asTomlLiteral().toShort()
     }
 
     override fun decodeInt(): Int {
-        return element.toTomlLiteral().toInt()
+        return element.asTomlLiteral().toInt()
     }
 
     override fun decodeLong(): Long {
-        return element.toTomlLiteral().toLong()
+        return element.asTomlLiteral().toLong()
     }
 
     override fun decodeFloat(): Float {
-        return element.toTomlLiteral().toFloat()
+        return element.asTomlLiteral().toFloat()
     }
 
     override fun decodeDouble(): Double {
-        return element.toTomlLiteral().toDouble()
+        return element.asTomlLiteral().toDouble()
     }
 
     override fun decodeChar(): Char {
-        return element.toTomlLiteral().toChar()
+        return element.asTomlLiteral().toChar()
     }
 
     override fun decodeString(): String {
-        return element.toTomlLiteral().content
+        return element.asTomlLiteral().content
     }
 
     override fun decodeNull(): Nothing? {
-        return element.toTomlNull().content
+        return element.asTomlNull().content
     }
 
     override fun decodeNotNullMark(): Boolean {
@@ -103,7 +103,7 @@ internal class TomlElementDecoder(
     }
 
     override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
-        return enumDescriptor.getElementIndex(element.toTomlLiteral().content)
+        return enumDescriptor.getElementIndex(element.asTomlLiteral().content)
     }
 
     override fun decodeInline(descriptor: SerialDescriptor): Decoder {
@@ -119,10 +119,10 @@ internal class TomlElementDecoder(
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
         return when (val kind = descriptor.kind) {
-            CLASS -> ClassDecoder(element.toTomlTable())
-            OBJECT -> ClassDecoder(element.toTomlTable())
-            LIST -> ArrayDecoder(element.toTomlArray())
-            MAP -> MapDecoder(element.toTomlTable())
+            CLASS -> ClassDecoder(element.asTomlTable())
+            OBJECT -> ClassDecoder(element.asTomlTable())
+            LIST -> ArrayDecoder(element.asTomlArray())
+            MAP -> MapDecoder(element.asTomlTable())
             else -> throwUnsupportedSerialKind(kind)
         }
     }
@@ -132,19 +132,19 @@ internal class TomlElementDecoder(
         private val delegate: TomlDecoder
     ) : TomlDecoder by delegate {
         override fun decodeByte(): Byte {
-            return elementProvider().toTomlLiteral().content.toUByte().toByte()
+            return elementProvider().asTomlLiteral().content.toUByte().toByte()
         }
 
         override fun decodeShort(): Short {
-            return elementProvider().toTomlLiteral().content.toUShort().toShort()
+            return elementProvider().asTomlLiteral().content.toUShort().toShort()
         }
 
         override fun decodeInt(): Int {
-            return elementProvider().toTomlLiteral().content.toUInt().toInt()
+            return elementProvider().asTomlLiteral().content.toUInt().toInt()
         }
 
         override fun decodeLong(): Long {
-            return elementProvider().toTomlLiteral().content.toULong().toLong()
+            return elementProvider().asTomlLiteral().content.toULong().toLong()
         }
 
         override fun decodeInline(descriptor: SerialDescriptor): Decoder {
@@ -159,43 +159,43 @@ internal class TomlElementDecoder(
             get() = this@TomlElementDecoder.serializersModule
 
         final override fun decodeBoolean(): Boolean {
-            return currentElement.toTomlLiteral().toBoolean()
+            return currentElement.asTomlLiteral().toBoolean()
         }
 
         final override fun decodeByte(): Byte {
-            return currentElement.toTomlLiteral().toByte()
+            return currentElement.asTomlLiteral().toByte()
         }
 
         final override fun decodeShort(): Short {
-            return currentElement.toTomlLiteral().toShort()
+            return currentElement.asTomlLiteral().toShort()
         }
 
         final override fun decodeInt(): Int {
-            return currentElement.toTomlLiteral().toInt()
+            return currentElement.asTomlLiteral().toInt()
         }
 
         final override fun decodeLong(): Long {
-            return currentElement.toTomlLiteral().toLong()
+            return currentElement.asTomlLiteral().toLong()
         }
 
         final override fun decodeFloat(): Float {
-            return currentElement.toTomlLiteral().toFloat()
+            return currentElement.asTomlLiteral().toFloat()
         }
 
         final override fun decodeDouble(): Double {
-            return currentElement.toTomlLiteral().toDouble()
+            return currentElement.asTomlLiteral().toDouble()
         }
 
         final override fun decodeChar(): Char {
-            return currentElement.toTomlLiteral().toChar()
+            return currentElement.asTomlLiteral().toChar()
         }
 
         final override fun decodeString(): String {
-            return currentElement.toTomlLiteral().content
+            return currentElement.asTomlLiteral().content
         }
 
         final override fun decodeNull(): Nothing? {
-            return currentElement.toTomlNull().content
+            return currentElement.asTomlNull().content
         }
 
         final override fun decodeNotNullMark(): Boolean {
@@ -218,15 +218,15 @@ internal class TomlElementDecoder(
         }
 
         final override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
-            return enumDescriptor.getElementIndex(currentElement.toTomlLiteral().content)
+            return enumDescriptor.getElementIndex(currentElement.asTomlLiteral().content)
         }
 
         override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
             return when (val kind = descriptor.kind) {
-                CLASS -> ClassDecoder(currentElement.toTomlTable())
-                OBJECT -> ClassDecoder(currentElement.toTomlTable())
-                LIST -> ArrayDecoder(currentElement.toTomlArray())
-                MAP -> MapDecoder(currentElement.toTomlTable())
+                CLASS -> ClassDecoder(currentElement.asTomlTable())
+                OBJECT -> ClassDecoder(currentElement.asTomlTable())
+                LIST -> ArrayDecoder(currentElement.asTomlArray())
+                MAP -> MapDecoder(currentElement.asTomlTable())
                 else -> throwUnsupportedSerialKind(kind)
             }
         }
@@ -367,10 +367,10 @@ internal class TomlElementDecoder(
             override fun decodeByte(): Byte {
                 return if (!decodedNotNullMark) {
                     decodeElement(parentDescriptor, elementIndex) {
-                        currentElement.toTomlLiteral().content.toUByte().toByte()
+                        currentElement.asTomlLiteral().content.toUByte().toByte()
                     }
                 } else {
-                    val value = currentElement.toTomlLiteral().content.toUByte().toByte()
+                    val value = currentElement.asTomlLiteral().content.toUByte().toByte()
                     decodedNotNullMark = false
                     value
                 }
@@ -379,10 +379,10 @@ internal class TomlElementDecoder(
             override fun decodeShort(): Short {
                 return if (!decodedNotNullMark) {
                     decodeElement(parentDescriptor, elementIndex) {
-                        currentElement.toTomlLiteral().content.toUShort().toShort()
+                        currentElement.asTomlLiteral().content.toUShort().toShort()
                     }
                 } else {
-                    val value = currentElement.toTomlLiteral().content.toUShort().toShort()
+                    val value = currentElement.asTomlLiteral().content.toUShort().toShort()
                     decodedNotNullMark = false
                     value
                 }
@@ -391,10 +391,10 @@ internal class TomlElementDecoder(
             override fun decodeInt(): Int {
                 return if (!decodedNotNullMark) {
                     decodeElement(parentDescriptor, elementIndex) {
-                        currentElement.toTomlLiteral().content.toUInt().toInt()
+                        currentElement.asTomlLiteral().content.toUInt().toInt()
                     }
                 } else {
-                    val value = currentElement.toTomlLiteral().content.toUInt().toInt()
+                    val value = currentElement.asTomlLiteral().content.toUInt().toInt()
                     decodedNotNullMark = false
                     value
                 }
@@ -403,10 +403,10 @@ internal class TomlElementDecoder(
             override fun decodeLong(): Long {
                 return if (!decodedNotNullMark) {
                     decodeElement(parentDescriptor, elementIndex) {
-                        currentElement.toTomlLiteral().content.toULong().toLong()
+                        currentElement.asTomlLiteral().content.toULong().toLong()
                     }
                 } else {
-                    val value = currentElement.toTomlLiteral().content.toULong().toLong()
+                    val value = currentElement.asTomlLiteral().content.toULong().toLong()
                     decodedNotNullMark = false
                     value
                 }

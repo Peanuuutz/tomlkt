@@ -32,7 +32,7 @@ class CustomSerializerTest {
         }
 
         override fun deserialize(decoder: Decoder): Any {
-            val literal = decoder.asTomlDecoder().decodeTomlElement().toTomlLiteral()
+            val literal = decoder.asTomlDecoder().decodeTomlElement().asTomlLiteral()
             return literal.toIntOrNull() ?: literal.content
         }
     }
