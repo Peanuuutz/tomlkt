@@ -127,6 +127,8 @@ tasks {
     }
 
     dokkaHtml {
+        moduleName.set("tomlkt")
+
         outputDirectory.set(docsDir)
 
         dokkaSourceSets {
