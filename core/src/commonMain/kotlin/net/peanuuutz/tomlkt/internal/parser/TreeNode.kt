@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Peanuuutz
+    Copyright 2023 Peanuuutz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package net.peanuuutz.tomlkt.internal.parser
 
 import net.peanuuutz.tomlkt.TomlElement
-import net.peanuuutz.tomlkt.internal.ConflictEntryException
+import net.peanuuutz.tomlkt.internal.throwConflictEntry
 
 internal typealias Path = List<String>
 
@@ -78,7 +78,7 @@ private tailrec fun KeyNode.addByPathRecursively(
     val child = get(path[index])
     if (index == path.lastIndex) {
         if (child != null) {
-            throw ConflictEntryException(path)
+            throwConflictEntry(path)
         }
         add(node)
     } else {
@@ -99,7 +99,7 @@ private tailrec fun KeyNode.addByPathRecursively(
                 grandChild.addByPathRecursively(path, node, arrayOfTableIndices, index + 1)
             }
             is ValueNode -> {
-                throw ConflictEntryException(path)
+                throwConflictEntry(path)
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Peanuuutz
+    Copyright 2023 Peanuuutz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -35,11 +35,11 @@ import net.peanuuutz.tomlkt.internal.DefiniteNumberConstraints
 import net.peanuuutz.tomlkt.internal.EndArray
 import net.peanuuutz.tomlkt.internal.EndTable
 import net.peanuuutz.tomlkt.internal.HexadecimalConstraints
-import net.peanuuutz.tomlkt.internal.IncompleteException
 import net.peanuuutz.tomlkt.internal.KeyValueDelimiter
 import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartTable
-import net.peanuuutz.tomlkt.internal.UnexpectedTokenException
+import net.peanuuutz.tomlkt.internal.throwIncomplete
+import net.peanuuutz.tomlkt.internal.throwUnexpectedToken
 import net.peanuuutz.tomlkt.internal.toNumber
 import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.contracts.InvocationKind
@@ -80,7 +80,7 @@ internal class TomlFileParser(private val source: String) {
     }
 
     private fun throwIncomplete(): Nothing {
-        throw IncompleteException(currentLineNumber)
+        throwIncomplete(currentLineNumber)
     }
 
     private inline fun throwIncompleteIf(predicate: () -> Boolean) {
@@ -92,7 +92,7 @@ internal class TomlFileParser(private val source: String) {
     }
 
     private fun throwUnexpectedToken(token: Char): Nothing {
-        throw UnexpectedTokenException(token, currentLineNumber)
+        throwUnexpectedToken(token, currentLineNumber)
     }
 
     private inline fun throwUnexpectedTokenIf(token: Char, predicate: (Char) -> Boolean) {
@@ -580,7 +580,8 @@ internal class TomlFileParser(private val source: String) {
             }
         }
         currentIndex--
-        val number = builder.toString().toNumber(
+        val result = builder.toString()
+        val number = result.toNumber(
             positive = sign != '-',
             radix = radix,
             isDouble = isDouble,
@@ -716,17 +717,14 @@ internal class TomlFileParser(private val source: String) {
                 }
                 '"' -> {
                     if (!multiline) {
-                        if (getChar(-1) != '\\') {
-                            justEnded = true
-                            break
-                        }
-                    } else {
-                        throwIncompleteIf { isEof() }
-                        if (getChar(1) == '"' && getChar(2) == '"') {
-                            currentIndex += 2
-                            justEnded = true
-                            break
-                        }
+                        justEnded = true
+                        break
+                    }
+                    throwIncompleteIf { isEof() }
+                    if (getChar(1) == '"' && getChar(2) == '"') {
+                        currentIndex += 2
+                        justEnded = true
+                        break
                     }
                     builder.append(current)
                 }
@@ -738,7 +736,7 @@ internal class TomlFileParser(private val source: String) {
                             throwUnexpectedTokenIf(current) { !multiline }
                             trim = true
                         }
-                        'u', 'b', 't', 'n', 'f', 'r', '"', '\\' -> {
+                        'n', '"', '\\', 'u', 'U', 't', 'r', 'b', 'f' -> {
                             builder.append(current).append(next)
                             currentIndex++
                         }
@@ -755,7 +753,8 @@ internal class TomlFileParser(private val source: String) {
             justStarted = true
         }
         throwIncompleteIf { !justEnded }
-        val content = builder.toString().unescape()
+        val result = builder.toString()
+        val content = result.unescape()
         return TomlLiteral(content)
     }
 
@@ -817,8 +816,8 @@ internal class TomlFileParser(private val source: String) {
             justStarted = true
         }
         throwIncompleteIf { !justEnded }
-        val content = builder.toString()
-        return TomlLiteral(content)
+        val result = builder.toString()
+        return TomlLiteral(result)
     }
 
     // Start right on '[', end on ']'.

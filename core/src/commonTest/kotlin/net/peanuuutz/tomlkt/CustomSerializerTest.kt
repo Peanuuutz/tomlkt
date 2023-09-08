@@ -26,13 +26,13 @@ class CustomSerializerTest {
 
         override fun serialize(encoder: Encoder, value: Any) {
             when (value) {
-                is String -> String.serializer().serialize(encoder, value)
-                is Int -> Int.serializer().serialize(encoder, value)
+                is String -> encoder.encodeString(value)
+                is Int -> encoder.encodeInt(value)
             }
         }
 
         override fun deserialize(decoder: Decoder): Any {
-            val literal = decoder.asTomlDecoder().decodeTomlElement().toTomlLiteral()
+            val literal = decoder.asTomlDecoder().decodeTomlElement().asTomlLiteral()
             return literal.toIntOrNull() ?: literal.content
         }
     }
@@ -46,25 +46,42 @@ class CustomSerializerTest {
     """.trimIndent()
 
     @Test
-    fun encodeAnyInClass() {
+    fun encodeClassWithSerializableProperty() {
         testEncode(M1.serializer(), m11, s11)
     }
 
+    @Test
+    fun decodeClassWithSerializableProperty() {
+        testDecode(M1.serializer(), s11, m11)
+    }
+
     val m12: Map<String, Any> = mapOf(
-        "1" to "YES"
+        "a" to "YES",
+        "b" to 1
     )
 
     val s12 = """
-        1 = "YES"
+        a = "YES"
+        b = 1
     """.trimIndent()
 
     @Test
-    fun encodeAnyInMap() {
+    fun encodeMapLikeWithSerializableProperty() {
         val serializer = MapSerializer(
             keySerializer = String.serializer(),
             valueSerializer = StringOrIntSerializer
         )
 
         testEncode(serializer, m12, s12)
+    }
+
+    @Test
+    fun decodeMapLikeWithSerializableProperty() {
+        val serializer = MapSerializer(
+            keySerializer = String.serializer(),
+            valueSerializer = StringOrIntSerializer
+        )
+
+        testDecode(serializer, s12, m12)
     }
 }

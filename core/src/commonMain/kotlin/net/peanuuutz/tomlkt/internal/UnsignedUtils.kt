@@ -14,16 +14,17 @@
     limitations under the License.
  */
 
-package net.peanuuutz.tomlkt
+package net.peanuuutz.tomlkt.internal
 
-/**
- * Indicates that the corresponding type is only stable to use, but shouldn't be
- * subclassed by any third party, otherwise unpredictable behavior may be
- * observed.
- */
-@RequiresOptIn(
-    message = "This type should only be subclassed by Toml internally"
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+
+private val UnsignedIntegerDescriptors: Set<SerialDescriptor> = setOf(
+    UByte.serializer().descriptor,
+    UShort.serializer().descriptor,
+    UInt.serializer().descriptor,
+    ULong.serializer().descriptor
 )
-@Retention(AnnotationRetention.BINARY)
-@MustBeDocumented
-public annotation class TomlSpecific
+
+internal val SerialDescriptor.isUnsignedInteger: Boolean
+    get() = this.isInline && this in UnsignedIntegerDescriptors

@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Peanuuutz
+    Copyright 2023 Peanuuutz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.asTomlArray
 import net.peanuuutz.tomlkt.asTomlDecoder
 import net.peanuuutz.tomlkt.asTomlEncoder
-import net.peanuuutz.tomlkt.toTomlArray
-import net.peanuuutz.tomlkt.toTomlLiteral
-import net.peanuuutz.tomlkt.toTomlNull
-import net.peanuuutz.tomlkt.toTomlTable
+import net.peanuuutz.tomlkt.asTomlLiteral
+import net.peanuuutz.tomlkt.asTomlNull
+import net.peanuuutz.tomlkt.asTomlTable
 
 internal object TomlElementSerializer : KSerializer<TomlElement> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor(
@@ -68,7 +68,7 @@ internal object TomlNullSerializer : KSerializer<TomlNull> {
     }
 
     override fun deserialize(decoder: Decoder): TomlNull {
-        return decoder.asTomlDecoder().decodeTomlElement().toTomlNull()
+        return decoder.asTomlDecoder().decodeTomlElement().asTomlNull()
     }
 }
 
@@ -83,7 +83,7 @@ internal object TomlLiteralSerializer : KSerializer<TomlLiteral> {
     }
 
     override fun deserialize(decoder: Decoder): TomlLiteral {
-        return decoder.asTomlDecoder().decodeTomlElement().toTomlLiteral()
+        return decoder.asTomlDecoder().decodeTomlElement().asTomlLiteral()
     }
 }
 
@@ -101,7 +101,7 @@ internal object TomlArraySerializer : KSerializer<TomlArray> {
     }
 
     override fun deserialize(decoder: Decoder): TomlArray {
-        return decoder.asTomlDecoder().decodeTomlElement().toTomlArray()
+        return decoder.asTomlDecoder().decodeTomlElement().asTomlArray()
     }
 }
 
@@ -120,6 +120,6 @@ internal object TomlTableSerializer : KSerializer<TomlTable> {
     }
 
     override fun deserialize(decoder: Decoder): TomlTable {
-        return decoder.asTomlDecoder().decodeTomlElement().toTomlTable()
+        return decoder.asTomlDecoder().decodeTomlElement().asTomlTable()
     }
 }

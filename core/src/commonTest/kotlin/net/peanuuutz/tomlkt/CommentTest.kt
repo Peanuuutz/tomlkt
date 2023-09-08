@@ -80,7 +80,7 @@ class CommentTest {
 
     val m31 = M3(
         c = C(
-            f = 1.0f
+            f = 1.1f
         )
     )
 
@@ -89,7 +89,7 @@ class CommentTest {
         # test
         
         [c]
-        f = 1.0
+        f = 1.1
     """.trimIndent()
 
     @Test
@@ -104,7 +104,7 @@ class CommentTest {
 
     val s32 = """
         [c] # test
-        f = 1.0
+        f = 1.1
     """.trimIndent()
 
     @Test
@@ -121,7 +121,7 @@ class CommentTest {
     val m41 = M4(
         cs = listOf(
             C(
-                f = 1.0f
+                f = 1.1f
             )
         )
     )
@@ -131,7 +131,7 @@ class CommentTest {
         # test
         
         [[cs]]
-        f = 1.0
+        f = 1.1
     """.trimIndent()
 
     @Test
@@ -146,7 +146,7 @@ class CommentTest {
 
     val s42 = """
         [[cs]] # test
-        f = 1.0
+        f = 1.1
     """.trimIndent()
 
     @Test
@@ -222,14 +222,14 @@ class CommentTest {
 
     val m71 = M7(
         i = 0,
-        f = 0.0f
+        f = 0.1f
     )
 
     val s71 = """
         # text
         i = 0
         # another
-        f = 0.0
+        f = 0.1
     """.trimIndent()
 
     @Test
@@ -253,7 +253,7 @@ class CommentTest {
     val m81 = M8(
         i = 0,
         c = C(
-            f = 0.0f
+            f = 0.1f
         )
     )
 
@@ -264,7 +264,7 @@ class CommentTest {
         # another
         
         [c]
-        f = 0.0
+        f = 0.1
     """.trimIndent()
 
     @Test

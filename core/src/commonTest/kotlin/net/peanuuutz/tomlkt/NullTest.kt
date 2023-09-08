@@ -18,12 +18,12 @@ class NullTest {
     """.trimIndent()
 
     @Test
-    fun encode() {
+    fun encodeRegularly() {
         testEncode(M1.serializer(), m11, s11)
     }
 
     @Test
-    fun decode() {
+    fun decodeRegularly() {
         testDecode(M1.serializer(), s11, m11)
     }
 

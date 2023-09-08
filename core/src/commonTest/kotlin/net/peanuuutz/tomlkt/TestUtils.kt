@@ -15,12 +15,32 @@ fun <T> testEncode(
     assertEquals(expect, actual)
 }
 
+fun <T> testEncodeTomlElement(
+    serializer: SerializationStrategy<T>,
+    value: T,
+    expect: TomlElement
+) {
+    val actual = Toml.encodeToTomlElement(serializer, value)
+
+    assertEquals(expect, actual)
+}
+
 fun <T> testDecode(
     deserializer: DeserializationStrategy<T>,
     string: String,
     expect: T
 ) {
     val actual = Toml.decodeFromString(deserializer, string)
+
+    assertEquals(expect, actual)
+}
+
+fun <T> testDecodeTomlElement(
+    deserializer: DeserializationStrategy<T>,
+    value: TomlElement,
+    expect: T
+) {
+    val actual = Toml.decodeFromTomlElement(deserializer, value)
 
     assertEquals(expect, actual)
 }
