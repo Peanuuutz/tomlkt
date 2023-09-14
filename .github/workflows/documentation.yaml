@@ -1,0 +1,20 @@
+name: Documentation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: corretto
+      - name: Grant Gradle Wrapper Permission
+        run: chmod +x gradlew
+      - name: Generate Documentation
+        run: ./gradlew core:dokkaHtml
