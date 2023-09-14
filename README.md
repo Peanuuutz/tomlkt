@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.1")
+    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.2")
 }
 ```
 </details>
@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.1"
+    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.2"
 }
 ```
 </details>
@@ -45,7 +45,7 @@ dependencies {
 <dependency>
   <groupId>net.peanuuutz.tomlkt</groupId>
   <artifactId>tomlkt-jvm</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
 </dependency>
 ```
 </details>
@@ -105,19 +105,19 @@ fun main() {
 
 ## Features
 
-| TOML format             | Serialization                     | Deserialization                   |
-|-------------------------|-----------------------------------|-----------------------------------|
-| [Comment](#Comment)     | :heavy_check_mark:                | :heavy_check_mark:                |
-| Key                     | :heavy_check_mark:                | :heavy_check_mark:                |
-| [String](#String)       | :heavy_check_mark:                | :heavy_check_mark:                |
-| Integer                 | :heavy_check_mark:                | :heavy_check_mark:                |
-| Float                   | :heavy_check_mark:                | :heavy_check_mark:                |
-| Boolean                 | :heavy_check_mark:                | :heavy_check_mark:                |
-| [Date Time](#Date-Time) | :heavy_check_mark:                | :heavy_check_mark:                |
-| Array                   | :heavy_check_mark:                | :heavy_check_mark:                |
-| [Table](#Table)         | :heavy_check_mark::grey_question: | :heavy_check_mark::grey_question: |
-| Inline Table            | :heavy_check_mark:                | :heavy_check_mark:                |
-| Array of Tables         | :heavy_check_mark:                | :heavy_check_mark:                |
+| TOML format             | Serialization      | Deserialization                   |
+|-------------------------|--------------------|-----------------------------------|
+| [Comment](#Comment)     | :heavy_check_mark: | :heavy_check_mark:                |
+| Key                     | :heavy_check_mark: | :heavy_check_mark:                |
+| [String](#String)       | :heavy_check_mark: | :heavy_check_mark:                |
+| Integer                 | :heavy_check_mark: | :heavy_check_mark:                |
+| Float                   | :heavy_check_mark: | :heavy_check_mark:                |
+| Boolean                 | :heavy_check_mark: | :heavy_check_mark:                |
+| [Date Time](#Date-Time) | :heavy_check_mark: | :heavy_check_mark:                |
+| Array                   | :heavy_check_mark: | :heavy_check_mark:                |
+| [Table](#Table)         | :heavy_check_mark: | :heavy_check_mark::grey_question: |
+| Inline Table            | :heavy_check_mark: | :heavy_check_mark:                |
+| Array of Tables         | :heavy_check_mark: | :heavy_check_mark:                |
 
 ### Comment
 
@@ -199,11 +199,6 @@ If you'd like to provide a custom serializer, use `NativeLocalDateTime` and the 
 
 ### Table
 
-:grey_question:: **Currently `PolymorphicKind`s are NOT supported.**
-
-<font color = 'gray'>*(Anyway, to flatten it is better because TOML is actually not for
-serialization but for configuration)*</font>
-
 :grey_question:: There's an internal issue. When you define super-table **before** the sub-table:
 
 ```toml
@@ -227,8 +222,8 @@ the whole [Tree](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/
 The working process of tomlkt:
 
 * Serialization: Model / TomlElement → (TomlFileEncoder) → File(String); Model →
-(TomlElementEncoder) → TomlElement
-* Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model
+(TomlElementEncoder) → TomlElement.
+* Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model.
 
 As you see, if you already have a TOML file, you can have no model class, but still gain access
 to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).

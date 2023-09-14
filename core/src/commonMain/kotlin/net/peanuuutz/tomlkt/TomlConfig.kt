@@ -25,12 +25,21 @@ import kotlin.jvm.JvmInline
  * The builder for `Toml { ... }` factory function.
  */
 public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConfig) {
+    // -------- Common --------
+
     /**
      * The [SerializersModule] to be used in the [Toml] instance.
      *
      * [EmptySerializersModule] by default.
      */
     public var serializersModule: SerializersModule = from.serializersModule
+
+    /**
+     * The key of the class discriminator for polymorphic serialization.
+     *
+     * "type" by default.
+     */
+    public var classDiscriminator: String = from.classDiscriminator
 
     // -------- Serialization --------
 
@@ -61,12 +70,16 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     // ======== Internal ========
 
     @PublishedApi
-    internal fun build(): TomlConfig = TomlConfig(
-        serializersModule = serializersModule,
-        indentation = indentation,
-        itemsPerLineInBlockArray = itemsPerLineInBlockArray,
-        ignoreUnknownKeys = ignoreUnknownKeys
-    )
+    internal fun build(): TomlConfig {
+        val itemsPerLineInBlockArray = itemsPerLineInBlockArray.coerceAtLeast(1)
+        return TomlConfig(
+            serializersModule = serializersModule,
+            classDiscriminator = classDiscriminator,
+            indentation = indentation,
+            itemsPerLineInBlockArray = itemsPerLineInBlockArray,
+            ignoreUnknownKeys = ignoreUnknownKeys
+        )
+    }
 }
 
 /**
@@ -110,6 +123,7 @@ public value class TomlIndentation(public val representation: String) {
 
 internal class TomlConfig(
     val serializersModule: SerializersModule,
+    val classDiscriminator: String,
     val indentation: TomlIndentation,
     val itemsPerLineInBlockArray: Int,
     val ignoreUnknownKeys: Boolean
@@ -117,6 +131,7 @@ internal class TomlConfig(
     companion object {
         val Default: TomlConfig = TomlConfig(
             serializersModule = EmptySerializersModule(),
+            classDiscriminator = "type",
             indentation = TomlIndentation.Space4,
             itemsPerLineInBlockArray = 1,
             ignoreUnknownKeys = false

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package test
 
 import kotlinx.datetime.Instant
@@ -7,10 +5,13 @@ import kotlinx.datetime.serializers.InstantIso8601Serializer
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.Json
 import net.peanuuutz.tomlkt.NativeOffsetDateTime
+import net.peanuuutz.tomlkt.TomlClassDiscriminator
 import net.peanuuutz.tomlkt.TomlDecoder
 import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlOffsetDateTimeSerializer
@@ -18,7 +19,23 @@ import org.intellij.lang.annotations.Language
 import java.time.ZoneOffset
 
 fun main() {
+    val string = """
+        i = 0
 
+        [data]
+        list = [
+            "any",
+            { type = "integer", value = 0 }
+        ]
+    """.trimIndent()
+
+    val value = TomlObjects.tomlkt.decodeFromString(
+        deserializer = String.serializer(),
+        string = string,
+        "data", "list", 0
+    )
+
+    println(value)
 }
 
 @Serializable
@@ -88,22 +105,22 @@ object OffsetDateTimeSerializer : KSerializer<Any> {
         if (encoder is TomlEncoder) {
             when (value) {
                 is NativeOffsetDateTime -> {
-                    TomlOffsetDateTimeSerializer().serialize(encoder, value)
+                    encoder.encodeSerializableValue(TomlOffsetDateTimeSerializer(), value)
                 }
                 is Instant -> {
                     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
                     val converted = value.value.atOffset(ZoneOffset.UTC)
-                    TomlOffsetDateTimeSerializer().serialize(encoder, converted)
+                    encoder.encodeSerializableValue(TomlOffsetDateTimeSerializer(), converted)
                 }
             }
         } else {
             when (value) {
                 is NativeOffsetDateTime -> {
                     val converted = value.toInstant().toKotlinInstant()
-                    InstantIso8601Serializer.serialize(encoder, converted)
+                    encoder.encodeSerializableValue(InstantIso8601Serializer, converted)
                 }
                 is Instant -> {
-                    InstantIso8601Serializer.serialize(encoder, value)
+                    encoder.encodeSerializableValue(InstantIso8601Serializer, value)
                 }
             }
         }
@@ -111,9 +128,9 @@ object OffsetDateTimeSerializer : KSerializer<Any> {
 
     override fun deserialize(decoder: Decoder): Any {
         return if (decoder is TomlDecoder) {
-            TomlOffsetDateTimeSerializer().deserialize(decoder)
+            decoder.decodeSerializableValue(TomlOffsetDateTimeSerializer())
         } else {
-            InstantIso8601Serializer.deserialize(decoder)
+            decoder.decodeSerializableValue(InstantIso8601Serializer)
         }
     }
 }

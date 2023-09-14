@@ -608,6 +608,14 @@ public fun TomlArray(value: Iterable<*>): TomlArray {
     return TomlArray(content)
 }
 
+/**
+ * Creates a [TomlArray] with given [values].
+ */
+public fun TomlArray(vararg values: Any?): TomlArray {
+    val content = values.map(Any?::toTomlElement)
+    return TomlArray(content)
+}
+
 // -------- TomlTable --------
 
 /**
@@ -686,13 +694,41 @@ public fun TomlTable(value: Map<*, *>): TomlTable {
     return TomlTable(content)
 }
 
+/**
+ * Creates a [TomlTable] with given [entries].
+ */
+public fun TomlTable(vararg entries: Pair<*, *>): TomlTable {
+    val content = buildMap(entries.size) {
+        for ((k, v) in entries) {
+            put(k.toTomlKey(), v.toTomlElement())
+        }
+    }
+    return TomlTable(content)
+}
+
 // ---- Extensions for TomlTable ----
 
 /**
- * Gets the value along the path constructed by [keys].
+ * Gets the element along the path constructed by [keys].
+ *
+ * Given the following TOML file:
+ *
+ * ```toml
+ * i = 0
+ *
+ * [data]
+ * list = [
+ *     "any",
+ *     { type: "integer", value: 0 }
+ * ]
+ * ```
+ *
+ * With `keys = ["data", "list", 1, "value"]`, the above table emits 0 (in
+ * [TomlLiteral]).
  *
  * @param keys the path which leads to the value. Each one item is a single
- * segment.
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int] or
+ * [String] (will be parsed into integer).
  *
  * @throws NonPrimitiveKeyException if provided non-primitive keys.
  */
@@ -724,12 +760,35 @@ private fun TreeNode.toTomlElement(): TomlElement {
 
 private tailrec fun TomlTable.getByPathRecursively(
     keys: Array<out Any?>,
-    index: Int
+    depth: Int
 ): TomlElement? {
-    val value = get(keys[index])
+    val key = keys[depth]
+    val value = get(key)
     return when {
-        index == keys.lastIndex -> value
-        value is TomlTable -> value.getByPathRecursively(keys, index + 1)
+        depth == keys.lastIndex -> value
+        value is TomlTable -> value.getByPathRecursively(keys, depth + 1)
+        value is TomlArray -> value.getByPathRecursively(keys, depth + 1)
+        else -> null
+    }
+}
+
+private tailrec fun TomlArray.getByPathRecursively(
+    keys: Array<out Any?>,
+    depth: Int
+): TomlElement? {
+    val index = when (val key = keys[depth]) {
+        is Int -> key
+        is String -> key.toInt()
+        else -> {
+            val message = "Expect integer key when accessing TomlArray, but found $key"
+            throw IllegalArgumentException(message)
+        }
+    }
+    val value = get(index)
+    return when {
+        depth == keys.lastIndex -> value
+        value is TomlTable -> value.getByPathRecursively(keys, depth + 1)
+        value is TomlArray -> value.getByPathRecursively(keys, depth + 1)
         else -> null
     }
 }

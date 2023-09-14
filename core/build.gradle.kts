@@ -54,6 +54,7 @@ kotlin {
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("kotlinx.serialization.ExperimentalSerializationApi")
                 optIn("kotlinx.serialization.InternalSerializationApi")
+                optIn("net.peanuuutz.tomlkt.TomlSpecific")
             }
         }
 

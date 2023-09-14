@@ -22,11 +22,12 @@ import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.peanuuutz.tomlkt.Toml.Default
+import net.peanuuutz.tomlkt.internal.NonPrimitiveKeyException
 import net.peanuuutz.tomlkt.internal.TomlDecodingException
-import net.peanuuutz.tomlkt.internal.TomlElementDecoder
-import net.peanuuutz.tomlkt.internal.TomlElementEncoder
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
-import net.peanuuutz.tomlkt.internal.TomlFileEncoder
+import net.peanuuutz.tomlkt.internal.decoder.TomlElementDecoder
+import net.peanuuutz.tomlkt.internal.encoder.TomlElementEncoder
+import net.peanuuutz.tomlkt.internal.encoder.TomlFileEncoder
 import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
 
 /**
@@ -126,7 +127,7 @@ public sealed class Toml(
             serializersModule = serializersModule,
             writer = writer
         )
-        serializer.serialize(encoder, value)
+        encoder.encodeSerializableValue(serializer, value)
     }
 
     /**
@@ -139,7 +140,7 @@ public sealed class Toml(
         value: T
     ): TomlElement {
         val encoder = TomlElementEncoder(config, serializersModule)
-        serializer.serialize(encoder, value)
+        encoder.encodeSerializableValue(serializer, value)
         return encoder.element
     }
 
@@ -157,7 +158,34 @@ public sealed class Toml(
         deserializer: DeserializationStrategy<T>,
         string: String
     ): T {
-        val element = parseToTomlTable(string)
+        val table = parseToTomlTable(string)
+        return decodeFromTomlElement(deserializer, table)
+    }
+
+    /**
+     * Parses [string] into a [TomlTable] and deserializes the corresponding
+     * element fetched with [keys] into a value of type [T] using [deserializer].
+     *
+     * @param string **MUST** be a TOML file, as this method delegates parsing
+     * to [parseToTomlTable].
+     * @param keys the path which leads to the value. Each one item is a single
+     * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+     * or [String] (will be parsed into integer).
+     *
+     * @throws TomlDecodingException if `string` cannot be parsed into
+     * [TomlTable] or the element cannot be deserialized.
+     * @throws NonPrimitiveKeyException if provided non-primitive keys.
+     *
+     * @see get
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun <T> decodeFromString(
+        deserializer: DeserializationStrategy<T>,
+        string: String,
+        vararg keys: Any?
+    ): T {
+        val table = parseToTomlTable(string)
+        val element = table.get(keys = keys)!!
         return decodeFromTomlElement(deserializer, element)
     }
 
@@ -175,7 +203,7 @@ public sealed class Toml(
             serializersModule = serializersModule,
             element = element
         )
-        return deserializer.deserialize(decoder)
+        return decoder.decodeSerializableValue(deserializer)
     }
 
     /**
@@ -227,6 +255,31 @@ public inline fun <reified T> Toml.encodeToWriter(
  */
 public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
     return encodeToTomlElement(serializersModule.serializer(), value)
+}
+
+/**
+ * Parses [string] into a [TomlTable] and deserializes the corresponding
+ * element fetched with [keys] into a value of type [T] using serializer
+ * retrieved from reified type parameter.
+ *
+ * @param string **MUST** be a TOML file, as this method delegates parsing
+ * to [Toml.parseToTomlTable].
+ * @param keys the path which leads to the value. Each one item is a single
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+ * or [String] (will be parsed into integer).
+ *
+ * @throws TomlDecodingException if `string` cannot be parsed into
+ * [TomlTable] or the element cannot be deserialized.
+ * @throws NonPrimitiveKeyException if provided non-primitive keys.
+ *
+ * @see get
+ */
+@Suppress("OutdatedDocumentation")
+public inline fun <reified T> Toml.decodeFromString(
+    string: String,
+    vararg keys: Any?
+): T {
+    return decodeFromString(serializersModule.serializer(), string, keys = keys)
 }
 
 /**

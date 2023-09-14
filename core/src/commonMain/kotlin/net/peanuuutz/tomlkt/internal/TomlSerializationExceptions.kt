@@ -44,15 +44,24 @@ internal fun throwUnsupportedSerialKind(message: String): Nothing {
     throw UnsupportedSerialKindException(message)
 }
 
+// ---- PolymorphicCollectionException ----
+
+private const val PolymorphicCollection: String = "Collection-like type cannot be polymorphic"
+
+internal class PolymorphicCollectionException : TomlEncodingException(PolymorphicCollection)
+
+internal fun throwPolymorphicCollection(): Nothing {
+    throw PolymorphicCollectionException()
+}
+
 // ---- NullInArrayOfTableException ----
 
-private const val NullInArrayOfTableMessage: String = "Null is not allowed in array of table, " +
-        "please mark the corresponding property as @TomlBlockArray or @TomlInline"
+internal class NullInArrayOfTableException(message: String) : TomlEncodingException(message)
 
-internal class NullInArrayOfTableException : TomlEncodingException(NullInArrayOfTableMessage)
-
-internal fun throwNullInArrayOfTable(): Nothing {
-    throw NullInArrayOfTableException()
+internal fun throwNullInArrayOfTable(path: String): Nothing {
+    val message = "Null is not allowed in array of table. Please annotate the corresponding property " +
+            "(at $path) with @TomlBlockArray or @TomlInline"
+    throw NullInArrayOfTableException(message)
 }
 
 // ---- EmptyArrayOfTableInMapException ----
