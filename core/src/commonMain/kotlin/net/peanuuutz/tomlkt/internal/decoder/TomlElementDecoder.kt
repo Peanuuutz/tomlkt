@@ -119,12 +119,14 @@ internal abstract class AbstractTomlElementDecoder(
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
+        val discriminator = currentDiscriminator
+        currentDiscriminator = null
         return when (val kind = descriptor.kind) {
             CLASS, is PolymorphicKind, OBJECT -> {
                 TomlElementClassDecoder(
                     table = element.asTomlTable(),
                     delegate = this,
-                    discriminator = currentDiscriminator
+                    discriminator = discriminator
                 )
             }
             LIST -> {
