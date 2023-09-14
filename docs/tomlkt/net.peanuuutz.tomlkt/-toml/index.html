@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Toml</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>tomlkt</span>
+            </a>
+    </div>
+    <div>
+0.3.2    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":core:dokkaHtml/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":core:dokkaHtml/jvmMain">jvm</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="tomlkt::net.peanuuutz.tomlkt/Toml///PointingToDeclaration//-864720431">
+  <div class="breadcrumbs"><a href="../../../index.html">tomlkt</a><span class="delimiter">/</span><a href="../index.html">net.peanuuutz.tomlkt</a><span class="delimiter">/</span><span class="current">Toml</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Toml</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="index.html">Toml</a> : <span data-unresolved-link="kotlinx.serialization/StringFormat///PointingToDeclaration/">StringFormat</span><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/Toml.kt#L86">source</a>)</span></span></div><p class="paragraph">The main entry point to use TOML.</p><p class="paragraph">Programmer could simply use <a href="-default/index.html">Default</a> instance or customize configuration by using the factory function with the same name.</p><p class="paragraph">Basic usage:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">@Serializable<br>data class User(<br>    val name: String,<br>    val account: Account? // Nullable property.<br>)<br><br>@Serializable<br>data class Account(<br>    val username: String,<br>    val password: String<br>)<br><br>val user = User(&quot;Peanuuutz&quot;, Account(&quot;Peanuuutz&quot;, &quot;123456&quot;))<br>// With [Default] instance.<br>// Either is OK, but to explicitly pass a serializer is faster.<br>val tomlString = Toml.encodeToString(User.serializer(), user)<br>val tomlString = Toml.encodeToString&lt;User&gt;(user)<br>// Print it.<br>println(tomlString)<br>/*<br>name = &quot;Peanuuutz&quot;<br><br>[account]<br>username = &quot;Peanuuutz&quot;<br>password = &quot;123456&quot;<br>*/<br><br>// Vice versa.<br>val user = Toml.decodeFromString(User.serializer(), tomlString)<br>// Print it.<br>println(user)<br>/*<br>User(name=Peanuuutz,account=Account(username=Peanuuutz,password=123456))<br>*/<br><br>// If you don't have a model class, try [TomlElement].<br>val config = Toml.parseToTomlTable(tomlString)<br>// Now you can access all the entries (this is an extension as &quot;get by path&quot;).<br>val password = config[&quot;account&quot;, &quot;password&quot;]!!.toTomlLiteral().content</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-toml-config-builder/index.html"><span>Toml</span><wbr></wbr><span>Config</span><wbr></wbr><span><span>Builder</span></span></a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-toml-element/index.html"><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div></span></div><div></div></div></div></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="-default/index.html">Default</a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="727875614%2FClasslikes%2F-864720431" anchor-label="Default" id="727875614%2FClasslikes%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-default/index.html"><span><span>Default</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="727875614%2FClasslikes%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-default/index.html">Default</a> : <a href="index.html">Toml</a></div><div class="brief "><p class="paragraph">The default implementation of <a href="index.html">Toml</a> with default configuration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1810293663%2FProperties%2F-864720431" anchor-label="serializersModule" id="1810293663%2FProperties%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="serializers-module.html"><span>serializers</span><wbr></wbr><span><span>Module</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1810293663%2FProperties%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="serializers-module.html">serializersModule</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization.modules/SerializersModule///PointingToDeclaration/">SerializersModule</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1285410539%2FFunctions%2F-864720431" anchor-label="decodeFromString" id="-1285410539%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="decode-from-string.html"><span>decode</span><wbr></wbr><span>From</span><wbr></wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1285410539%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-string.html">T</a><span class="token operator">&gt; </span><a href="decode-from-string.html"><span class="token function">decodeFromString</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">deserializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/DeserializationStrategy///PointingToDeclaration/">DeserializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-string.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="decode-from-string.html">T</a></div><div class="brief "><p class="paragraph">Deserializes <a href="decode-from-string.html">string</a> into a value of type <a href="decode-from-string.html">T</a> using <a href="decode-from-string.html">deserializer</a>.</p></div><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-string.html">T</a><span class="token operator">&gt; </span><a href="decode-from-string.html"><span class="token function">decodeFromString</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">deserializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/DeserializationStrategy///PointingToDeclaration/">DeserializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-string.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>keys<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="decode-from-string.html">T</a></div><div class="brief "><p class="paragraph">Parses <a href="decode-from-string.html">string</a> into a <a href="../-toml-table/index.html">TomlTable</a> and deserializes the corresponding element fetched with <a href="decode-from-string.html">keys</a> into a value of type <a href="decode-from-string.html">T</a> using <a href="decode-from-string.html">deserializer</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1296952213%2FFunctions%2F-864720431" anchor-label="decodeFromString" id="-1296952213%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../decode-from-string.html"><span>decode</span><wbr></wbr><span>From</span><wbr></wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1296952213%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../decode-from-string.html">T</a><span class="token operator">&gt; </span><a href="index.html">Toml</a><span class="token punctuation">.</span><a href="../decode-from-string.html"><span class="token function">decodeFromString</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>keys<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../decode-from-string.html">T</a></div><div class="brief "><p class="paragraph">Parses <a href="../decode-from-string.html">string</a> into a <a href="../-toml-table/index.html">TomlTable</a> and deserializes the corresponding element fetched with <a href="../decode-from-string.html">keys</a> into a value of type <a href="../decode-from-string.html">T</a> using serializer retrieved from reified type parameter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="110391303%2FFunctions%2F-864720431" anchor-label="decodeFromTomlElement" id="110391303%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="decode-from-toml-element.html"><span>decode</span><wbr></wbr><span>From</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="110391303%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-toml-element.html">T</a><span class="token operator">&gt; </span><a href="decode-from-toml-element.html"><span class="token function">decodeFromTomlElement</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">deserializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/DeserializationStrategy///PointingToDeclaration/">DeserializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="decode-from-toml-element.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="../-toml-element/index.html">TomlElement</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="decode-from-toml-element.html">T</a></div><div class="brief "><p class="paragraph">Deserializes <a href="decode-from-toml-element.html">element</a> into a value of type <a href="decode-from-toml-element.html">T</a> using <a href="decode-from-toml-element.html">deserializer</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="511024066%2FFunctions%2F-864720431" anchor-label="decodeFromTomlElement" id="511024066%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../decode-from-toml-element.html"><span>decode</span><wbr></wbr><span>From</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="511024066%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../decode-from-toml-element.html">T</a><span class="token operator">&gt; </span><a href="index.html">Toml</a><span class="token punctuation">.</span><a href="../decode-from-toml-element.html"><span class="token function">decodeFromTomlElement</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">element<span class="token operator">: </span><a href="../-toml-element/index.html">TomlElement</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../decode-from-toml-element.html">T</a></div><div class="brief "><p class="paragraph">Deserializes <a href="../decode-from-toml-element.html">element</a> into a value of type <a href="../decode-from-toml-element.html">T</a> using serializer retrieved from reified type parameter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1353596607%2FFunctions%2F957248005" anchor-label="encodeToStream" id="-1353596607%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../encode-to-stream.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Stream</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1353596607%2FFunctions%2F957248005"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../encode-to-stream.html">T</a><span class="token operator">&gt; </span><a href="index.html">Toml</a><span class="token punctuation">.</span><a href="../encode-to-stream.html"><span class="token function">encodeToStream</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../encode-to-stream.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">outputStream<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html">OutputStream</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Serializes <a href="../encode-to-stream.html">value</a> into <a href="../encode-to-stream.html">outputStream</a> using serializer retrieved from reified type parameter.</p></div><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../encode-to-stream.html">T</a><span class="token operator">&gt; </span><a href="index.html">Toml</a><span class="token punctuation">.</span><a href="../encode-to-stream.html"><span class="token function">encodeToStream</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">serializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/SerializationStrategy///PointingToDeclaration/">SerializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../encode-to-stream.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="../encode-to-stream.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">outputStream<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html">OutputStream</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Serializes <a href="../encode-to-stream.html">value</a> into <a href="../encode-to-stream.html">outputStream</a> using <a href="../encode-to-stream.html">serializer</a>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1804554693%2FFunctions%2F-864720431" anchor-label="encodeToString" id="1804554693%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-to-string.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1804554693%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-string.html">T</a><span class="token operator">&gt; </span><a href="encode-to-string.html"><span class="token function">encodeToString</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">serializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/SerializationStrategy///PointingToDeclaration/">SerializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-string.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="encode-to-string.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Serializes <a href="encode-to-string.html">value</a> into TOML string using <a href="encode-to-string.html">serializer</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="139902644%2FFunctions%2F-864720431" anchor-label="encodeToTomlElement" id="139902644%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-to-toml-element.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="139902644%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-toml-element.html">T</a><span class="token operator">&gt; </span><a href="encode-to-toml-element.html"><span class="token function">encodeToTomlElement</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">serializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/SerializationStrategy///PointingToDeclaration/">SerializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-toml-element.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="encode-to-toml-element.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-toml-element/index.html">TomlElement</a></div><div class="brief "><p class="paragraph">Serializes <a href="encode-to-toml-element.html">value</a> into <a href="../-toml-element/index.html">TomlElement</a> using <a href="encode-to-toml-element.html">serializer</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1765067448%2FFunctions%2F-864720431" anchor-label="encodeToTomlElement" id="1765067448%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../encode-to-toml-element.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1765067448%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../encode-to-toml-element.html">T</a><span class="token operator">&gt; </span><a href="index.html">Toml</a><span class="token punctuation">.</span><a href="../encode-to-toml-element.html"><span class="token function">encodeToTomlElement</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../encode-to-toml-element.html">T</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-toml-element/index.html">TomlElement</a></div><div class="brief "><p class="paragraph">Serializes <a href="../encode-to-toml-element.html">value</a> into <a href="../-toml-element/index.html">TomlElement</a> using serializer retrieved from reified type parameter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1316755148%2FFunctions%2F-864720431" anchor-label="encodeToWriter" id="-1316755148%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-to-writer.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Writer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1316755148%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-writer.html">T</a><span class="token operator">&gt; </span><a href="encode-to-writer.html"><span class="token function">encodeToWriter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">serializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/SerializationStrategy///PointingToDeclaration/">SerializationStrategy</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="encode-to-writer.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="encode-to-writer.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">writer<span class="token operator">: </span><a href="../-toml-writer/index.html">TomlWriter</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Serializes <a href="encode-to-writer.html">value</a> into <a href="encode-to-writer.html">writer</a> using <a href="encode-to-writer.html">serializer</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1717758460%2FFunctions%2F-864720431" anchor-label="encodeToWriter" id="-1717758460%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../encode-to-writer.html"><span>encode</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Writer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1717758460%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../encode-to-writer.html">T</a><span class="token operator">&gt; </span><a href="index.html">Toml</a><span class="token punctuation">.</span><a href="../encode-to-writer.html"><span class="token function">encodeToWriter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../encode-to-writer.html">T</a><span class="token punctuation">, </span></span><span class="parameter ">writer<span class="token operator">: </span><a href="../-toml-writer/index.html">TomlWriter</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Serializes <a href="../encode-to-writer.html">value</a> into <a href="../encode-to-writer.html">writer</a> using serializer retrieved from reified type parameter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-309497540%2FFunctions%2F-864720431" anchor-label="parseToTomlTable" id="-309497540%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="parse-to-toml-table.html"><span>parse</span><wbr></wbr><span>To</span><wbr></wbr><span>Toml</span><wbr></wbr><span><span>Table</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-309497540%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="parse-to-toml-table.html"><span class="token function">parseToTomlTable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-toml-table/index.html">TomlTable</a></div><div class="brief "><p class="paragraph">Parses <a href="parse-to-toml-table.html">string</a> into equivalent representation of <a href="../-toml-table/index.html">TomlTable</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
