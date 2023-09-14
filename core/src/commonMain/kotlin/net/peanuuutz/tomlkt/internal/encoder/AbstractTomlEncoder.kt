@@ -234,12 +234,12 @@ internal fun AbstractTomlEncoder.onBeginStructurePolymorphically(
     isEmptyStructure: Boolean
 ) {
     val discriminator = currentDiscriminator ?: return
+    currentDiscriminator = null
     compositeEncoder.encodeDiscriminatorElement(
         discriminator = discriminator,
         serialName = descriptor.serialName,
         isEmptyStructure = isEmptyStructure
     )
-    currentDiscriminator = null
 }
 
 // -------- AbstractTomlInlineElementEncoder --------

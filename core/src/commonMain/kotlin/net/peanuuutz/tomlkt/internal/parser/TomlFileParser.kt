@@ -71,14 +71,6 @@ internal class TomlFileParser(private val source: String) {
         return currentIndex >= lastIndex - offset
     }
 
-    private fun isNotEof(): Boolean {
-        return currentIndex < lastIndex
-    }
-
-    private fun isNotEofAfter(offset: Int): Boolean {
-        return currentIndex < lastIndex - offset
-    }
-
     private fun throwIncomplete(): Nothing {
         throwIncomplete(currentLineNumber)
     }
@@ -125,6 +117,7 @@ internal class TomlFileParser(private val source: String) {
         val tree = KeyNode("")
         val arrayOfTableIndices = mutableMapOf<Path, Int>()
         var tablePath: Path? = null
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -187,6 +180,7 @@ internal class TomlFileParser(private val source: String) {
     private fun parseTableHead(isArrayOfTable: Boolean): Path {
         var path: Path? = null
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -219,6 +213,7 @@ internal class TomlFileParser(private val source: String) {
         val path = mutableListOf<String>()
         var justEnded = false
         var expectKey = true
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -264,6 +259,7 @@ internal class TomlFileParser(private val source: String) {
     // Start right on the actual token, end right before ' ' or '\t' or '\n' or '=' or '.' or ']'.
     private fun parseBareKey(): String {
         val builder = StringBuilder().append(getChar())
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t', '.', KeyValueDelimiter, EndArray -> {
@@ -299,6 +295,7 @@ internal class TomlFileParser(private val source: String) {
     // Start right before the actual token, end right before '\n' or ',' or ']' or '}'.
     private fun parseValue(inStructure: Boolean): TomlElement {
         var element: TomlElement? = null
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -430,7 +427,7 @@ internal class TomlFileParser(private val source: String) {
         while (++testOffset <= maxOffset) {
             when (val current = getChar(testOffset)) {
                 ' ' -> {
-                    if (isNotEofAfter(testOffset) && getChar(testOffset + 1) in DecimalConstraints) {
+                    if (isEofAfter(testOffset).not() && getChar(testOffset + 1) in DecimalConstraints) {
                         isNumber = false
                     }
                     break
@@ -507,6 +504,7 @@ internal class TomlFileParser(private val source: String) {
         }
         var isDouble = false
         var isExponent = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
@@ -526,7 +524,7 @@ internal class TomlFileParser(private val source: String) {
                 '.' -> {
                     throwUnexpectedTokenIf(current) {
                         val surroundedByNumber = getChar(-1) in DecimalConstraints &&
-                                isNotEof() &&
+                                isEof().not() &&
                                 getChar(1) in DecimalConstraints
                         val condition = isExponent ||
                                 isDouble ||
@@ -542,7 +540,7 @@ internal class TomlFileParser(private val source: String) {
                     if (radix == 10) {
                         throwUnexpectedTokenIf(current) {
                             val surroundedByNumber = getChar(-1) in DecimalConstraints &&
-                                    isNotEof() &&
+                                    isEof().not() &&
                                     getChar(1) in DecimalOrSignConstraints
                             val condition = isExponent ||
                                     !surroundedByNumber
@@ -559,7 +557,7 @@ internal class TomlFileParser(private val source: String) {
                 '_' -> {
                     throwUnexpectedTokenIf(current) {
                         val surroundedByNumber = getChar(-1) in HexadecimalConstraints &&
-                                isNotEof() &&
+                                isEof().not() &&
                                 getChar(1) in HexadecimalConstraints
                         !surroundedByNumber
                     }
@@ -597,6 +595,7 @@ internal class TomlFileParser(private val source: String) {
         var hasTime = false
         var hasOffset = false
         var hasDateTimeSeparator = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 '\t', '\n', ',', Comment, EndArray, EndTable -> {
@@ -683,7 +682,7 @@ internal class TomlFileParser(private val source: String) {
             next != '"' -> {
                 multiline = false
             }
-            isNotEofAfter(1) && getChar(2) == '"' -> {
+            isEofAfter(1).not() && getChar(2) == '"' -> {
                 multiline = true
                 currentIndex += 2
                 throwIncompleteIf { isEof() }
@@ -701,6 +700,7 @@ internal class TomlFileParser(private val source: String) {
         var trim = false
         var justStarted = false
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -767,7 +767,7 @@ internal class TomlFileParser(private val source: String) {
             next != '\'' -> {
                 multiline = false
             }
-            isNotEofAfter(1) && getChar(2) == '\'' -> {
+            isEofAfter(1).not() && getChar(2) == '\'' -> {
                 multiline = true
                 currentIndex += 2
                 throwIncompleteIf { isEof() }
@@ -784,6 +784,7 @@ internal class TomlFileParser(private val source: String) {
         val builder = StringBuilder()
         var justStarted = false
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -825,6 +826,7 @@ internal class TomlFileParser(private val source: String) {
         val builder = mutableListOf<TomlElement>()
         var expectValue = true
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -861,6 +863,7 @@ internal class TomlFileParser(private val source: String) {
         var expectEntry = true
         var justStarted = true
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -904,6 +907,7 @@ internal class TomlFileParser(private val source: String) {
 
     // Start right on '#', end right before '\n'.
     private fun parseComment() {
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             if (getChar() == '\n') {
                 break

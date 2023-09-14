@@ -68,8 +68,8 @@ private fun validateDiscriminator(
         else -> {
             val message = "Subclass ${realDescriptor.serialName} cannot be serialized as base class " +
                     "${baseDescriptor.serialName} because one of the property serial name conflicts with class " +
-                    "discriminator $discriminator. Please rename the conflicting property, or annotate it with " +
-                    "@SerialName providing another serial name"
+                    "discriminator \"$discriminator\". Please rename the conflicting property, or annotate it " +
+                    "with @SerialName providing another serial name"
             error(message)
         }
     }
