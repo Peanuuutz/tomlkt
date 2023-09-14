@@ -21,5 +21,5 @@ internal inline fun <reified A> List<Annotation>.anyIsInstance(): Boolean {
 }
 
 internal inline fun <reified A> List<Annotation>.firstIsInstanceOrNull(): A? {
-    return firstOrNull { it is A } as A?
+    return firstOrNull { it is A } as? A?
 }

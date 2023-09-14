@@ -274,6 +274,7 @@ public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
  *
  * @see get
  */
+@Suppress("OutdatedDocumentation")
 public inline fun <reified T> Toml.decodeFromString(
     string: String,
     vararg keys: Any?
