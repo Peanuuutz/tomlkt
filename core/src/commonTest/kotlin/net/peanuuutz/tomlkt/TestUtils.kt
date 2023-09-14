@@ -8,9 +8,10 @@ import kotlin.test.assertFails
 fun <T> testEncode(
     serializer: SerializationStrategy<T>,
     value: T,
-    expect: String
+    expect: String,
+    toml: Toml = Toml
 ) {
-    val actual = Toml.encodeToString(serializer, value)
+    val actual = toml.encodeToString(serializer, value)
 
     assertEquals(expect, actual)
 }
@@ -18,9 +19,10 @@ fun <T> testEncode(
 fun <T> testEncodeTomlElement(
     serializer: SerializationStrategy<T>,
     value: T,
-    expect: TomlElement
+    expect: TomlElement,
+    toml: Toml = Toml
 ) {
-    val actual = Toml.encodeToTomlElement(serializer, value)
+    val actual = toml.encodeToTomlElement(serializer, value)
 
     assertEquals(expect, actual)
 }
@@ -28,9 +30,10 @@ fun <T> testEncodeTomlElement(
 fun <T> testDecode(
     deserializer: DeserializationStrategy<T>,
     string: String,
-    expect: T
+    expect: T,
+    toml: Toml = Toml
 ) {
-    val actual = Toml.decodeFromString(deserializer, string)
+    val actual = toml.decodeFromString(deserializer, string)
 
     assertEquals(expect, actual)
 }
@@ -38,13 +41,17 @@ fun <T> testDecode(
 fun <T> testDecodeTomlElement(
     deserializer: DeserializationStrategy<T>,
     value: TomlElement,
-    expect: T
+    expect: T,
+    toml: Toml = Toml
 ) {
-    val actual = Toml.decodeFromTomlElement(deserializer, value)
+    val actual = toml.decodeFromTomlElement(deserializer, value)
 
     assertEquals(expect, actual)
 }
 
-fun testInvalid(string: String) {
-    assertFails { Toml.parseToTomlTable(string) }
+fun testInvalid(
+    string: String,
+    toml: Toml = Toml
+) {
+    assertFails { toml.parseToTomlTable(string) }
 }

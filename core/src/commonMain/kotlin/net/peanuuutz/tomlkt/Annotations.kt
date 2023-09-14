@@ -16,6 +16,7 @@
 
 package net.peanuuutz.tomlkt
 
+import kotlinx.serialization.InheritableSerialInfo
 import kotlinx.serialization.SerialInfo
 
 /**
@@ -211,3 +212,42 @@ public annotation class TomlInteger(val base: Base) {
         OCT(8, "0o");
     }
 }
+
+/**
+ * Sets the key of the class discriminator of a specific type hierarchy.
+ *
+ * ```kotlin
+ * @Serializable
+ * @TomlClassDiscriminator("class")
+ * sealed class Element
+ *
+ * @Serializable
+ * data class Literal(
+ *     val string: String
+ * ) : Element()
+ *
+ * @Serializable
+ * data class Data(
+ *     val element: Element
+ * )
+ * Data(Literal("Hello"))
+ * ```
+ *
+ * will produce:
+ *
+ * ```toml
+ * [element]
+ * class = "package.Literal"
+ * string = "Hello"
+ * ```
+ *
+ * Again, this annotation will affect the whole type **hierarchy**, so any
+ * subclass will use the same discriminator. It is not possible to define
+ * different discriminators in different parts of the hierarchy.
+ *
+ * To change the default discriminator, please refer to [Toml] factory function
+ * and [TomlConfigBuilder.classDiscriminator].
+ */
+@InheritableSerialInfo
+@Target(AnnotationTarget.CLASS)
+public annotation class TomlClassDiscriminator(val discriminator: String)
