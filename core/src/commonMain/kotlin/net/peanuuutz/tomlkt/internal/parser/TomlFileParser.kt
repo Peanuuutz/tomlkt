@@ -117,6 +117,7 @@ internal class TomlFileParser(private val source: String) {
         val tree = KeyNode("")
         val arrayOfTableIndices = mutableMapOf<Path, Int>()
         var tablePath: Path? = null
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -179,6 +180,7 @@ internal class TomlFileParser(private val source: String) {
     private fun parseTableHead(isArrayOfTable: Boolean): Path {
         var path: Path? = null
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -211,6 +213,7 @@ internal class TomlFileParser(private val source: String) {
         val path = mutableListOf<String>()
         var justEnded = false
         var expectKey = true
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -256,6 +259,7 @@ internal class TomlFileParser(private val source: String) {
     // Start right on the actual token, end right before ' ' or '\t' or '\n' or '=' or '.' or ']'.
     private fun parseBareKey(): String {
         val builder = StringBuilder().append(getChar())
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t', '.', KeyValueDelimiter, EndArray -> {
@@ -291,6 +295,7 @@ internal class TomlFileParser(private val source: String) {
     // Start right before the actual token, end right before '\n' or ',' or ']' or '}'.
     private fun parseValue(inStructure: Boolean): TomlElement {
         var element: TomlElement? = null
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -499,6 +504,7 @@ internal class TomlFileParser(private val source: String) {
         }
         var isDouble = false
         var isExponent = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
@@ -589,6 +595,7 @@ internal class TomlFileParser(private val source: String) {
         var hasTime = false
         var hasOffset = false
         var hasDateTimeSeparator = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 '\t', '\n', ',', Comment, EndArray, EndTable -> {
@@ -693,6 +700,7 @@ internal class TomlFileParser(private val source: String) {
         var trim = false
         var justStarted = false
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -776,6 +784,7 @@ internal class TomlFileParser(private val source: String) {
         val builder = StringBuilder()
         var justStarted = false
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -817,6 +826,7 @@ internal class TomlFileParser(private val source: String) {
         val builder = mutableListOf<TomlElement>()
         var expectValue = true
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -853,6 +863,7 @@ internal class TomlFileParser(private val source: String) {
         var expectEntry = true
         var justStarted = true
         var justEnded = false
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             when (val current = getChar()) {
                 ' ', '\t' -> {
@@ -896,6 +907,7 @@ internal class TomlFileParser(private val source: String) {
 
     // Start right on '#', end right before '\n'.
     private fun parseComment() {
+        val lastIndex = lastIndex
         while (++currentIndex <= lastIndex) {
             if (getChar() == '\n') {
                 break
