@@ -191,7 +191,7 @@ The mapping of these expect types are as follows:
 | TomlLocalDate      | LocalDate      | LocalDate        |
 | TomlLocalTime      | LocalTime      | LocalTime        |
 
-[TomlLiteral](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt) is the default intermediate representation of a date time. For conversion,
+[TomlLiteral](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt) is the default intermediate representation of a date time. For conversion,
 simply use `TomlLiteral(TomlLocalDateTime)` to create a `TomlLiteral` from a `TomlLocalDateTime`
 (true for other types), and `TomlLiteral.toLocalDateTime()` for the other way.
 
@@ -214,8 +214,10 @@ It will be successfully parsed, but if you define after that:
 ```
 
 It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the reading process
-of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into
-the whole [Tree](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined. :face_with_head_bandage:
+of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into
+the whole [tree](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined.
+
+Better to keep super-table first!
 
 ### Extra features
 
@@ -226,7 +228,7 @@ The working process of tomlkt:
 * Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model.
 
 As you see, if you already have a TOML file, you can have no model class, but still gain access
-to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
+to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
 
 *Note: Due to no context of values in TomlTable(see TomlElement.kt), all of those are encoded as
 inline(meaning you can't get the same serialized structure between model class and TomlTable).*
