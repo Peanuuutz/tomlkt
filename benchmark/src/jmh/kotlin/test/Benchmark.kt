@@ -28,14 +28,14 @@ object TomlObjects {
 }
 
 /*
-    Benchmark                              Mode  Cnt      Score      Error  Units
-    Benchmark.jacksonWithType              avgt   10   7696.731 ±  112.218  ns/op
-    Benchmark.jacksonWithClass             avgt   10   8090.255 ±  420.727  ns/op
-    Benchmark.tomlktWithoutSerializer      avgt   10  10265.799 ±   72.684  ns/op
-    Benchmark.tomlktWithSerializer         avgt   10  10901.727 ± 1002.641  ns/op
-    Benchmark.toml4j                       avgt   10  20390.178 ±  251.729  ns/op
-    Benchmark.ktomlWithSerializer          avgt   10  46123.130 ± 1389.639  ns/op
-    Benchmark.ktomlWithoutSerializer       avgt   10  46555.647 ± 1047.836  ns/op
+    Benchmark                          Mode  Cnt      Score       Error  Units
+    Benchmark.jacksonWithType          avgt   10   7586.296 ±   289.578  ns/op
+    Benchmark.jacksonWithClass         avgt   10   7704.172 ±   209.295  ns/op
+    Benchmark.tomlktWithSerializer     avgt   10  10306.778 ±   105.617  ns/op
+    Benchmark.tomlktWithoutSerializer  avgt   10  10495.636 ±   318.807  ns/op
+    Benchmark.toml4j                   avgt   10  20702.267 ±   329.674  ns/op
+    Benchmark.ktomlWithoutSerializer   avgt   10  46438.459 ±  1340.517  ns/op
+    Benchmark.ktomlWithSerializer      avgt   10  50074.490 ± 10656.502  ns/op
  */
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 4)
