@@ -104,11 +104,7 @@ public sealed class Toml(
         value: T
     ): String {
         val writer = TomlStringWriter()
-        encodeToWriter(
-            serializer = serializer,
-            value = value,
-            writer = writer
-        )
+        encodeToWriter(serializer, value, writer)
         return writer.toString()
     }
 
@@ -122,11 +118,7 @@ public sealed class Toml(
         value: T,
         writer: TomlWriter
     ) {
-        val encoder = TomlFileEncoder(
-            config = config,
-            serializersModule = serializersModule,
-            writer = writer
-        )
+        val encoder = TomlFileEncoder(this, writer)
         encoder.encodeSerializableValue(serializer, value)
     }
 
@@ -139,7 +131,7 @@ public sealed class Toml(
         serializer: SerializationStrategy<T>,
         value: T
     ): TomlElement {
-        val encoder = TomlElementEncoder(config, serializersModule)
+        val encoder = TomlElementEncoder(this)
         encoder.encodeSerializableValue(serializer, value)
         return encoder.element
     }
@@ -158,8 +150,7 @@ public sealed class Toml(
         deserializer: DeserializationStrategy<T>,
         string: String
     ): T {
-        val table = parseToTomlTable(string)
-        return decodeFromTomlElement(deserializer, table)
+        return decodeFromLines(deserializer, string.lineSequence())
     }
 
     /**
@@ -184,7 +175,49 @@ public sealed class Toml(
         string: String,
         vararg keys: Any?
     ): T {
-        val table = parseToTomlTable(string)
+        return decodeFromLines(deserializer, string.lineSequence(), keys = keys)
+    }
+
+    /**
+     * Deserializes [lineSequence] into a value of type [T] using [deserializer].
+     *
+     * @param lineSequence **MUST** be a TOML file, as this method delegates
+     * parsing to [parseToTomlTable].
+     *
+     * @throws TomlDecodingException if `lineSequence` cannot be parsed into
+     * [TomlTable] or cannot be deserialized.
+     */
+    public fun <T> decodeFromLines(
+        deserializer: DeserializationStrategy<T>,
+        lineSequence: Sequence<CharSequence>
+    ): T {
+        val table = parseToTomlTable(lineSequence)
+        return decodeFromTomlElement(deserializer, table)
+    }
+
+    /**
+     * Parses [lineSequence] into a [TomlTable] and deserializes the
+     * corresponding element fetched with [keys] into a value of type [T] using
+     * [deserializer].
+     *
+     * @param lineSequence **MUST** be a TOML file, as this method delegates
+     * parsing to [parseToTomlTable].
+     * @param keys the path which leads to the value. Each one item is a single
+     * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+     * or [String] (will be parsed into integer).
+     *
+     * @throws TomlDecodingException if `lineSequence` cannot be parsed into
+     * [TomlTable] or the element cannot be deserialized.
+     * @throws NonPrimitiveKeyException if provided non-primitive keys.
+     *
+     * @see get
+     */
+    public fun <T> decodeFromLines(
+        deserializer: DeserializationStrategy<T>,
+        lineSequence: Sequence<CharSequence>,
+        vararg keys: Any?
+    ): T {
+        val table = parseToTomlTable(lineSequence)
         val element = table.get(keys = keys)!!
         return decodeFromTomlElement(deserializer, element)
     }
@@ -198,11 +231,7 @@ public sealed class Toml(
         deserializer: DeserializationStrategy<T>,
         element: TomlElement
     ): T {
-        val decoder = TomlElementDecoder(
-            config = config,
-            serializersModule = serializersModule,
-            element = element
-        )
+        val decoder = TomlElementDecoder(this, element)
         return decoder.decodeSerializableValue(deserializer)
     }
 
@@ -213,8 +242,17 @@ public sealed class Toml(
      * [TomlTable].
      */
     public fun parseToTomlTable(string: String): TomlTable {
-        val refined = refine(string)
-        return TomlFileParser(refined).parse()
+        return parseToTomlTable(string.lineSequence())
+    }
+
+    /**
+     * Parses [lineSequence] into equivalent representation of [TomlTable].
+     *
+     * @throws TomlDecodingException if `lineSequence` cannot be parsed into
+     * [TomlTable].
+     */
+    public fun parseToTomlTable(lineSequence: Sequence<CharSequence>): TomlTable {
+        return TomlFileParser(lineSequence.iterator()).parse()
     }
 }
 
@@ -228,11 +266,13 @@ public sealed class Toml(
 public inline fun Toml(
     from: Toml = Toml,
     config: TomlConfigBuilder.() -> Unit
-): Toml = TomlImpl(TomlConfigBuilder(from.config).apply(config).build())
+): Toml {
+    return TomlImpl(TomlConfigBuilder(from.config).apply(config).build())
+}
 
 /**
- * Serializes [value] into [writer] using serializer retrieved from reified type
- * parameter.
+ * Serializes [value] into [writer] using the serializer retrieved from reified
+ * type parameter.
  *
  * @throws TomlEncodingException if `value` cannot be serialized.
  */
@@ -240,16 +280,12 @@ public inline fun <reified T> Toml.encodeToWriter(
     value: T,
     writer: TomlWriter
 ) {
-    encodeToWriter(
-        serializer = serializersModule.serializer(),
-        value = value,
-        writer = writer
-    )
+    encodeToWriter(serializersModule.serializer(), value, writer)
 }
 
 /**
- * Serializes [value] into [TomlElement] using serializer retrieved from reified
- * type parameter.
+ * Serializes [value] into [TomlElement] using the serializer retrieved from
+ * reified type parameter.
  *
  * @throws TomlEncodingException if `value` cannot be serialized.
  */
@@ -258,18 +294,18 @@ public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
 }
 
 /**
- * Parses [string] into a [TomlTable] and deserializes the corresponding
- * element fetched with [keys] into a value of type [T] using serializer
- * retrieved from reified type parameter.
+ * Parses [string] into a [TomlTable] and deserializes the corresponding element
+ * fetched with [keys] into a value of type [T] using the serializer retrieved
+ * from reified type parameter.
  *
- * @param string **MUST** be a TOML file, as this method delegates parsing
- * to [Toml.parseToTomlTable].
+ * @param string **MUST** be a TOML file, as this method delegates parsing to
+ * [Toml.parseToTomlTable].
  * @param keys the path which leads to the value. Each one item is a single
- * segment. If a [TomlArray] is met, any direct child segment must be [Int]
- * or [String] (will be parsed into integer).
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int] or
+ * [String] (will be parsed into integer).
  *
- * @throws TomlDecodingException if `string` cannot be parsed into
- * [TomlTable] or the element cannot be deserialized.
+ * @throws TomlDecodingException if `string` cannot be parsed into [TomlTable]
+ * or the element cannot be deserialized.
  * @throws NonPrimitiveKeyException if provided non-primitive keys.
  *
  * @see get
@@ -283,8 +319,46 @@ public inline fun <reified T> Toml.decodeFromString(
 }
 
 /**
- * Deserializes [element] into a value of type [T] using serializer retrieved
- * from reified type parameter.
+ * Deserializes [lineSequence] into a value of type [T] using the serializer
+ * retrieved from reified type parameter.
+ *
+ * @param lineSequence **MUST** be a TOML file, as this method delegates
+ * parsing to [Toml.parseToTomlTable].
+ *
+ * @throws TomlDecodingException if `lineSequence` cannot be parsed into
+ * [TomlTable] or cannot be deserialized.
+ */
+public inline fun <reified T> Toml.decodeFromLines(lineSequence: Sequence<CharSequence>): T {
+    return decodeFromLines(serializersModule.serializer(), lineSequence)
+}
+
+/**
+ * Parses [lineSequence] into a [TomlTable] and deserializes the corresponding
+ * element fetched with [keys] into a value of type [T] using the serializer
+ * retrieved from reified type parameter.
+ *
+ * @param lineSequence **MUST** be a TOML file, as this method delegates parsing
+ * to [Toml.parseToTomlTable].
+ * @param keys the path which leads to the value. Each one item is a single
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int] or
+ * [String] (will be parsed into integer).
+ *
+ * @throws TomlDecodingException if `lineSequence` cannot be parsed into
+ * [TomlTable] or the element cannot be deserialized.
+ * @throws NonPrimitiveKeyException if provided non-primitive keys.
+ *
+ * @see get
+ */
+public inline fun <reified T> Toml.decodeFromLines(
+    lineSequence: Sequence<CharSequence>,
+    vararg keys: Any?
+): T {
+    return decodeFromLines(serializersModule.serializer(), lineSequence, keys = keys)
+}
+
+/**
+ * Deserializes [element] into a value of type [T] using the serializer
+ * retrieved from reified type parameter.
  *
  * @throws TomlDecodingException if `element` cannot be deserialized.
  */
@@ -296,7 +370,3 @@ public inline fun <reified T> Toml.decodeFromTomlElement(element: TomlElement): 
 
 @PublishedApi
 internal class TomlImpl(config: TomlConfig) : Toml(config)
-
-private fun refine(raw: String): String {
-    return raw.replace("\r\n", "\n")
-}

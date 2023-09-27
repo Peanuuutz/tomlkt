@@ -22,7 +22,7 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.TomlConfig
+import net.peanuuutz.tomlkt.Toml
 import net.peanuuutz.tomlkt.TomlDecoder
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.internal.decodePolymorphically
@@ -34,9 +34,11 @@ import net.peanuuutz.tomlkt.internal.throwUnsupportedSerialKind
 // -------- AbstractTomlDecoder --------
 
 internal abstract class AbstractTomlDecoder(
-    val config: TomlConfig,
-    final override val serializersModule: SerializersModule
+    final override val toml: Toml
 ) : TomlDecoder {
+    final override val serializersModule: SerializersModule
+        get() = toml.serializersModule
+
     var currentDiscriminator: String? = null
 
     final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
@@ -48,7 +50,7 @@ internal fun <T> AbstractTomlDecoder.decodeSerializableValuePolymorphically(
     deserializer: DeserializationStrategy<T>
 ): T {
     return when {
-        deserializer.descriptor.findRealDescriptor(config).isPrimitiveLike -> {
+        deserializer.descriptor.findRealDescriptor(toml.config).isPrimitiveLike -> {
             deserializer.deserialize(this)
         }
         deserializer !is AbstractPolymorphicSerializer<*> -> {
@@ -178,10 +180,13 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
 ) : TomlDecoder {
     protected var decodedNotNullMark: Boolean = false
 
-    override val serializersModule: SerializersModule
+    final override val toml: Toml
+        get() = delegate.toml
+
+    final override val serializersModule: SerializersModule
         get() = delegate.serializersModule
 
-    override fun decodeBoolean(): Boolean {
+    final override fun decodeBoolean(): Boolean {
         return if (!decodedNotNullMark) {
             delegate.decodeBooleanElement(parentDescriptor, elementIndex)
         } else {
@@ -191,7 +196,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeFloat(): Float {
+    final override fun decodeFloat(): Float {
         return if (!decodedNotNullMark) {
             delegate.decodeFloatElement(parentDescriptor, elementIndex)
         } else {
@@ -201,7 +206,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeDouble(): Double {
+    final override fun decodeDouble(): Double {
         return if (!decodedNotNullMark) {
             delegate.decodeDoubleElement(parentDescriptor, elementIndex)
         } else {
@@ -211,7 +216,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeChar(): Char {
+    final override fun decodeChar(): Char {
         return if (!decodedNotNullMark) {
             delegate.decodeCharElement(parentDescriptor, elementIndex)
         } else {
@@ -221,7 +226,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeString(): String {
+    final override fun decodeString(): String {
         return if (!decodedNotNullMark) {
             delegate.decodeStringElement(parentDescriptor, elementIndex)
         } else {
@@ -231,7 +236,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeNull(): Nothing? {
+    final override fun decodeNull(): Nothing? {
         return if (!decodedNotNullMark) {
             delegate.decodeElement(parentDescriptor, elementIndex) {
                 delegate.decodeNull()
@@ -243,7 +248,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeNotNullMark(): Boolean {
+    final override fun decodeNotNullMark(): Boolean {
         return if (!decodedNotNullMark) {
             val isNotNull = delegate.decodeElement(parentDescriptor, elementIndex) {
                 delegate.decodeNotNullMark()
@@ -255,7 +260,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeTomlElement(): TomlElement {
+    final override fun decodeTomlElement(): TomlElement {
         return if (!decodedNotNullMark) {
             delegate.decodeElement(parentDescriptor, elementIndex) {
                 delegate.decodeTomlElement()
@@ -267,7 +272,7 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
+    final override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
         return if (!decodedNotNullMark) {
             delegate.decodeElement(parentDescriptor, elementIndex) {
                 delegate.decodeEnum(enumDescriptor)
@@ -279,11 +284,11 @@ internal abstract class AbstractTomlInlineElementDecoder<D : TomlCompositeDecode
         }
     }
 
-    override fun decodeInline(descriptor: SerialDescriptor): Decoder {
+    final override fun decodeInline(descriptor: SerialDescriptor): Decoder {
         return this // Returns this anyway.
     }
 
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
+    final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
         throwUnsupportedSerialKind("Cannot decode structures in AbstractTomlInlineElementDecoder")
     }
 }

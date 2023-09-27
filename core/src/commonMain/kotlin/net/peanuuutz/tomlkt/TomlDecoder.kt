@@ -17,6 +17,7 @@
 package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.encoding.Decoder
+import kotlin.contracts.contract
 
 /**
  * A special [Decoder] which is used internally by decoding process of [Toml],
@@ -25,6 +26,8 @@ import kotlinx.serialization.encoding.Decoder
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlDecoder : Decoder {
+    public val toml: Toml
+
     public fun decodeTomlElement(): TomlElement
 }
 
@@ -32,5 +35,7 @@ public interface TomlDecoder : Decoder {
  * More convenient approach to cast [this] Decoder to [TomlDecoder].
  */
 public fun Decoder.asTomlDecoder(): TomlDecoder {
+    contract { returns() implies (this@asTomlDecoder is TomlDecoder) }
+
     return this as? TomlDecoder ?: error("Expect TomlDecoder, but found ${this::class.simpleName}")
 }

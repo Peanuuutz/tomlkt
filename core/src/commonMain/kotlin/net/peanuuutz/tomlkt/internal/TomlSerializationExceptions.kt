@@ -19,10 +19,19 @@ package net.peanuuutz.tomlkt.internal
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialKind
 import net.peanuuutz.tomlkt.internal.parser.Path
+import kotlin.reflect.KClass
 
 // -------- Encoding --------
 
 internal sealed class TomlEncodingException(message: String) : SerializationException(message)
+
+internal fun throwSubclassNotRegistered(subclass: KClass<*>, baseClass: KClass<*>): Nothing {
+    val message = "Class ${subclass.simpleName} is not registered for polymorphic serialization " +
+            "in the scope of ${baseClass.simpleName}. Mark ${baseClass.simpleName} as sealed or " +
+            "register ${subclass.simpleName} in a serializers module (and switch out the default " +
+            "one in the Toml {  } factory function)"
+    error(message)
+}
 
 // ---- NonPrimitiveKeyException ----
 

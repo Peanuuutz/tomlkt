@@ -16,10 +16,15 @@
 
 package net.peanuuutz.tomlkt
 
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
+import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
+import java.io.InputStream
 import java.io.OutputStream
+import java.io.Reader
+import java.io.Writer
 
 /**
  * Serializes [value] into [outputStream] using [serializer].
@@ -33,16 +38,14 @@ public fun <T> Toml.encodeToStream(
     value: T,
     outputStream: OutputStream
 ) {
-    val writer = TomlStreamWriter(outputStream)
-    encodeToWriter(
-        serializer = serializer,
-        value = value,
-        writer = writer
-    )
+    outputStream.buffered().use { buffered ->
+        val writer = TomlStreamWriter(buffered)
+        encodeToWriter(serializer, value, writer)
+    }
 }
 
 /**
- * Serializes [value] into [outputStream] using serializer retrieved from
+ * Serializes [value] into [outputStream] using the serializer retrieved from
  * reified type parameter.
  *
  * @throws TomlEncodingException if `value` cannot be serialized.
@@ -53,9 +56,69 @@ public inline fun <reified T> Toml.encodeToStream(
     value: T,
     outputStream: OutputStream
 ) {
-    encodeToStream(
-        serializer = serializersModule.serializer(),
-        value = value,
-        outputStream = outputStream
-    )
+    encodeToStream(serializersModule.serializer(), value, outputStream)
+}
+
+/**
+ * Serializes [value] into [nativeWriter] using [serializer].
+ *
+ * @throws TomlEncodingException if `value` cannot be serialized.
+ *
+ * @see TomlNativeWriter
+ */
+public fun <T> Toml.encodeToNativeWriter(
+    serializer: SerializationStrategy<T>,
+    value: T,
+    nativeWriter: Writer
+) {
+    nativeWriter.buffered().use { buffered ->
+        val writer = TomlNativeWriter(buffered)
+        encodeToWriter(serializer, value, writer)
+    }
+}
+
+/**
+ * Serializes [value] into [nativeWriter] using the serializer retrieved from
+ * reified type parameter.
+ *
+ * @throws TomlEncodingException if `value` cannot be serialized.
+ *
+ * @see TomlNativeWriter
+ */
+public inline fun <reified T> Toml.encodeToNativeWriter(
+    value: T,
+    nativeWriter: Writer
+) {
+    encodeToNativeWriter(serializersModule.serializer(), value, nativeWriter)
+}
+
+/**
+ * Deserializes the content of [nativeReader] into a value of type [T] using
+ * [serializer].
+ *
+ * @param nativeReader the stream containing a TOML file.
+ *
+ * @throws TomlDecodingException if the content of `nativeReader` cannot be
+ * parsed into [TomlTable] or cannot be deserialized.
+ */
+public fun <T> Toml.decodeFromNativeReader(
+    deserializer: DeserializationStrategy<T>,
+    nativeReader: Reader
+): T {
+    return nativeReader.useLines { lineSequence ->
+        decodeFromLines(deserializer, lineSequence)
+    }
+}
+
+/**
+ * Deserializes the content of [nativeReader] into a value of type [T] using
+ * the serializer retrieved from reified type parameter.
+ *
+ * @param nativeReader the stream containing a TOML file.
+ *
+ * @throws TomlDecodingException if the content of `nativeReader` cannot be
+ * parsed into [TomlTable] or cannot be deserialized.
+ */
+public inline fun <reified T> Toml.decodeFromNativeReader(nativeReader: Reader): T {
+    return decodeFromNativeReader(serializersModule.serializer(), nativeReader)
 }

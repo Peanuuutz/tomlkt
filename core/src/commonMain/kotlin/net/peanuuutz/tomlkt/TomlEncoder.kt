@@ -17,6 +17,7 @@
 package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.encoding.Encoder
+import kotlin.contracts.contract
 
 /**
  * A special [Encoder] which is used internally by encoding process of [Toml],
@@ -25,6 +26,8 @@ import kotlinx.serialization.encoding.Encoder
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlEncoder : Encoder {
+    public val toml: Toml
+
     public fun encodeTomlElement(value: TomlElement)
 }
 
@@ -32,5 +35,7 @@ public interface TomlEncoder : Encoder {
  * More convenient approach to cast [this] Encoder to [TomlEncoder].
  */
 public fun Encoder.asTomlEncoder(): TomlEncoder {
+    contract { returns() implies (this@asTomlEncoder is TomlEncoder) }
+
     return this as? TomlEncoder ?: error("Expect TomlEncoder, but found ${this::class.simpleName}")
 }

@@ -23,13 +23,12 @@ import kotlinx.serialization.descriptors.StructureKind.CLASS
 import kotlinx.serialization.descriptors.StructureKind.LIST
 import kotlinx.serialization.descriptors.StructureKind.MAP
 import kotlinx.serialization.descriptors.StructureKind.OBJECT
+import kotlinx.serialization.descriptors.elementNames
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
-import kotlinx.serialization.encoding.CompositeDecoder.Companion.UNKNOWN_NAME
 import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.modules.SerializersModule
+import net.peanuuutz.tomlkt.Toml
 import net.peanuuutz.tomlkt.TomlArray
-import net.peanuuutz.tomlkt.TomlConfig
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlNull
@@ -52,61 +51,58 @@ import net.peanuuutz.tomlkt.toShort
 
 // -------- AbstractTomlElementDecoder --------
 
-internal abstract class AbstractTomlElementDecoder(
-    config: TomlConfig,
-    serializersModule: SerializersModule
-) : AbstractTomlDecoder(config, serializersModule) {
+internal abstract class AbstractTomlElementDecoder(toml: Toml) : AbstractTomlDecoder(toml) {
     abstract val element: TomlElement
 
-    override fun decodeBoolean(): Boolean {
+    final override fun decodeBoolean(): Boolean {
         return element.asTomlLiteral().toBoolean()
     }
 
-    override fun decodeByte(): Byte {
+    final override fun decodeByte(): Byte {
         return element.asTomlLiteral().toByte()
     }
 
-    override fun decodeShort(): Short {
+    final override fun decodeShort(): Short {
         return element.asTomlLiteral().toShort()
     }
 
-    override fun decodeInt(): Int {
+    final override fun decodeInt(): Int {
         return element.asTomlLiteral().toInt()
     }
 
-    override fun decodeLong(): Long {
+    final override fun decodeLong(): Long {
         return element.asTomlLiteral().toLong()
     }
 
-    override fun decodeFloat(): Float {
+    final override fun decodeFloat(): Float {
         return element.asTomlLiteral().toFloat()
     }
 
-    override fun decodeDouble(): Double {
+    final override fun decodeDouble(): Double {
         return element.asTomlLiteral().toDouble()
     }
 
-    override fun decodeChar(): Char {
+    final override fun decodeChar(): Char {
         return element.asTomlLiteral().toChar()
     }
 
-    override fun decodeString(): String {
+    final override fun decodeString(): String {
         return element.asTomlLiteral().content
     }
 
-    override fun decodeNull(): Nothing? {
+    final override fun decodeNull(): Nothing? {
         return element.asTomlNull().content
     }
 
-    override fun decodeNotNullMark(): Boolean {
+    final override fun decodeNotNullMark(): Boolean {
         return element != TomlNull
     }
 
-    override fun decodeTomlElement(): TomlElement {
+    final override fun decodeTomlElement(): TomlElement {
         return element
     }
 
-    override fun decodeInline(descriptor: SerialDescriptor): Decoder {
+    final override fun decodeInline(descriptor: SerialDescriptor): Decoder {
         return if (descriptor.isUnsignedInteger) {
             TomlElementInlineDecoder(this)
         } else {
@@ -114,31 +110,31 @@ internal abstract class AbstractTomlElementDecoder(
         }
     }
 
-    override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
+    final override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
         return enumDescriptor.getElementIndex(element.asTomlLiteral().content)
     }
 
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
+    final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
         val discriminator = currentDiscriminator
         currentDiscriminator = null
         return when (val kind = descriptor.kind) {
             CLASS, is PolymorphicKind, OBJECT -> {
                 TomlElementClassDecoder(
-                    table = element.asTomlTable(),
                     delegate = this,
+                    table = element.asTomlTable(),
                     discriminator = discriminator
                 )
             }
             LIST -> {
                 TomlElementArrayDecoder(
-                    array = element.asTomlArray(),
-                    delegate = this
+                    delegate = this,
+                    array = element.asTomlArray()
                 )
             }
             MAP -> {
                 TomlElementMapDecoder(
-                    table = element.asTomlTable(),
-                    delegate = this
+                    delegate = this,
+                    table = element.asTomlTable()
                 )
             }
             else -> throwUnsupportedSerialKind(kind)
@@ -149,10 +145,9 @@ internal abstract class AbstractTomlElementDecoder(
 // -------- TomlElementDecoder --------
 
 internal class TomlElementDecoder(
-    config: TomlConfig,
-    serializersModule: SerializersModule,
+    toml: Toml,
     override val element: TomlElement
-) : AbstractTomlElementDecoder(config, serializersModule)
+) : AbstractTomlElementDecoder(toml)
 
 // -------- TomlElementInlineDecoder --------
 
@@ -180,8 +175,8 @@ private class TomlElementInlineDecoder(
 
 private abstract class AbstractTomlElementCompositeDecoder(
     delegate: AbstractTomlElementDecoder
-) : AbstractTomlElementDecoder(delegate.config, delegate.serializersModule), TomlCompositeDecoder {
-    override fun decodeInlineElement(descriptor: SerialDescriptor, index: Int): Decoder {
+) : AbstractTomlElementDecoder(delegate.toml), TomlCompositeDecoder {
+    final override fun decodeInlineElement(descriptor: SerialDescriptor, index: Int): Decoder {
         return if (descriptor.getElementDescriptor(index).isUnsignedInteger) {
             TomlElementInlineElementDecoder(
                 parentDescriptor = descriptor,
@@ -193,7 +188,7 @@ private abstract class AbstractTomlElementCompositeDecoder(
         }
     }
 
-    override fun <T : Any> decodeNullableSerializableElement(
+    final override fun <T : Any> decodeNullableSerializableElement(
         descriptor: SerialDescriptor,
         index: Int,
         deserializer: DeserializationStrategy<T?>,
@@ -270,63 +265,70 @@ private class TomlElementInlineElementDecoder(
 // -------- TomlElementClassDecoder --------
 
 private class TomlElementClassDecoder(
-    table: TomlTable,
     delegate: AbstractTomlElementDecoder,
+    private val table: TomlTable,
     private val discriminator: String?
 ) : AbstractTomlElementCompositeDecoder(delegate) {
-    private val iterator: Iterator<Map.Entry<String, TomlElement>> = table.iterator()
-
-    private var consumedElementCount: Int = 0
+    private var allowImplicitNull: Boolean = false
 
     private var currentElementIndex: Int = 0
 
     override lateinit var element: TomlElement
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
-        return when {
-            consumedElementCount < descriptor.elementsCount -> decodeBeforeFinished(descriptor)
-            iterator.hasNext() -> tryDecodeAfterFinished(descriptor)
-            else -> DECODE_DONE
+        while (currentElementIndex < descriptor.elementsCount) {
+            val index = currentElementIndex
+            val key = descriptor.getElementName(index)
+            allowImplicitNull = false
+            currentElementIndex++
+            when {
+                key in table -> {
+                    element = table[key]!!
+                    return index
+                }
+                allowImplicitNull(descriptor, index) -> {
+                    element = TomlNull
+                    return index
+                }
+            }
         }
+        return DECODE_DONE
     }
 
-    private fun decodeBeforeFinished(descriptor: SerialDescriptor): Int {
-        if (iterator.hasNext().not()) {
-            return DECODE_DONE
-        }
-        val (key, value) = iterator.next()
-        if (key == discriminator) {
-            return decodeElementIndex(descriptor)
-        }
-        val index = descriptor.getElementIndex(key)
-        if (index == UNKNOWN_NAME && config.ignoreUnknownKeys.not()) {
-            throwUnknownKey(key)
-        }
-        currentElementIndex = index
-        element = value
-        return index
-    }
-
-    private fun tryDecodeAfterFinished(descriptor: SerialDescriptor): Int {
-        val key = iterator.next().key
-        if (key != discriminator && config.ignoreUnknownKeys.not()) {
-            throwUnknownKey(key)
-        }
-        return decodeElementIndex(descriptor)
+    private fun allowImplicitNull(
+        descriptor: SerialDescriptor,
+        index: Int
+    ): Boolean {
+        val allow = toml.config.explicitNulls.not() &&
+                descriptor.isElementOptional(index).not() &&
+                descriptor.getElementDescriptor(index).isNullable
+        allowImplicitNull = allow
+        return allow
     }
 
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {}
 
-    override fun endElement(descriptor: SerialDescriptor, index: Int) {
-        consumedElementCount++
+    override fun endElement(descriptor: SerialDescriptor, index: Int) {}
+
+    override fun endStructure(descriptor: SerialDescriptor) {
+        if (toml.config.ignoreUnknownKeys) {
+            return
+        }
+        // Validate keys.
+        val expectedKeys = descriptor.elementNames.toSet()
+        for (key in table.keys) {
+            if (key !in expectedKeys && key != discriminator) {
+                throwUnknownKey(key)
+            }
+        }
     }
 }
 
 // -------- TomlElementMapDecoder --------
 
 private class TomlElementMapDecoder(
-    private val table: TomlTable,
-    delegate: AbstractTomlElementDecoder
+    delegate: AbstractTomlElementDecoder,
+    private val table: TomlTable
 ) : AbstractTomlElementCompositeDecoder(delegate) {
     private val iterator: Iterator<TomlElement> = iterator {
         for ((k, v) in table) {
@@ -367,8 +369,8 @@ private class TomlElementMapDecoder(
 // -------- TomlElementArrayDecoder --------
 
 private class TomlElementArrayDecoder(
-    private val array: TomlArray,
     delegate: AbstractTomlElementDecoder,
+    private val array: TomlArray
 ) : AbstractTomlElementCompositeDecoder(delegate) {
     private var currentElementIndex: Int = 0
 
