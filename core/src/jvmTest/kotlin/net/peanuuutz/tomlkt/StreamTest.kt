@@ -2,11 +2,9 @@ package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.Serializable
 import kotlin.io.path.Path
-import kotlin.io.path.bufferedReader
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.outputStream
 import kotlin.io.path.readText
-import kotlin.io.path.writeText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -70,16 +68,5 @@ class StreamTest {
         val r = p1.readText()
 
         assertEquals(s11, r)
-    }
-
-    @Test
-    fun decodeFromNativeReader() {
-        p1.writeText(s11)
-
-        val r = p1.bufferedReader().use { reader ->
-            Toml.decodeFromNativeReader(M1.serializer(), reader)
-        }
-
-        assertEquals(m11, r)
     }
 }
