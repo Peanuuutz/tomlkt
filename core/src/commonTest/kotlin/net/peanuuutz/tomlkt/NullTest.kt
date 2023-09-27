@@ -118,4 +118,22 @@ class NullTest {
     fun decodeNullableTableWhenNotNull() {
         testDecode(M3.serializer(), s32, m32)
     }
+
+    val s33 = """
+        
+        [c]
+        i = 1
+    """.trimIndent()
+
+    val t1 = Toml { explicitNulls = false }
+
+    @Test
+    fun encodeWithoutExplicitNulls() {
+        testEncode(M3.serializer(), m31, s33, t1)
+    }
+
+    @Test
+    fun decodeWithoutExplicitNulls() {
+        testDecode(M3.serializer(), s33, m31, t1)
+    }
 }
