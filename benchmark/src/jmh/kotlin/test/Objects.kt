@@ -3,39 +3,50 @@ package test
 import kotlinx.datetime.Instant
 import kotlinx.datetime.serializers.InstantIso8601Serializer
 import kotlinx.datetime.toKotlinInstant
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
 import net.peanuuutz.tomlkt.NativeOffsetDateTime
-import net.peanuuutz.tomlkt.TomlClassDiscriminator
+import net.peanuuutz.tomlkt.TomlContentPolymorphicSerializer
 import net.peanuuutz.tomlkt.TomlDecoder
+import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlOffsetDateTimeSerializer
+import net.peanuuutz.tomlkt.asTomlTable
 import org.intellij.lang.annotations.Language
 import java.time.ZoneOffset
 
 fun main() {
     val string = """
-        i = 0
-
-        [data]
-        list = [
-            "any",
-            { type = "integer", value = 0 }
-        ]
+        x = 0.0
+        y = 0.0
     """.trimIndent()
 
-    val value = TomlObjects.tomlkt.decodeFromString(
-        deserializer = String.serializer(),
-        string = string,
-        "data", "list", 0
-    )
+    val value = TomlObjects.tomlkt.decodeFromString<Config>(SampleConfig)
 
     println(value)
+}
+
+object PlacementSerializer : TomlContentPolymorphicSerializer<Placement>(Placement::class) {
+    override fun selectDeserializer(element: TomlElement): DeserializationStrategy<Placement> {
+        return when {
+            element.asTomlTable().isNotEmpty() -> Placement.Placed.serializer()
+            else -> Placement.Unplaced.serializer()
+        }
+    }
+}
+
+@Serializable(PlacementSerializer::class)
+sealed class Placement {
+    @Serializable
+    data object Unplaced : Placement()
+
+    @Serializable
+    data class Placed(val x: Double, val y: Double) : Placement()
 }
 
 @Serializable

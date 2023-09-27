@@ -49,7 +49,7 @@ internal inline fun AbstractTomlEncoder.encodePolymorphically(
     value: Any,
     callback: (discriminator: String) -> Unit
 ) {
-    val discriminator = serializer.descriptor.findDiscriminator(config)
+    val discriminator = serializer.descriptor.findDiscriminator(toml.config)
     val realSerializer = serializer.findPolymorphicSerializer(this, value)
     validateDiscriminator(serializer.descriptor, realSerializer.descriptor, discriminator)
     validateKind(realSerializer.descriptor)
@@ -91,7 +91,7 @@ internal inline fun <T> AbstractTomlDecoder.decodePolymorphically(
     deserializer: AbstractPolymorphicSerializer<Any>,
     callback: (discriminator: String) -> Unit
 ): T {
-    val discriminator = deserializer.descriptor.findDiscriminator(config)
+    val discriminator = deserializer.descriptor.findDiscriminator(toml.config)
     val table = decodeTomlElement().asTomlTable()
     val type = table[discriminator]?.asTomlLiteral()?.content
     val dummyDecoder = configureDummyDecoder(serializersModule)

@@ -25,9 +25,8 @@ import kotlinx.serialization.descriptors.StructureKind.MAP
 import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.modules.SerializersModule
+import net.peanuuutz.tomlkt.Toml
 import net.peanuuutz.tomlkt.TomlArray
-import net.peanuuutz.tomlkt.TomlConfig
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlNull
@@ -39,57 +38,54 @@ import net.peanuuutz.tomlkt.toTomlKey
 
 // -------- AbstractTomlElementEncoder --------
 
-internal abstract class AbstractTomlElementEncoder(
-    config: TomlConfig,
-    serializersModule: SerializersModule
-) : AbstractTomlEncoder(config, serializersModule) {
+internal abstract class AbstractTomlElementEncoder(toml: Toml) : AbstractTomlEncoder(toml) {
     lateinit var element: TomlElement
 
-    override fun encodeBoolean(value: Boolean) {
+    final override fun encodeBoolean(value: Boolean) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeByte(value: Byte) {
+    final override fun encodeByte(value: Byte) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeShort(value: Short) {
+    final override fun encodeShort(value: Short) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeInt(value: Int) {
+    final override fun encodeInt(value: Int) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeLong(value: Long) {
+    final override fun encodeLong(value: Long) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeFloat(value: Float) {
+    final override fun encodeFloat(value: Float) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeDouble(value: Double) {
+    final override fun encodeDouble(value: Double) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeChar(value: Char) {
+    final override fun encodeChar(value: Char) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeString(value: String) {
+    final override fun encodeString(value: String) {
         element = TomlLiteral(value)
     }
 
-    override fun encodeNull() {
+    final override fun encodeNull() {
         element = TomlNull
     }
 
-    override fun encodeTomlElement(value: TomlElement) {
+    final override fun encodeTomlElement(value: TomlElement) {
         element = value
     }
 
-    override fun encodeInline(descriptor: SerialDescriptor): Encoder {
+    final override fun encodeInline(descriptor: SerialDescriptor): Encoder {
         return if (descriptor.isUnsignedInteger) {
             TomlElementInlineEncoder(this)
         } else {
@@ -97,25 +93,22 @@ internal abstract class AbstractTomlElementEncoder(
         }
     }
 
-    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+    final override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
         encodeString(enumDescriptor.getElementName(index))
     }
 
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
+    final override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         return beginStructurePolymorphically(descriptor)
     }
 
-    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
+    final override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
         return beginCollectionPolymorphically(descriptor, collectionSize)
     }
 }
 
 // -------- TomlElementEncoder --------
 
-internal class TomlElementEncoder(
-    config: TomlConfig,
-    serializersModule: SerializersModule
-) : AbstractTomlElementEncoder(config, serializersModule)
+internal class TomlElementEncoder(toml: Toml) : AbstractTomlElementEncoder(toml)
 
 // -------- TomlElementInlineEncoder --------
 
@@ -143,7 +136,7 @@ private class TomlElementInlineEncoder(
 
 private abstract class AbstractTomlElementCompositeEncoder(
     delegate: AbstractTomlElementEncoder
-) : AbstractTomlElementEncoder(delegate.config, delegate.serializersModule), TomlCompositeEncoder {
+) : AbstractTomlElementEncoder(delegate.toml), TomlCompositeEncoder {
     final override fun encodeInlineElement(descriptor: SerialDescriptor, index: Int): Encoder {
         return if (descriptor.getElementDescriptor(index).isUnsignedInteger) {
             TomlElementInlineElementEncoder(
@@ -228,11 +221,13 @@ private class TomlElementMapEncoder(
         serializer: SerializationStrategy<T>,
         value: T
     ) {
-        if (isKey) {
+        if (isKey) { // This element is key.
             currentKey = value.toTomlKey()
-        } else {
-            encodeSerializableValue(serializer, value)
-            builder[currentKey] = element
+        } else { // This element is value (of the entry).
+            if (value.isNullLike.not() || toml.config.explicitNulls) {
+                encodeSerializableValue(serializer, value)
+                builder[currentKey] = element
+            }
         }
         isKey = !isKey
     }

@@ -26,11 +26,10 @@ import kotlinx.serialization.descriptors.StructureKind.MAP
 import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.modules.SerializersModule
+import net.peanuuutz.tomlkt.Toml
 import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlBlockArray
 import net.peanuuutz.tomlkt.TomlComment
-import net.peanuuutz.tomlkt.TomlConfig
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlInline
 import net.peanuuutz.tomlkt.TomlInteger
@@ -63,10 +62,9 @@ import net.peanuuutz.tomlkt.toTomlKey
 // -------- AbstractTomlFileEncoder --------
 
 internal abstract class AbstractTomlFileEncoder(
-    config: TomlConfig,
-    serializersModule: SerializersModule,
+    toml: Toml,
     val writer: TomlWriter
-) : AbstractTomlEncoder(config, serializersModule) {
+) : AbstractTomlEncoder(toml) {
     final override fun encodeBoolean(value: Boolean) {
         writer.writeBoolean(value)
     }
@@ -155,10 +153,9 @@ internal abstract class AbstractTomlFileEncoder(
 // -------- TomlFileEncoder --------
 
 internal class TomlFileEncoder(
-    config: TomlConfig,
-    serializersModule: SerializersModule,
+    toml: Toml,
     writer: TomlWriter
-) : AbstractTomlFileEncoder(config, serializersModule, writer)
+) : AbstractTomlFileEncoder(toml, writer)
 
 // -------- TomlFileInlineEncoder --------
 
@@ -186,7 +183,7 @@ private class TomlFileInlineEncoder(
 
 private abstract class AbstractTomlFileCompositeEncoder(
     delegate: AbstractTomlFileEncoder
-) : AbstractTomlFileEncoder(delegate.config, delegate.serializersModule, delegate.writer), TomlCompositeEncoder {
+) : AbstractTomlFileEncoder(delegate.toml, delegate.writer), TomlCompositeEncoder {
     private fun encodeByteWithBase(value: Byte, base: Base) {
         require(value >= 0.toByte() || base == Dec) {
             "Negative integer cannot be represented by other bases, but found $value"
@@ -298,10 +295,18 @@ private abstract class AbstractTomlFileCompositeEncoder(
             val isLiteral = annotations.anyIsInstance<TomlLiteralString>()
             val isMultiline = annotations.anyIsInstance<TomlMultilineString>()
             when {
-                !isLiteral && !isMultiline -> encodeString(value)
-                !isLiteral -> encodeMultilineString(value)
-                !isMultiline -> encodeLiteralString(value)
-                else -> encodeMultilineLiteralString(value)
+                !isLiteral && !isMultiline -> {
+                    encodeString(value)
+                }
+                !isLiteral -> {
+                    encodeMultilineString(value)
+                }
+                !isMultiline -> {
+                    encodeLiteralString(value)
+                }
+                else -> {
+                    encodeMultilineLiteralString(value)
+                }
             }
         }
     }
@@ -392,6 +397,8 @@ private class TomlFileFlowMapEncoder(
 ) : AbstractTomlFileCompositeEncoder(delegate) {
     private var isKey: Boolean = true
 
+    private lateinit var currentKey: String
+
     init { writer.writeString("{ ") }
 
     override fun <T> encodeSerializableElement(
@@ -401,14 +408,16 @@ private class TomlFileFlowMapEncoder(
         value: T
     ) {
         if (isKey) { // This element is key.
-            val currentKey = value.toTomlKey()
+            currentKey = value.toTomlKey()
                 .escape()
                 .doubleQuotedIfNotPure()
-            writer.writeKey(currentKey)
         } else { // This element is value (of the entry).
-            encodeSerializableValue(serializer, value)
-            if (index != mapSize * 2 - 1) {
-                writer.writeString(", ")
+            if (value.isNullLike.not() || toml.config.explicitNulls) {
+                writer.writeKey(currentKey)
+                encodeSerializableValue(serializer, value)
+                if (index != mapSize * 2 - 1) {
+                    writer.writeString(", ")
+                }
             }
         }
         isKey = !isKey
@@ -474,7 +483,7 @@ private class TomlFileBlockArrayEncoder(
 
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {
         if (currentLineItemsCount == 0) {
-            writer.writeString(config.indentation.representation)
+            writer.writeString(toml.config.indentation.representation)
         } else {
             writer.writeChar(' ')
         }
@@ -527,7 +536,9 @@ private abstract class TomlFileTableLikeEncoder(
         val compositeEncoder = when (val kind = descriptor.kind) {
             CLASS, is PolymorphicKind, OBJECT -> {
                 when {
-                    shouldInlineCurrentElement -> TomlFileFlowClassEncoder(this)
+                    shouldInlineCurrentElement -> {
+                        TomlFileFlowClassEncoder(this)
+                    }
                     shouldStructureCurrentElement -> {
                         TomlFileClassEncoder(
                             delegate = this,
@@ -564,9 +575,13 @@ private abstract class TomlFileTableLikeEncoder(
         return when (val kind = descriptor.kind) {
             LIST -> {
                 when {
-                    collectionSize == 0 -> TomlFileFlowArrayEncoder(this, 0)
-                    shouldInlineCurrentElement -> TomlFileFlowArrayEncoder(this, collectionSize)
-                    shouldStructureCurrentElement && blockArrayAnnotation == null && descriptor.isArrayOfTable -> {
+                    collectionSize == 0 -> {
+                        TomlFileFlowArrayEncoder(this, 0)
+                    }
+                    shouldInlineCurrentElement -> {
+                        TomlFileFlowArrayEncoder(this, collectionSize)
+                    }
+                    shouldStructureCurrentElement && blockArray == null && descriptor.isArrayOfTable -> {
                         TomlFileArrayOfTableEncoder(
                             delegate = this,
                             path = currentElementPath,
@@ -574,18 +589,19 @@ private abstract class TomlFileTableLikeEncoder(
                         )
                     }
                     else -> {
-                        val itemsPerLine = blockArrayAnnotation?.itemsPerLine ?: config.itemsPerLineInBlockArray
                         TomlFileBlockArrayEncoder(
                             delegate = this,
                             arraySize = collectionSize,
-                            itemsPerLine = itemsPerLine
+                            itemsPerLine = blockArray?.itemsPerLine ?: toml.config.itemsPerLineInBlockArray
                         )
                     }
                 }
             }
             MAP -> {
                 when {
-                    shouldInlineCurrentElement -> TomlFileFlowMapEncoder(this, collectionSize)
+                    shouldInlineCurrentElement -> {
+                        TomlFileFlowMapEncoder(this, collectionSize)
+                    }
                     shouldStructureCurrentElement -> {
                         TomlFileMapEncoder(
                             delegate = this,
@@ -614,7 +630,7 @@ private abstract class TomlFileTableLikeEncoder(
         }
     }
 
-    protected open val blockArrayAnnotation: TomlBlockArray?
+    protected open val blockArray: TomlBlockArray?
         get() = null
 
     final override fun endStructure(descriptor: SerialDescriptor) {}
@@ -630,7 +646,7 @@ private class TomlFileClassEncoder(
 ) : TomlFileTableLikeEncoder(delegate, isStructured, path) {
     private lateinit var currentElementDescriptor: SerialDescriptor
 
-    override var blockArrayAnnotation: TomlBlockArray? = null
+    override var blockArray: TomlBlockArray? = null
 
     override fun <T> encodeSerializableElement(
         descriptor: SerialDescriptor,
@@ -638,7 +654,7 @@ private class TomlFileClassEncoder(
         serializer: SerializationStrategy<T>,
         value: T
     ) {
-        if (value.isNullLike) {
+        if (value.isNullLike && toml.config.explicitNulls) {
             shouldInlineCurrentElement = true
         }
         super.encodeSerializableElement(descriptor, index, serializer, value)
@@ -682,7 +698,7 @@ private class TomlFileClassEncoder(
                         .forEach(commentLines::add)
                 }
                 is TomlBlockArray -> {
-                    blockArrayAnnotation = annotation
+                    blockArray = annotation
                 }
                 is TomlInline -> {
                     shouldAddExtraLineFeed = false
@@ -739,7 +755,7 @@ private class TomlFileClassEncoder(
             writer.writeLineFeed()
         }
         shouldInlineCurrentElement = false
-        blockArrayAnnotation = null
+        blockArray = null
     }
 }
 
@@ -773,18 +789,20 @@ private class TomlFileMapEncoder(
                 .escape()
                 .doubleQuotedIfNotPure()
         } else { // This element is value (of the entry).
-            when {
-                value.isNullLike -> {
-                    appendKeyDirectly()
+            if (value.isNullLike.not() || toml.config.explicitNulls) {
+                when {
+                    value.isNullLike -> {
+                        appendKeyDirectly()
+                    }
+                    valueDescriptor.isCollection.not() -> {
+                        appendKey()
+                    }
+                    // For non-null collections, defer to beginCollection().
                 }
-                valueDescriptor.isCollection.not() -> {
-                    appendKey()
+                encodeSerializableValue(serializer, value)
+                if (index != mapSize * 2 - 1) {
+                    writer.writeLineFeed()
                 }
-                // For non-null collections, defer to beginCollection().
-            }
-            encodeSerializableValue(serializer, value)
-            if (index != mapSize * 2 - 1) {
-                writer.writeLineFeed()
             }
         }
         currentElementIndex++
@@ -857,10 +875,14 @@ private class TomlFileArrayOfTableEncoder(
         serializer: SerializationStrategy<T>,
         value: T
     ) {
-        if (value.isNullLike) {
-            throwNullInArrayOfTable(path)
+        when {
+            value.isNullLike.not() -> {
+                super.encodeSerializableElement(descriptor, index, serializer, value)
+            }
+            toml.config.explicitNulls -> {
+                throwNullInArrayOfTable(path)
+            }
         }
-        super.encodeSerializableElement(descriptor, index, serializer, value)
     }
 
     override fun encodeDiscriminatorElement(discriminator: String, serialName: String, isEmptyStructure: Boolean) {
@@ -918,21 +940,29 @@ private fun AbstractTomlFileEncoder.beginCollectionPolymorphically(
     return when (val kind = descriptor.kind) {
         LIST -> {
             when {
-                collectionSize == 0 -> TomlFileFlowArrayEncoder(this, 0)
-                forceInline -> TomlFileFlowArrayEncoder(this, collectionSize)
+                collectionSize == 0 -> {
+                    TomlFileFlowArrayEncoder(this, 0)
+                }
+                forceInline -> {
+                    TomlFileFlowArrayEncoder(this, collectionSize)
+                }
                 else -> {
                     TomlFileBlockArrayEncoder(
                         delegate = this,
                         arraySize = collectionSize,
-                        itemsPerLine = config.itemsPerLineInBlockArray
+                        itemsPerLine = toml.config.itemsPerLineInBlockArray
                     )
                 }
             }
         }
         MAP -> {
             when {
-                collectionSize == 0 -> TomlFileFlowMapEncoder(this, 0)
-                forceInline -> TomlFileFlowMapEncoder(this, collectionSize)
+                collectionSize == 0 -> {
+                    TomlFileFlowMapEncoder(this, 0)
+                }
+                forceInline -> {
+                    TomlFileFlowMapEncoder(this, collectionSize)
+                }
                 else -> {
                     TomlFileMapEncoder(
                         delegate = this,
@@ -967,9 +997,6 @@ private fun calculateStructuredTableLikeIndex(descriptor: SerialDescriptor): Int
     }
     return structuredIndex
 }
-
-private val Any?.isNullLike: Boolean
-    get() = this == null || this == TomlNull
 
 private fun TomlWriter.writeKey(key: String) {
     writeString("$key = ")

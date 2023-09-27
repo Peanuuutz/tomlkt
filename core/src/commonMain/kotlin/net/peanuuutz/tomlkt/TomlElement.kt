@@ -36,6 +36,7 @@ import net.peanuuutz.tomlkt.internal.parser.TreeNode
 import net.peanuuutz.tomlkt.internal.parser.ValueNode
 import net.peanuuutz.tomlkt.internal.throwNonPrimitiveKey
 import net.peanuuutz.tomlkt.internal.toStringModified
+import kotlin.contracts.contract
 
 // -------- TomlElement --------
 
@@ -89,6 +90,8 @@ public object TomlNull : TomlElement() {
  * @throws IllegalStateException if `this` is not `TomlNull`.
  */
 public fun TomlElement.asTomlNull(): TomlNull {
+    contract { returns() implies (this@asTomlNull is TomlNull) }
+
     return this as? TomlNull ?: failConversion("TomlNull")
 }
 
@@ -153,6 +156,8 @@ public class TomlLiteral internal constructor(
  * @throws IllegalStateException if `this` is not `TomlLiteral`.
  */
 public fun TomlElement.asTomlLiteral(): TomlLiteral {
+    contract { returns() implies (this@asTomlLiteral is TomlLiteral) }
+
     return this as? TomlLiteral ?: failConversion("TomlLiteral")
 }
 
@@ -574,6 +579,13 @@ public class TomlArray internal constructor(
     override fun hashCode(): Int {
         return content.hashCode()
     }
+
+    public companion object {
+        /**
+         * An empty [TomlArray].
+         */
+        public val Empty: TomlArray = TomlArray(emptyList())
+    }
 }
 
 // ---- To TomlArray ----
@@ -584,6 +596,8 @@ public class TomlArray internal constructor(
  * @throws IllegalStateException if `this` is not `TomlArray`.
  */
 public fun TomlElement.asTomlArray(): TomlArray {
+    contract { returns() implies (this@asTomlArray is TomlArray) }
+
     return this as? TomlArray ?: failConversion("TomlArray")
 }
 
@@ -604,7 +618,10 @@ public fun TomlElement.toTomlArray(): TomlArray {
  * Creates a [TomlArray] from given `Iterable` [value].
  */
 public fun TomlArray(value: Iterable<*>): TomlArray {
-    val content = value.map(Any?::toTomlElement)
+    if (value is Collection && value.isEmpty()) {
+        return TomlArray.Empty
+    }
+    val content = value.map { it.toTomlElement() }
     return TomlArray(content)
 }
 
@@ -612,7 +629,10 @@ public fun TomlArray(value: Iterable<*>): TomlArray {
  * Creates a [TomlArray] with given [values].
  */
 public fun TomlArray(vararg values: Any?): TomlArray {
-    val content = values.map(Any?::toTomlElement)
+    if (values.isEmpty()) {
+        return TomlArray.Empty
+    }
+    val content = values.map { it.toTomlElement() }
     return TomlArray(content)
 }
 
@@ -656,6 +676,13 @@ public class TomlTable internal constructor(
     override fun hashCode(): Int {
         return content.hashCode()
     }
+
+    public companion object {
+        /**
+         * An empty [TomlTable].
+         */
+        public val Empty: TomlTable = TomlTable(emptyMap())
+    }
 }
 
 // ---- To TomlTable ----
@@ -666,6 +693,8 @@ public class TomlTable internal constructor(
  * @throws IllegalStateException if `this` is not `TomlTable`.
  */
 public fun TomlElement.asTomlTable(): TomlTable {
+    contract { returns() implies (this@asTomlTable is TomlTable) }
+
     return this as? TomlTable ?: failConversion("TomlTable")
 }
 
@@ -686,24 +715,44 @@ public fun TomlElement.toTomlTable(): TomlTable {
  * Creates a [TomlTable] from given `Map` [value].
  */
 public fun TomlTable(value: Map<*, *>): TomlTable {
-    val content = buildMap(value.size) {
-        for ((k, v) in value) {
-            put(k.toTomlKey(), v.toTomlElement())
+    return when (val size = value.size) {
+        0 -> TomlTable.Empty
+        1 -> {
+            val (k, v) = value.entries.first()
+            val content = mapOf(pair = k.toTomlKey() to v.toTomlElement())
+            TomlTable(content)
+        }
+        else -> {
+            val content = buildMap(size) {
+                for ((k, v) in value) {
+                    put(k.toTomlKey(), v.toTomlElement())
+                }
+            }
+            TomlTable(content)
         }
     }
-    return TomlTable(content)
 }
 
 /**
  * Creates a [TomlTable] with given [entries].
  */
 public fun TomlTable(vararg entries: Pair<*, *>): TomlTable {
-    val content = buildMap(entries.size) {
-        for ((k, v) in entries) {
-            put(k.toTomlKey(), v.toTomlElement())
+    return when (val size = entries.size) {
+        0 -> TomlTable.Empty
+        1 -> {
+            val (k, v) = entries[0]
+            val content = mapOf(pair = k.toTomlKey() to v.toTomlElement())
+            TomlTable(content)
+        }
+        else -> {
+            val content = buildMap(size) {
+                for ((k, v) in entries) {
+                    put(k.toTomlKey(), v.toTomlElement())
+                }
+            }
+            TomlTable(content)
         }
     }
-    return TomlTable(content)
 }
 
 // ---- Extensions for TomlTable ----
@@ -739,13 +788,30 @@ public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
 // ======== Internal ========
 
 internal fun TomlArray(value: ArrayNode): TomlArray {
-    val content = value.children.map(TreeNode::toTomlElement)
-    return TomlArray(content)
+    val children = value.children
+    return when (children.size) {
+        0 -> TomlArray.Empty
+        1 -> {
+            val element = TomlTable(children[0])
+            val content = listOf(element = element)
+            TomlArray(content)
+        }
+        else -> {
+            val content = children.map(::TomlTable)
+            TomlArray(content)
+        }
+    }
 }
 
 internal fun TomlTable(value: KeyNode): TomlTable {
-    val content = value.children.associate { node ->
-        node.key to node.toTomlElement()
+    val children = value.children
+    if (children.isEmpty()) {
+        return TomlTable.Empty
+    }
+    val content = buildMap(children.size) {
+        for (node in children) {
+            put(node.key, node.toTomlElement())
+        }
     }
     return TomlTable(content)
 }

@@ -22,7 +22,7 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
-import net.peanuuutz.tomlkt.TomlConfig
+import net.peanuuutz.tomlkt.Toml
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlNull
@@ -37,9 +37,11 @@ import kotlin.contracts.contract
 // -------- AbstractTomlEncoder --------
 
 internal abstract class AbstractTomlEncoder(
-    val config: TomlConfig,
-    final override val serializersModule: SerializersModule
+    final override val toml: Toml
 ) : TomlEncoder {
+    final override val serializersModule: SerializersModule
+        get() = toml.serializersModule
+
     var currentDiscriminator: String? = null
 
     final override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
@@ -47,12 +49,15 @@ internal abstract class AbstractTomlEncoder(
     }
 }
 
+internal val Any?.isNullLike: Boolean
+    get() = this == null || this == TomlNull
+
 internal fun <T> AbstractTomlEncoder.encodeSerializableValuePolymorphically(
     serializer: SerializationStrategy<T>,
     value: T
 ) {
     when {
-        serializer.descriptor.findRealDescriptor(config).isPrimitiveLike -> {
+        serializer.descriptor.findRealDescriptor(toml.config).isPrimitiveLike -> {
             serializer.serialize(this, value)
         }
         serializer !is AbstractPolymorphicSerializer<*> -> {
@@ -210,8 +215,10 @@ internal interface TomlCompositeEncoder : TomlEncoder, CompositeEncoder {
         serializer: SerializationStrategy<T>,
         value: T
     ) {
-        encodeElement(descriptor, index) {
-            encodeSerializableValue(serializer, value)
+        if (value.isNullLike.not() || toml.config.explicitNulls) {
+            encodeElement(descriptor, index) {
+                encodeSerializableValue(serializer, value)
+            }
         }
     }
 }
@@ -249,6 +256,9 @@ internal abstract class AbstractTomlInlineElementEncoder<E : TomlCompositeEncode
     protected val elementIndex: Int,
     protected val delegate: E
 ) : TomlEncoder {
+    final override val toml: Toml
+        get() = delegate.toml
+
     final override val serializersModule: SerializersModule
         get() = delegate.serializersModule
 

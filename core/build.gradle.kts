@@ -16,10 +16,6 @@ plugins {
 val archivesName: String by rootProject
 base.archivesName.set(archivesName)
 
-repositories {
-    mavenCentral()
-}
-
 kotlin {
     explicitApi()
 

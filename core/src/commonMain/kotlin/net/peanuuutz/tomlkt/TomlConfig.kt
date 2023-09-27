@@ -35,6 +35,17 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     public var serializersModule: SerializersModule = from.serializersModule
 
     /**
+     * Specifies whether `null` should be explicitly encoded or decoded.
+     *
+     * If set to `false`, during encoding, any property with `null` value will
+     * not be encoded; during decoding, any nullable property without default
+     * value will be set to `null` if the corresponding entry does not exist.
+     *
+     * `true` by default.
+     */
+    public var explicitNulls: Boolean = from.explicitNulls
+
+    /**
      * The key of the class discriminator for polymorphic serialization.
      *
      * "type" by default.
@@ -74,6 +85,7 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
         val itemsPerLineInBlockArray = itemsPerLineInBlockArray.coerceAtLeast(1)
         return TomlConfig(
             serializersModule = serializersModule,
+            explicitNulls = explicitNulls,
             classDiscriminator = classDiscriminator,
             indentation = indentation,
             itemsPerLineInBlockArray = itemsPerLineInBlockArray,
@@ -123,6 +135,7 @@ public value class TomlIndentation(public val representation: String) {
 
 internal class TomlConfig(
     val serializersModule: SerializersModule,
+    val explicitNulls: Boolean,
     val classDiscriminator: String,
     val indentation: TomlIndentation,
     val itemsPerLineInBlockArray: Int,
@@ -131,6 +144,7 @@ internal class TomlConfig(
     companion object {
         val Default: TomlConfig = TomlConfig(
             serializersModule = EmptySerializersModule(),
+            explicitNulls = true,
             classDiscriminator = "type",
             indentation = TomlIndentation.Space4,
             itemsPerLineInBlockArray = 1,
