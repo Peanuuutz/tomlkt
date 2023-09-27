@@ -16,13 +16,10 @@
 
 package net.peanuuutz.tomlkt
 
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
-import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
 import java.io.OutputStream
-import java.io.Reader
 import java.io.Writer
 
 /**
@@ -89,35 +86,4 @@ public inline fun <reified T> Toml.encodeToNativeWriter(
     nativeWriter: Writer
 ) {
     encodeToNativeWriter(serializersModule.serializer(), value, nativeWriter)
-}
-
-/**
- * Deserializes the content of [nativeReader] into a value of type [T] using
- * [serializer].
- *
- * @param nativeReader the stream containing a TOML file.
- *
- * @throws TomlDecodingException if the content of `nativeReader` cannot be
- * parsed into [TomlTable] or cannot be deserialized.
- */
-public fun <T> Toml.decodeFromNativeReader(
-    deserializer: DeserializationStrategy<T>,
-    nativeReader: Reader
-): T {
-    return nativeReader.useLines { lineSequence ->
-        decodeFromLines(deserializer, lineSequence)
-    }
-}
-
-/**
- * Deserializes the content of [nativeReader] into a value of type [T] using
- * the serializer retrieved from reified type parameter.
- *
- * @param nativeReader the stream containing a TOML file.
- *
- * @throws TomlDecodingException if the content of `nativeReader` cannot be
- * parsed into [TomlTable] or cannot be deserialized.
- */
-public inline fun <reified T> Toml.decodeFromNativeReader(nativeReader: Reader): T {
-    return decodeFromNativeReader(serializersModule.serializer(), nativeReader)
 }
