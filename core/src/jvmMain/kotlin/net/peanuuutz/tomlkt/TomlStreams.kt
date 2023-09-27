@@ -21,7 +21,6 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
 import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
-import java.io.InputStream
 import java.io.OutputStream
 import java.io.Reader
 import java.io.Writer
