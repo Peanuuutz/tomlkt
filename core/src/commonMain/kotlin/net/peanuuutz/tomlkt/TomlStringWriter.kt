@@ -19,6 +19,8 @@ package net.peanuuutz.tomlkt
 /**
  * A [TomlWriter] that writes TOML as string.
  *
+ * This writer is NOT thread-safe, so any concurrent usage should be avoided.
+ *
  * Use with [Toml.encodeToWriter] to encode objects. This is useful for
  * concatenating two TOML strings. However, programmer should prefer
  * [Toml.encodeToString] if only one object is being encoded.

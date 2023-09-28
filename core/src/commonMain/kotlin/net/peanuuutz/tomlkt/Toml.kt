@@ -182,6 +182,53 @@ public sealed class Toml(
     }
 
     /**
+     * Deserializes the content of the [reader] into a value of type [T] using
+     * [deserializer].
+     *
+     * @param reader **MUST** contain a TOML file, as this method delegates
+     * parsing to [parseToTomlTable].
+     *
+     * @throws TomlDecodingException if the content cannot be parsed into
+     * [TomlTable] or cannot be deserialized.
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun <T> decodeFromReader(
+        deserializer: DeserializationStrategy<T>,
+        reader: TomlReader
+    ): T {
+        val table = parseToTomlTable(reader)
+        return decodeFromTomlElement(deserializer, table)
+    }
+
+    /**
+     * Parses the content of the [reader] into a [TomlTable] and deserializes
+     * the corresponding element fetched with [keys] into a value of type [T]
+     * using [deserializer].
+     *
+     * @param reader **MUST** contain a TOML file, as this method delegates
+     * parsing to [parseToTomlTable].
+     * @param keys the path which leads to the value. Each one item is a single
+     * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+     * or [String] (will be parsed into integer).
+     *
+     * @throws TomlDecodingException if the content cannot be parsed into
+     * [TomlTable] or the element cannot be deserialized.
+     * @throws NonPrimitiveKeyException if provided non-primitive keys.
+     *
+     * @see get
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun <T> decodeFromReader(
+        deserializer: DeserializationStrategy<T>,
+        reader: TomlReader,
+        vararg keys: Any?
+    ): T {
+        val table = parseToTomlTable(reader)
+        val element = table.get(keys = keys)!!
+        return decodeFromTomlElement(deserializer, element)
+    }
+
+    /**
      * Deserializes [element] into a value of type [T] using [deserializer].
      *
      * @throws TomlDecodingException if `element` cannot be deserialized.
@@ -201,7 +248,19 @@ public sealed class Toml(
      * [TomlTable].
      */
     public fun parseToTomlTable(string: String): TomlTable {
-        return TomlFileParser(string).parse()
+        val reader = TomlStringReader(string)
+        return parseToTomlTable(reader)
+    }
+
+    /**
+     * Parses the content of the [reader] into equivalent representation of
+     * [TomlTable].
+     *
+     * @throws TomlDecodingException if the content cannot be parsed into
+     * [TomlTable].
+     */
+    public fun parseToTomlTable(reader: TomlReader): TomlTable {
+        return TomlFileParser(reader).parse()
     }
 }
 
@@ -265,6 +324,46 @@ public inline fun <reified T> Toml.decodeFromString(
     vararg keys: Any?
 ): T {
     return decodeFromString(serializersModule.serializer(), string, keys = keys)
+}
+
+/**
+ * Deserializes the content of the [reader] into a value of type [T] using the
+ * serializer retrieved from reified type parameter.
+ *
+ * @param reader **MUST** contain a TOML file, as this method delegates parsing
+ * to [Toml.parseToTomlTable].
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * [TomlTable] or cannot be deserialized.
+ */
+@Suppress("OutdatedDocumentation")
+public inline fun <reified T> Toml.decodeFromReader(reader: TomlReader): T {
+    return decodeFromReader(serializersModule.serializer(), reader)
+}
+
+/**
+ * Parses the content of the [reader] into a [TomlTable] and deserializes
+ * the corresponding element fetched with [keys] into a value of type [T]
+ * using the serializer retrieved from reified type parameter.
+ *
+ * @param reader **MUST** contain a TOML file, as this method delegates
+ * parsing to [Toml.parseToTomlTable].
+ * @param keys the path which leads to the value. Each one item is a single
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+ * or [String] (will be parsed into integer).
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * [TomlTable] or the element cannot be deserialized.
+ * @throws NonPrimitiveKeyException if provided non-primitive keys.
+ *
+ * @see get
+ */
+@Suppress("OutdatedDocumentation")
+public inline fun <reified T> Toml.decodeFromReader(
+    reader: TomlReader,
+    vararg keys: Any?
+): T {
+    return decodeFromReader(serializersModule.serializer(), reader, keys = keys)
 }
 
 /**
