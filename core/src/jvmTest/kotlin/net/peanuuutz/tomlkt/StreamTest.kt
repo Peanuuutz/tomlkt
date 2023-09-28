@@ -2,9 +2,11 @@ package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.Serializable
 import kotlin.io.path.Path
-import kotlin.io.path.bufferedWriter
 import kotlin.io.path.outputStream
 import kotlin.io.path.readText
+import kotlin.io.path.reader
+import kotlin.io.path.writeText
+import kotlin.io.path.writer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -45,28 +47,28 @@ class StreamTest {
 
     @Test
     fun encodeToStream() {
-        p1.outputStream().use { stream ->
-            Toml.encodeToStream(M1.serializer(), m11, stream)
-        }
+        Toml.encodeToStream(M1.serializer(), m11, p1.outputStream())
 
         val r = p1.readText()
 
         assertEquals(s11, r)
-    }
-
-    @Test
-    fun decodeFromStream() {
-        // TODO
     }
 
     @Test
     fun encodeToNativeWriter() {
-        p1.bufferedWriter().use { writer ->
-            Toml.encodeToNativeWriter(M1.serializer(), m11, writer)
-        }
+        Toml.encodeToNativeWriter(M1.serializer(), m11, p1.writer())
 
         val r = p1.readText()
 
         assertEquals(s11, r)
+    }
+
+    @Test
+    fun decodeFromNativeReader() {
+        p1.writeText(s11)
+
+        val r = Toml.decodeFromNativeReader(M1.serializer(), p1.reader())
+
+        assertEquals(m11, r)
     }
 }

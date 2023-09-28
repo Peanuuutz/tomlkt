@@ -16,14 +16,21 @@
 
 package net.peanuuutz.tomlkt
 
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
+import net.peanuuutz.tomlkt.internal.NonPrimitiveKeyException
+import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
 import java.io.OutputStream
+import java.io.Reader
 import java.io.Writer
 
 /**
  * Serializes [value] into [outputStream] using [serializer].
+ *
+ * Note that when finished, `outputStream` is automatically
+ * [closed][OutputStream.close].
  *
  * @throws TomlEncodingException if `value` cannot be serialized.
  *
@@ -44,6 +51,9 @@ public fun <T> Toml.encodeToStream(
  * Serializes [value] into [outputStream] using the serializer retrieved from
  * reified type parameter.
  *
+ * Note that when finished, `outputStream` is automatically
+ * [closed][OutputStream.close].
+ *
  * @throws TomlEncodingException if `value` cannot be serialized.
  *
  * @see TomlStreamWriter
@@ -57,6 +67,9 @@ public inline fun <reified T> Toml.encodeToStream(
 
 /**
  * Serializes [value] into [nativeWriter] using [serializer].
+ *
+ * Note that when finished, `nativeWriter` is automatically
+ * [closed][Writer.close].
  *
  * @throws TomlEncodingException if `value` cannot be serialized.
  *
@@ -77,6 +90,9 @@ public fun <T> Toml.encodeToNativeWriter(
  * Serializes [value] into [nativeWriter] using the serializer retrieved from
  * reified type parameter.
  *
+ * Note that when finished, `nativeWriter` is automatically
+ * [closed][Writer.close].
+ *
  * @throws TomlEncodingException if `value` cannot be serialized.
  *
  * @see TomlNativeWriter
@@ -86,4 +102,110 @@ public inline fun <reified T> Toml.encodeToNativeWriter(
     nativeWriter: Writer
 ) {
     encodeToNativeWriter(serializersModule.serializer(), value, nativeWriter)
+}
+
+/**
+ * Deserializes the content of the [nativeReader] into a value of type [T] using
+ * [deserializer].
+ *
+ * Note that when finished, `nativeReader` is automatically
+ * [closed][Reader.close].
+ *
+ * @param nativeReader **MUST** contain a TOML file, as this method delegates
+ * parsing to [Toml.parseToTomlTable].
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * [TomlTable] or cannot be deserialized.
+ *
+ * @see TomlNativeReader
+ */
+@Suppress("OutdatedDocumentation")
+public fun <T> Toml.decodeFromNativeReader(
+    deserializer: DeserializationStrategy<T>,
+    nativeReader: Reader
+): T {
+    return nativeReader.buffered().use { buffered ->
+        val reader = TomlNativeReader(buffered)
+        decodeFromReader(deserializer, reader)
+    }
+}
+
+/**
+ * Deserializes the content of the [nativeReader] into a value of type [T] using
+ * the serializer retrieved from reified type parameter.
+ *
+ * Note that when finished, `nativeReader` is automatically
+ * [closed][Reader.close].
+ *
+ * @param nativeReader **MUST** contain a TOML file, as this method delegates
+ * parsing to [Toml.parseToTomlTable].
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * [TomlTable] or cannot be deserialized.
+ *
+ * @see TomlNativeReader
+ */
+@Suppress("OutdatedDocumentation")
+public inline fun <reified T> Toml.decodeFromNativeReader(nativeReader: Reader): T {
+    return decodeFromNativeReader(serializersModule.serializer(), nativeReader)
+}
+
+/**
+ * Parses the content of the [nativeReader] into a [TomlTable] and deserializes
+ * the corresponding element fetched with [keys] into a value of type [T]
+ * using [deserializer].
+ *
+ * Note that when finished, `nativeReader` is automatically
+ * [closed][Reader.close].
+ *
+ * @param nativeReader **MUST** contain a TOML file, as this method delegates
+ * parsing to [Toml.parseToTomlTable].
+ * @param keys the path which leads to the value. Each one item is a single
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+ * or [String] (will be parsed into integer).
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * [TomlTable] or the element cannot be deserialized.
+ * @throws NonPrimitiveKeyException if provided non-primitive keys.
+ *
+ * @see get
+ */
+@Suppress("OutdatedDocumentation")
+public fun <T> Toml.decodeFromNativeReader(
+    deserializer: DeserializationStrategy<T>,
+    nativeReader: Reader,
+    vararg keys: Any?
+): T {
+    return nativeReader.buffered().use { buffered ->
+        val reader = TomlNativeReader(buffered)
+        decodeFromReader(deserializer, reader, keys = keys)
+    }
+}
+
+/**
+ * Parses the content of the [nativeReader] into a [TomlTable] and deserializes
+ * the corresponding element fetched with [keys] into a value of type [T]
+ * using the serializer retrieved from reified type parameter.
+ *
+ * Note that when finished, `nativeReader` is automatically
+ * [closed][Reader.close].
+ *
+ * @param nativeReader **MUST** contain a TOML file, as this method delegates
+ * parsing to [Toml.parseToTomlTable].
+ * @param keys the path which leads to the value. Each one item is a single
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int]
+ * or [String] (will be parsed into integer).
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * [TomlTable] or the element cannot be deserialized.
+ * @throws NonPrimitiveKeyException if provided non-primitive keys.
+ *
+ * @see get
+ */
+@Suppress("OutdatedDocumentation")
+public inline fun <reified T> Toml.decodeFromNativeReader(
+    nativeReader: Reader,
+    vararg keys: Any?
+): T {
+    return decodeFromNativeReader(serializersModule.serializer(), nativeReader, keys = keys)
 }
