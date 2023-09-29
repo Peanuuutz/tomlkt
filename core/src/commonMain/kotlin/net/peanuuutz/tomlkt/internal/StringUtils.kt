@@ -41,7 +41,7 @@ internal const val BareKeyConstraints: String =
 
 internal const val DefiniteDateTimeConstraints: String = "Tt:Zz"
 
-internal const val DefiniteNumberConstraints: String = "xob" + "." + "acdef" + "ABCDEF" + "_"
+internal const val DefiniteNumberConstraints: String = "." + "acdef" + "ABCDEF" + "_"
 
 internal val BareKeyRegex: Regex = Regex("[A-Za-z0-9_-]+")
 
@@ -60,7 +60,7 @@ internal val AsciiMapping: List<String> = buildList(128) {
     set('\n'.code, "\\n")
     set(12, "\\f")
     set('\r'.code, "\\r")
-    set('"'.code, "\\\"")
+    set('\"'.code, "\\\"")
     set('\\'.code, "\\\\")
 }
 
@@ -116,7 +116,7 @@ internal fun String.unescape(): String {
                 builder.append('\n')
                 i++
             }
-            '"' -> {
+            '\"' -> {
                 builder.append('\"')
                 i++
             }
