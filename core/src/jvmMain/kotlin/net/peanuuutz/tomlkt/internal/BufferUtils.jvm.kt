@@ -25,7 +25,7 @@ private const val TotalCapacityPropertyKey: String = "net.peanuuutz.tomlkt.total
 // At most 32 parsers work in parallel.
 private const val DefaultTotalCapacity: Int = 32 * BufferSize
 
-private val TotalCapacity: Int = System.getProperty(TotalCapacityPropertyKey).toIntOrNull() ?: DefaultTotalCapacity
+private val TotalCapacity: Int = System.getProperty(TotalCapacityPropertyKey)?.toIntOrNull() ?: DefaultTotalCapacity
 
 internal actual object BufferPool {
     private val pool: ArrayDeque<CharArray> = ArrayDeque()
