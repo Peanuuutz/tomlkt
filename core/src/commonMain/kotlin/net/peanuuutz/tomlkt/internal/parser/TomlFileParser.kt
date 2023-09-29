@@ -28,7 +28,6 @@ import net.peanuuutz.tomlkt.TomlReader
 import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.internal.BareKeyConstraints
 import net.peanuuutz.tomlkt.internal.BareKeyRegex
-import net.peanuuutz.tomlkt.internal.BufferPool
 import net.peanuuutz.tomlkt.internal.Comment
 import net.peanuuutz.tomlkt.internal.DecimalConstraints
 import net.peanuuutz.tomlkt.internal.DecimalOrSignConstraints
@@ -47,9 +46,10 @@ import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-internal class TomlFileParser(private val reader: TomlReader) {
-    private val buffer: CharArray = BufferPool.take()
-
+internal class TomlFileParser(
+    private val reader: TomlReader,
+    private val buffer: CharArray
+) {
     private val bufferSize: Int = buffer.size
 
     private var currentLineNumber: Int = 1

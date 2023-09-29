@@ -22,6 +22,7 @@ import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.peanuuutz.tomlkt.Toml.Default
+import net.peanuuutz.tomlkt.internal.BufferPool
 import net.peanuuutz.tomlkt.internal.NonPrimitiveKeyException
 import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
@@ -260,7 +261,12 @@ public sealed class Toml(
      * [TomlTable].
      */
     public fun parseToTomlTable(reader: TomlReader): TomlTable {
-        return TomlFileParser(reader).parse()
+        val buffer = BufferPool.take()
+        return try {
+            TomlFileParser(reader, buffer).parse()
+        } finally {
+            BufferPool.release(buffer)
+        }
     }
 }
 
