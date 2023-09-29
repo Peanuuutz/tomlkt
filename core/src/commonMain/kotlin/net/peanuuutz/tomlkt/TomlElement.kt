@@ -379,7 +379,7 @@ public fun TomlLiteral.toFloat(): Float {
 
 /**
  * Returns [content][TomlLiteral] as float only if it can be an exact float or
- * `inf`/`-inf`/`nan`, otherwise null.
+ * `inf`/`+inf`/`-inf`/`nan`, otherwise null.
  */
 public fun TomlLiteral.toFloatOrNull(): Float? {
     return when (content) {
@@ -402,11 +402,12 @@ public fun TomlLiteral.toDouble(): Double {
 
 /**
  * Returns [content][TomlLiteral] as double only if it can be an exact double or
- * `inf`/`-inf`/`nan`, otherwise null.
+ * `inf`/`+inf`/`-inf`/`nan`, otherwise null.
  */
 public fun TomlLiteral.toDoubleOrNull(): Double? {
     return when (content) {
         "inf" -> Double.POSITIVE_INFINITY
+        "+inf" -> Double.POSITIVE_INFINITY
         "-inf" -> Double.NEGATIVE_INFINITY
         "nan" -> Double.NaN
         else -> content.toDoubleOrNull()
