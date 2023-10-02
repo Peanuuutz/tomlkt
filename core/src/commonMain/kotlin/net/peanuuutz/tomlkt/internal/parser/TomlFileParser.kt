@@ -137,6 +137,10 @@ internal class TomlFileParser(
                     currentLineNumber++
                     proceed()
                 }
+                '\r' -> {
+                    proceed()
+                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                }
                 in BareKeyConstraints, '\"', '\'' -> {
                     val localPath = parsePath()
                     throwUnexpectedTokenIf(getChar()) { it != KeyValueDelimiter }
@@ -287,6 +291,9 @@ internal class TomlFileParser(
                 '\n' -> {
                     throwIncomplete()
                 }
+                '\r' -> {
+                    throwUnexpectedToken(currentChar)
+                }
                 else -> {
                     builder.append(currentChar)
                     proceed()
@@ -327,6 +334,10 @@ internal class TomlFileParser(
                 }
                 '\n' -> {
                     break
+                }
+                '\r' -> {
+                    proceed()
+                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
                 }
                 Comment -> {
                     parseComment()
@@ -495,6 +506,10 @@ internal class TomlFileParser(
                 ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
                     break
                 }
+                '\r' -> {
+                    proceed()
+                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                }
                 in DecimalConstraints -> {
                     builder.append(currentChar)
                     proceed()
@@ -542,6 +557,10 @@ internal class TomlFileParser(
             when (val currentChar = getChar()) {
                 ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
                     break
+                }
+                '\r' -> {
+                    proceed()
+                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
                 }
                 '0', '1' -> {
                     builder.append(currentChar)
@@ -638,6 +657,10 @@ internal class TomlFileParser(
                 '\t', '\n', ',', Comment, EndArray, EndTable -> {
                     break
                 }
+                '\r' -> {
+                    proceed()
+                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                }
                 ' ' -> {
                     if (hasDate && !hasDateTimeSeparator) {
                         hasDateTimeSeparator = true
@@ -723,6 +746,7 @@ internal class TomlFileParser(
     private fun parseStringValue(): TomlLiteral {
         proceed()
         throwIncompleteIf { isEof }
+        val builder = StringBuilder()
         val initialSecondChar = getChar()
         val multiline: Boolean
         if (initialSecondChar != '\"') {
@@ -733,6 +757,13 @@ internal class TomlFileParser(
                 multiline = true
                 proceed()
                 throwIncompleteIf { isEof }
+                if (getChar() == '\r') {
+                    proceed()
+                    throwIncompleteIf { isEof }
+                    if (getChar() != '\n') {
+                        builder.append('\r')
+                    }
+                }
                 if (getChar() == '\n') {
                     // Consumes the initial line feed
                     currentLineNumber++
@@ -742,7 +773,6 @@ internal class TomlFileParser(
                 return TomlLiteral("")
             }
         }
-        val builder = StringBuilder()
         var trim = false
         var justEnded = false
         while (!isEof) {
@@ -760,6 +790,13 @@ internal class TomlFileParser(
                     }
                     currentLineNumber++
                     proceed()
+                }
+                '\r' -> {
+                    proceed()
+                    throwIncompleteIf { isEof }
+                    if (getChar() != '\n') {
+                        builder.append(currentChar)
+                    }
                 }
                 '\"' -> {
                     if (!multiline) {
@@ -820,6 +857,7 @@ internal class TomlFileParser(
     private fun parseLiteralStringValue(): TomlLiteral {
         proceed()
         throwIncompleteIf { isEof }
+        val builder = StringBuilder()
         val initialSecondChar = getChar()
         val multiline: Boolean
         if (initialSecondChar != '\'') {
@@ -830,6 +868,13 @@ internal class TomlFileParser(
                 multiline = true
                 proceed()
                 throwIncompleteIf { isEof }
+                if (getChar() == '\r') {
+                    proceed()
+                    throwIncompleteIf { isEof }
+                    if (getChar() != '\n') {
+                        builder.append('\r')
+                    }
+                }
                 if (getChar() == '\n') {
                     // Consumes the initial line feed.
                     currentLineNumber++
@@ -839,7 +884,6 @@ internal class TomlFileParser(
                 return TomlLiteral("")
             }
         }
-        val builder = StringBuilder()
         var justEnded = false
         while (!isEof) {
             when (val currentChar = getChar()) {
@@ -852,6 +896,13 @@ internal class TomlFileParser(
                     builder.append(currentChar)
                     currentLineNumber++
                     proceed()
+                }
+                '\r' -> {
+                    proceed()
+                    throwIncompleteIf { isEof }
+                    if (getChar() != '\n') {
+                        builder.append(currentChar)
+                    }
                 }
                 '\'' -> {
                     if (!multiline) {
@@ -903,6 +954,11 @@ internal class TomlFileParser(
                 '\n' -> {
                     currentLineNumber++
                     proceed()
+                }
+                '\r' -> {
+                    proceed()
+                    throwIncompleteIf { isEof }
+                    throwUnexpectedTokenIf(currentChar) { getChar() != '\n' }
                 }
                 EndArray -> {
                     justEnded = true
