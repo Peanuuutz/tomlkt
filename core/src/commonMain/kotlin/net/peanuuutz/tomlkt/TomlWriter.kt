@@ -16,114 +16,87 @@
 
 package net.peanuuutz.tomlkt
 
-import net.peanuuutz.tomlkt.internal.Comment
-import net.peanuuutz.tomlkt.internal.ElementSeparator
-import net.peanuuutz.tomlkt.internal.EndArray
-import net.peanuuutz.tomlkt.internal.EndInlineTable
-import net.peanuuutz.tomlkt.internal.EndTableHead
-import net.peanuuutz.tomlkt.internal.KeyValueSeparator
-import net.peanuuutz.tomlkt.internal.SegmentSeparator
-import net.peanuuutz.tomlkt.internal.StartArray
-import net.peanuuutz.tomlkt.internal.StartInlineTable
-import net.peanuuutz.tomlkt.internal.StartTableHead
-import net.peanuuutz.tomlkt.internal.doubleQuoted
-import net.peanuuutz.tomlkt.internal.escape
-import net.peanuuutz.tomlkt.internal.singleQuoted
-import net.peanuuutz.tomlkt.internal.toStringModified
+import net.peanuuutz.tomlkt.TomlInteger.Base
+import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 
 /**
  * A custom writer used when encoding model class or [TomlElement].
  *
- * @see [TomlStringWriter]
+ * @see AbstractTomlWriter
+ * @see TomlStringWriter
  */
 public interface TomlWriter {
     // -------- Core --------
 
     public fun writeString(string: String)
 
-    public fun writeChar(char: Char) {
-        writeString(char.toString())
-    }
+    public fun writeChar(char: Char)
 
     // -------- Key --------
 
-    public fun writeSegmentSeparator() {
-        writeChar(SegmentSeparator)
-    }
+    public fun writeSegmentSeparator()
 
-    public fun writeBareSegment(segment: String) {
-        writeString(segment)
-    }
+    public fun writeBareSegment(segment: String)
 
-    public fun writeDoubleQuotedSegment(segment: String) {
-        writeString(segment.doubleQuoted)
-    }
+    public fun writeDoubleQuotedSegment(segment: String)
 
-    public fun writeSingleQuotedSegment(segment: String) {
-        writeString(segment.singleQuoted)
-    }
+    public fun writeSingleQuotedSegment(segment: String)
 
     // -------- Table Head --------
 
-    public fun startRegularTableHead() {
-        writeChar(StartTableHead)
-    }
+    public fun startRegularTableHead()
 
-    public fun endRegularTableHead() {
-        writeChar(EndTableHead)
-    }
+    public fun endRegularTableHead()
 
-    public fun startArrayOfTableHead() {
-        writeChar(StartTableHead)
-        writeChar(StartTableHead)
-    }
+    public fun startArrayOfTableHead()
 
-    public fun endArrayOfTableHead() {
-        writeChar(EndTableHead)
-        writeChar(EndTableHead)
-    }
+    public fun endArrayOfTableHead()
 
     // -------- Value --------
 
-    public fun writeBooleanValue(boolean: Boolean) {
-        writeString(boolean.toString())
-    }
+    public fun writeBooleanValue(boolean: Boolean)
 
-    public fun writeByteValue(byte: Byte) {
-        writeString(byte.toString())
-    }
+    public fun writeByteValue(
+        byte: Byte,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
 
-    public fun writeShortValue(short: Short) {
-        writeString(short.toString())
-    }
+    public fun writeShortValue(
+        short: Short,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
 
-    public fun writeIntValue(int: Int) {
-        writeString(int.toString())
-    }
+    public fun writeIntValue(
+        int: Int,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
 
-    public fun writeLongValue(long: Long) {
-        writeString(long.toString())
-    }
+    public fun writeLongValue(
+        long: Long,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
 
-    public fun writeFloatValue(float: Float) {
-        writeString(float.toStringModified())
-    }
+    public fun writeFloatValue(float: Float)
 
-    public fun writeDoubleValue(double: Double) {
-        writeString(double.toStringModified())
-    }
+    public fun writeDoubleValue(double: Double)
 
-    public fun writeCharValue(char: Char) {
-        writeString(char.escape().doubleQuoted)
-    }
+    public fun writeCharValue(char: Char)
 
-    public fun writeStringValue(string: String) {
-        writeString(string.escape().doubleQuoted)
-    }
+    public fun writeStringValue(
+        string: String,
+        isMultiline: Boolean = false,
+        isLiteral: Boolean = false
+    )
 
-    public fun writeNullValue() {
-        writeString("null")
-    }
+    public fun writeNullValue()
 
     @Deprecated(
         message = "Use writeBooleanValue instead.",
@@ -191,47 +164,27 @@ public interface TomlWriter {
 
     // -------- Structure --------
 
-    public fun startArray() {
-        writeChar(StartArray)
-    }
+    public fun startArray()
 
-    public fun endArray() {
-        writeChar(EndArray)
-    }
+    public fun endArray()
 
-    public fun startInlineTable() {
-        writeChar(StartInlineTable)
-    }
+    public fun startInlineTable()
 
-    public fun endInlineTable() {
-        writeChar(EndInlineTable)
-    }
+    public fun endInlineTable()
 
-    public fun writeKeyValueSeparator() {
-        writeChar(KeyValueSeparator)
-    }
+    public fun writeKeyValueSeparator()
 
-    public fun writeElementSeparator() {
-        writeChar(ElementSeparator)
-    }
+    public fun writeElementSeparator()
 
     // -------- Comment --------
 
-    public fun startComment() {
-        writeChar(Comment)
-    }
+    public fun startComment()
 
     // -------- Control --------
 
-    public fun writeSpace() {
-        writeChar(' ')
-    }
+    public fun writeSpace()
 
-    public fun writeIndentation(indentation: TomlIndentation) {
-        writeString(indentation.representation)
-    }
+    public fun writeIndentation(indentation: TomlIndentation)
 
-    public fun writeLineFeed() {
-        writeChar('\n')
-    }
+    public fun writeLineFeed()
 }

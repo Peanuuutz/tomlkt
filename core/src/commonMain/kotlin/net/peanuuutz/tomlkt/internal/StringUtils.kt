@@ -16,6 +16,8 @@
 
 package net.peanuuutz.tomlkt.internal
 
+import net.peanuuutz.tomlkt.TomlInteger.Base
+import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 import kotlin.math.pow
 
 internal const val Comment = '#'
@@ -191,6 +193,39 @@ internal fun Number.toStringModified(): String {
         is Double -> toStringModified()
         else -> toString()
     }
+}
+
+internal fun processIntegerString(
+    raw: String,
+    base: Base,
+    group: Int,
+    uppercase: Boolean
+): String {
+    val isNegative = raw[0] == '-'
+    val digits = if (!isNegative) {
+        raw
+    } else {
+        raw.substring(1)
+    }
+    val upper = if (base <= Dec || !uppercase) {
+        digits
+    } else {
+        digits.uppercase()
+    }
+    val grouped = if (group == 0) {
+        upper
+    } else {
+        upper.reversed()
+            .chunked(group, CharSequence::reversed)
+            .asReversed()
+            .joinToString(separator = "_")
+    }
+    val result = if (!isNegative) {
+        base.prefix + grouped
+    } else {
+        "-" + base.prefix + grouped
+    }
+    return result
 }
 
 internal fun String.toNumber(

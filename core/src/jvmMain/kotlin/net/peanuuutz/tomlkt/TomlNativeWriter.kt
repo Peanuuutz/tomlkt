@@ -34,7 +34,7 @@ import java.io.Writer
  */
 public class TomlNativeWriter(
     private val nativeWriter: Writer
-) : TomlWriter {
+) : AbstractTomlWriter() {
     override fun writeString(string: String) {
         nativeWriter.write(string)
     }

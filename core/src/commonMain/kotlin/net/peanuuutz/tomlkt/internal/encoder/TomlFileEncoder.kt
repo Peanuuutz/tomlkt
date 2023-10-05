@@ -33,8 +33,6 @@ import net.peanuuutz.tomlkt.TomlComment
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlInline
 import net.peanuuutz.tomlkt.TomlInteger
-import net.peanuuutz.tomlkt.TomlInteger.Base
-import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlLiteralString
 import net.peanuuutz.tomlkt.TomlMultilineString
@@ -51,7 +49,6 @@ import net.peanuuutz.tomlkt.internal.isExactlyTomlTable
 import net.peanuuutz.tomlkt.internal.isTable
 import net.peanuuutz.tomlkt.internal.isTableLike
 import net.peanuuutz.tomlkt.internal.isUnsignedInteger
-import net.peanuuutz.tomlkt.internal.singleQuoted
 import net.peanuuutz.tomlkt.internal.throwEmptyArrayOfTableInMap
 import net.peanuuutz.tomlkt.internal.throwNullInArrayOfTable
 import net.peanuuutz.tomlkt.internal.throwPolymorphicCollection
@@ -183,60 +180,52 @@ private class TomlFileInlineEncoder(
 private abstract class AbstractTomlFileCompositeEncoder(
     delegate: AbstractTomlFileEncoder
 ) : AbstractTomlFileEncoder(delegate.toml, delegate.writer), TomlCompositeEncoder {
-    private fun encodeByteWithBase(value: Byte, base: Base) {
-        require(value >= 0.toByte() || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeByteWithRepresentation(value: Byte, integer: TomlInteger) {
+        writer.writeByteValue(
+            byte = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
-    private fun encodeShortWithBase(value: Short, base: Base) {
-        require(value >= 0.toShort() || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeShortWithRepresentation(value: Short, integer: TomlInteger) {
+        writer.writeShortValue(
+            short = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
-    private fun encodeIntWithBase(value: Int, base: Base) {
-        require(value >= 0 || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeIntWithRepresentation(value: Int, integer: TomlInteger) {
+        writer.writeIntValue(
+            int = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
-    private fun encodeLongWithBase(value: Long, base: Base) {
-        require(value >= 0L || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeLongWithRepresentation(value: Long, integer: TomlInteger) {
+        writer.writeLongValue(
+            long = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
     private fun encodeMultilineString(value: String) {
-        writer.writeString("\"\"\"")
-        writer.writeLineFeed()
-        writer.writeString(value.escape(multiline = true))
-        writer.writeString("\"\"\"")
+        writer.writeStringValue(value, isMultiline = true)
     }
 
     private fun encodeLiteralString(value: String) {
-        require('\'' !in value && '\n' !in value) {
-            "Cannot have '\\'' or '\\n' in literal string, but found $value"
-        }
-        writer.writeString(value.singleQuoted)
+        writer.writeStringValue(value, isLiteral = true)
     }
 
     private fun encodeMultilineLiteralString(value: String) {
-        require("\'\'\'" !in value) {
-            "Cannot have \"\\'\\'\\'\" in multiline literal string, but found $value"
-        }
-        writer.writeString("\'\'\'")
-        writer.writeLineFeed()
-        writer.writeString(value)
-        writer.writeString("\'\'\'")
+        writer.writeStringValue(value, isMultiline = true, isLiteral = true)
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
@@ -255,35 +244,34 @@ private abstract class AbstractTomlFileCompositeEncoder(
     }
 
     final override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeByte, this::encodeByteWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeByte, this::encodeByteWithRepresentation)
     }
 
     final override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeShort, this::encodeShortWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeShort, this::encodeShortWithRepresentation)
     }
 
     final override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeInt, this::encodeIntWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeInt, this::encodeIntWithRepresentation)
     }
 
     final override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeLong, this::encodeLongWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeLong, this::encodeLongWithRepresentation)
     }
 
     private inline fun <T> encodeTomlIntegerElement(
         descriptor: SerialDescriptor,
         index: Int,
         value: T,
-        encodeNormally: (T) -> Unit,
-        encodeWithBase: (T, Base) -> Unit
+        encodeRegularly: (T) -> Unit,
+        encodeWithRepresentation: (T, TomlInteger) -> Unit
     ) {
         encodeElement(descriptor, index) {
-            val integerAnnotation = descriptor.getElementAnnotations(index)
-                .firstIsInstanceOrNull<TomlInteger>()
-            if (integerAnnotation == null) {
-                encodeNormally(value)
+            val integer = descriptor.getElementAnnotations(index).firstIsInstanceOrNull<TomlInteger>()
+            if (integer == null) {
+                encodeRegularly(value)
             } else {
-                encodeWithBase(value, integerAnnotation.base)
+                encodeWithRepresentation(value, integer)
             }
         }
     }

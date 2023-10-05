@@ -28,7 +28,7 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     // -------- Common --------
 
     /**
-     * The [SerializersModule] to be used in the [Toml] instance.
+     * Specifies the [SerializersModule] to be used in the [Toml] instance.
      *
      * [EmptySerializersModule] by default.
      */
@@ -46,7 +46,8 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     public var explicitNulls: Boolean = from.explicitNulls
 
     /**
-     * The key of the class discriminator for polymorphic serialization.
+     * Specifies the key of the class discriminator for polymorphic
+     * serialization.
      *
      * "type" by default.
      */
@@ -67,6 +68,14 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
      * 1 by default.
      */
     public var itemsPerLineInBlockArray: Int = from.itemsPerLineInBlockArray
+
+    /**
+     * Specifies whether the letters in an integer should be encoded as
+     * uppercase by default.
+     *
+     * `true` by default.
+     */
+    public var uppercaseInteger: Boolean = from.uppercaseInteger
 
     // -------- Deserialization --------
 
@@ -89,6 +98,7 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
             classDiscriminator = classDiscriminator,
             indentation = indentation,
             itemsPerLineInBlockArray = itemsPerLineInBlockArray,
+            uppercaseInteger = uppercaseInteger,
             ignoreUnknownKeys = ignoreUnknownKeys
         )
     }
@@ -139,6 +149,7 @@ internal class TomlConfig(
     val classDiscriminator: String,
     val indentation: TomlIndentation,
     val itemsPerLineInBlockArray: Int,
+    val uppercaseInteger: Boolean,
     val ignoreUnknownKeys: Boolean
 ) {
     companion object {
@@ -148,6 +159,7 @@ internal class TomlConfig(
             classDiscriminator = "type",
             indentation = TomlIndentation.Space4,
             itemsPerLineInBlockArray = 1,
+            uppercaseInteger = true,
             ignoreUnknownKeys = false
         )
     }

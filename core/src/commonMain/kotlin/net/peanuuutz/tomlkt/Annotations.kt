@@ -18,6 +18,7 @@ package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.InheritableSerialInfo
 import kotlinx.serialization.SerialInfo
+import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 
 /**
  * Adds comments to corresponding property.
@@ -80,8 +81,8 @@ public annotation class TomlInline
 /**
  * Modifies the encoding process of corresponding array-like property, either to
  * force array of tables to be encoded as block array, or to change how many
- * items will be encoded per line (will override
- * [TomlConfig][TomlConfigBuilder.itemsPerLineInBlockArray]).
+ * items will be encoded per line (this will override the default
+ * [config][TomlConfigBuilder.itemsPerLineInBlockArray]).
  *
  * Note: If the corresponding property is marked [TomlInline], this annotation
  * will not take effect.
@@ -160,21 +161,31 @@ public annotation class TomlLiteralString
  *
  * ```kotlin
  * class ByteCode(
- *     @TomlInteger(TomlInteger.Base.Bin)
- *     val code: Byte
+ *     @TomlInteger(
+ *         base = TomlInteger.Base.Hex,
+ *         group = 2
+ *     )
+ *     val code: Int
  * )
- * ByteCode(0b1101)
+ * ByteCode(0xFFE490)
  * ```
  *
  * will produce:
  *
  * ```toml
- * code = 0b1101
+ * code = 0xFF_E4_90
  * ```
+ *
+ * @property group the size of a digit group separated by '_'. If set to 0, the
+ * digits will not be grouped.
  */
+@Suppress("OutdatedDocumentation")
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class TomlInteger(val base: Base) {
+public annotation class TomlInteger(
+    val base: Base = Dec,
+    val group: Int = 0
+) {
     /**
      * The representation of a [TOML integer](https://toml.io/en/v1.0.0#integer).
      */
@@ -182,22 +193,10 @@ public annotation class TomlInteger(val base: Base) {
         public val value: Int,
         public val prefix: String
     ) {
-        Dec(10, ""),
-        Hex(16, "0x"),
         Bin(2, "0b"),
         Oct(8, "0o"),
-
-        @Deprecated(
-            message = "Unify singleton style.",
-            replaceWith = ReplaceWith("Dec")
-        )
-        DEC(10, ""),
-
-        @Deprecated(
-            message = "Unify singleton style.",
-            replaceWith = ReplaceWith("Hex")
-        )
-        HEX(16, "0x"),
+        Dec(10, ""),
+        Hex(16, "0x"),
 
         @Deprecated(
             message = "Unify singleton style.",
@@ -209,7 +208,19 @@ public annotation class TomlInteger(val base: Base) {
             message = "Unify singleton style.",
             replaceWith = ReplaceWith("Oct")
         )
-        OCT(8, "0o");
+        OCT(8, "0o"),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Dec")
+        )
+        DEC(10, ""),
+
+        @Deprecated(
+            message = "Unify singleton style.",
+            replaceWith = ReplaceWith("Hex")
+        )
+        HEX(16, "0x")
     }
 }
 

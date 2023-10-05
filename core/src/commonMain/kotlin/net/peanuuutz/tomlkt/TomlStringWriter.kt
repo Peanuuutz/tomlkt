@@ -27,7 +27,7 @@ package net.peanuuutz.tomlkt
  *
  * When finished, simply call [toString] to get the result.
  */
-public class TomlStringWriter : TomlWriter {
+public class TomlStringWriter : AbstractTomlWriter() {
     private val builder: StringBuilder = StringBuilder()
 
     override fun writeString(string: String) {

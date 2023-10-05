@@ -34,7 +34,7 @@ import java.io.OutputStream
  */
 public class TomlStreamWriter(
     private val outputStream: OutputStream
-) : TomlWriter {
+) : AbstractTomlWriter() {
     override fun writeString(string: String) {
         outputStream.write(string.toByteArray())
     }

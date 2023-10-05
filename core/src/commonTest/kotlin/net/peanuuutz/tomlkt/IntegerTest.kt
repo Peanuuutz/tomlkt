@@ -176,7 +176,7 @@ class IntegerTest {
     )
 
     val s41 = """
-        i = 0xffffff
+        i = 0xFFFFFF
     """.trimIndent()
 
     @Test
@@ -320,7 +320,7 @@ class IntegerTest {
     )
 
     val s91 = """
-        l = 0xffffffff
+        l = 0xFFFFFFFF
     """.trimIndent()
 
 
@@ -332,5 +332,37 @@ class IntegerTest {
     @Test
     fun decodeLongAsHexadecimal() {
         testDecode(M9.serializer(), s91, m91)
+    }
+
+    @Serializable
+    data class M10(
+        @TomlInteger(TomlInteger.Base.Hex, 2)
+        val i: Int
+    )
+
+    val m101 = M10(
+        i = 0xFFE490
+    )
+
+    val s101 = """
+        i = 0xFF_E4_90
+    """.trimIndent()
+
+    @Test
+    fun encodeWithGrouping1() {
+        testEncode(M10.serializer(), m101, s101)
+    }
+
+    val m102 = M10(
+        i = 0xFFFE490
+    )
+
+    val s102 = """
+        i = 0xF_FF_E4_90
+    """.trimIndent()
+
+    @Test
+    fun encodeWithGrouping2() {
+        testEncode(M10.serializer(), m102, s102)
     }
 }
