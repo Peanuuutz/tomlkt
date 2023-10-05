@@ -40,7 +40,7 @@
             </a>
     </div>
     <div>
-0.3.3    </div>
+0.3.4    </div>
     <div class="pull-right d-flex">
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector common-like" data-active="" data-filter=":core:dokkaHtml/commonMain">common</button>
@@ -58,7 +58,7 @@
   <div class="breadcrumbs"><a href="../../../index.html">tomlkt</a><span class="delimiter">/</span><a href="../index.html">net.peanuuutz.tomlkt</a><span class="delimiter">/</span><span class="current">TomlStringWriter</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Toml</span><wbr></wbr><span>String</span><wbr></wbr><span><span>Writer</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">TomlStringWriter</a> : <a href="../-toml-writer/index.html">TomlWriter</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlStringWriter.kt#L30">source</a>)</span></span></div><p class="paragraph">A <a href="../-toml-writer/index.html">TomlWriter</a> that writes TOML as string.</p><p class="paragraph">This writer is NOT thread-safe, so any concurrent usage should be avoided.</p><p class="paragraph">Use with <a href="../-toml/encode-to-writer.html">Toml.encodeToWriter</a> to encode objects. This is useful for concatenating two TOML strings. However, programmer should prefer <a href="../-toml/encode-to-string.html">Toml.encodeToString</a> if only one object is being encoded.</p><p class="paragraph">When finished, simply call <a href="to-string.html">toString</a> to get the result.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">TomlStringWriter</a> : <a href="../-abstract-toml-writer/index.html">AbstractTomlWriter</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlStringWriter.kt#L30">source</a>)</span></span></div><p class="paragraph">A <a href="../-toml-writer/index.html">TomlWriter</a> that writes TOML as string.</p><p class="paragraph">This writer is NOT thread-safe, so any concurrent usage should be avoided.</p><p class="paragraph">Use with <a href="../-toml/encode-to-writer.html">Toml.encodeToWriter</a> to encode objects. This is useful for concatenating two TOML strings. However, programmer should prefer <a href="../-toml/encode-to-string.html">Toml.encodeToString</a> if only one object is being encoded.</p><p class="paragraph">When finished, simply call <a href="to-string.html">toString</a> to get the result.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -84,7 +84,142 @@
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-313739578%2FFunctions%2F-864720431" anchor-label="toString" id="-313739578%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+        <div class="table"><a data-name="-520090811%2FFunctions%2F-864720431" anchor-label="endArray" id="-520090811%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/end-array.html"><span>end</span><wbr></wbr><span><span>Array</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-520090811%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/end-array.html"><span class="token function">endArray</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Ends a block array or inline array (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-889537410%2FFunctions%2F-864720431" anchor-label="endArrayOfTableHead" id="-889537410%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/end-array-of-table-head.html"><span>end</span><wbr></wbr><span>Array</span><wbr></wbr><span>Of</span><wbr></wbr><span>Table</span><wbr></wbr><span><span>Head</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-889537410%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/end-array-of-table-head.html"><span class="token function">endArrayOfTableHead</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Ends an array of table head (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2073811031%2FFunctions%2F-864720431" anchor-label="endInlineTable" id="-2073811031%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/end-inline-table.html"><span>end</span><wbr></wbr><span>Inline</span><wbr></wbr><span><span>Table</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2073811031%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/end-inline-table.html"><span class="token function">endInlineTable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Ends an inline table (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1416155382%2FFunctions%2F-864720431" anchor-label="endRegularTableHead" id="-1416155382%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/end-regular-table-head.html"><span>end</span><wbr></wbr><span>Regular</span><wbr></wbr><span>Table</span><wbr></wbr><span><span>Head</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1416155382%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/end-regular-table-head.html"><span class="token function">endRegularTableHead</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Ends a regular table head (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="664647436%2FFunctions%2F-864720431" anchor-label="startArray" id="664647436%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/start-array.html"><span>start</span><wbr></wbr><span><span>Array</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="664647436%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/start-array.html"><span class="token function">startArray</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts a block array or inline array (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-724844969%2FFunctions%2F-864720431" anchor-label="startArrayOfTableHead" id="-724844969%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/start-array-of-table-head.html"><span>start</span><wbr></wbr><span>Array</span><wbr></wbr><span>Of</span><wbr></wbr><span>Table</span><wbr></wbr><span><span>Head</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-724844969%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/start-array-of-table-head.html"><span class="token function">startArrayOfTableHead</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts an array of table head (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="862317510%2FFunctions%2F-864720431" anchor-label="startComment" id="862317510%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/start-comment.html"><span>start</span><wbr></wbr><span><span>Comment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="862317510%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/start-comment.html"><span class="token function">startComment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts a comment (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1983012304%2FFunctions%2F-864720431" anchor-label="startInlineTable" id="-1983012304%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/start-inline-table.html"><span>start</span><wbr></wbr><span>Inline</span><wbr></wbr><span><span>Table</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1983012304%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/start-inline-table.html"><span class="token function">startInlineTable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts an inline table (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1251462941%2FFunctions%2F-864720431" anchor-label="startRegularTableHead" id="-1251462941%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/start-regular-table-head.html"><span>start</span><wbr></wbr><span>Regular</span><wbr></wbr><span>Table</span><wbr></wbr><span><span>Head</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1251462941%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/start-regular-table-head.html"><span class="token function">startRegularTableHead</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts a regular table head (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-313739578%2FFunctions%2F-864720431" anchor-label="toString" id="-313739578%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -109,7 +244,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-boolean.html"><span class="token function">writeBoolean</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boolean<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-boolean.html">boolean</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-boolean.html"><span class="token function"><strike>writeBoolean</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boolean<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="779687124%2FFunctions%2F-864720431" anchor-label="writeBooleanValue" id="779687124%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-boolean-value.html"><span>write</span><wbr></wbr><span>Boolean</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="779687124%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-boolean-value.html"><span class="token function">writeBooleanValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boolean<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-boolean-value.html">boolean</a> as value.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -124,7 +274,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-byte.html"><span class="token function">writeByte</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">byte<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-byte.html">byte</a> <strong>as literal</strong>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-byte.html"><span class="token function"><strike>writeByte</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">byte<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-601489058%2FFunctions%2F-864720431" anchor-label="writeByteValue" id="-601489058%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-byte-value.html"><span>write</span><wbr></wbr><span>Byte</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-601489058%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-byte-value.html"><span class="token function">writeByteValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">byte<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-byte-value.html">byte</a> as value.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -139,7 +304,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="write-char.html"><span class="token function">writeChar</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">char<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="write-char.html">char</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="write-char.html"><span class="token function">writeChar</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">char<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="write-char.html">char</a> directly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="102896280%2FFunctions%2F-864720431" anchor-label="writeCharValue" id="102896280%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-char-value.html"><span>write</span><wbr></wbr><span>Char</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="102896280%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-char-value.html"><span class="token function">writeCharValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">char<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-char-value.html">char</a> <strong>as value</strong>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -154,7 +334,37 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-double.html"><span class="token function">writeDouble</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">double<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-double.html">double</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-double.html"><span class="token function"><strike>writeDouble</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">double<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-569726366%2FFunctions%2F-864720431" anchor-label="writeDoubleValue" id="-569726366%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-double-value.html"><span>write</span><wbr></wbr><span>Double</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-569726366%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-double-value.html"><span class="token function">writeDoubleValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">double<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-double-value.html">double</a> as value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1449857327%2FFunctions%2F-864720431" anchor-label="writeElementSeparator" id="1449857327%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-element-separator.html"><span>write</span><wbr></wbr><span>Element</span><wbr></wbr><span><span>Separator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1449857327%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-element-separator.html"><span class="token function">writeElementSeparator</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes an element separator (no whitespace).</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -169,7 +379,37 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-float.html"><span class="token function">writeFloat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-float.html">float</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-float.html"><span class="token function"><strike>writeFloat</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1934916908%2FFunctions%2F-864720431" anchor-label="writeFloatValue" id="-1934916908%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-float-value.html"><span>write</span><wbr></wbr><span>Float</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1934916908%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-float-value.html"><span class="token function">writeFloatValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-float-value.html">float</a> as value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1797325617%2FFunctions%2F-864720431" anchor-label="writeIndentation" id="-1797325617%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-indentation.html"><span>write</span><wbr></wbr><span><span>Indentation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1797325617%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-indentation.html"><span class="token function">writeIndentation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">indentation<span class="token operator">: </span><a href="../-toml-indentation/index.html">TomlIndentation</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-indentation.html">indentation</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -184,22 +424,82 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-int.html"><span class="token function">writeInt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">int<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-int.html">int</a> <strong>as literal</strong>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-int.html"><span class="token function"><strike>writeInt</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">int<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="83844439%2FFunctions%2F-864720431" anchor-label="writeLineFeed" id="83844439%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+<a data-name="1661241118%2FFunctions%2F-864720431" anchor-label="writeIntValue" id="1661241118%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="write-line-feed.html"><span>write</span><wbr></wbr><span>Line</span><wbr></wbr><span><span>Feed</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="83844439%2FFunctions%2F-864720431"></span>
+                  <div><a href="../-abstract-toml-writer/write-int-value.html"><span>write</span><wbr></wbr><span>Int</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1661241118%2FFunctions%2F-864720431"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="write-line-feed.html"><span class="token function">writeLineFeed</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes '\n'.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-int-value.html"><span class="token function">writeIntValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">int<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-int-value.html">int</a> as value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1041031201%2FFunctions%2F-864720431" anchor-label="writeKey" id="1041031201%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-key.html"><span>write</span><wbr></wbr><span><span>Key</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1041031201%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-key.html"><span class="token function">writeKey</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-key.html">key</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-748782254%2FFunctions%2F-864720431" anchor-label="writeKeySeparator" id="-748782254%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-key-separator.html"><span>write</span><wbr></wbr><span>Key</span><wbr></wbr><span><span>Separator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-748782254%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-key-separator.html"><span class="token function">writeKeySeparator</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes a key separator (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-836557521%2FFunctions%2F-864720431" anchor-label="writeKeyValueSeparator" id="-836557521%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-key-value-separator.html"><span>write</span><wbr></wbr><span>Key</span><wbr></wbr><span>Value</span><wbr></wbr><span><span>Separator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-836557521%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-key-value-separator.html"><span class="token function">writeKeyValueSeparator</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes a key-value separator (no whitespace).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="720503782%2FFunctions%2F-864720431" anchor-label="writeLineFeed" id="720503782%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-line-feed.html"><span>write</span><wbr></wbr><span>Line</span><wbr></wbr><span><span>Feed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="720503782%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-line-feed.html"><span class="token function">writeLineFeed</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes a line feed.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -214,7 +514,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-long.html"><span class="token function">writeLong</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">long<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-long.html">long</a> <strong>as literal</strong>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-long.html"><span class="token function"><strike>writeLong</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">long<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="692930166%2FFunctions%2F-864720431" anchor-label="writeLongValue" id="692930166%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-long-value.html"><span>write</span><wbr></wbr><span>Long</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="692930166%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-long-value.html"><span class="token function">writeLongValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">long<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-long-value.html">long</a> as value.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -229,7 +544,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-null.html"><span class="token function">writeNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes &quot;null&quot;.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-null.html"><span class="token function"><strike>writeNull</strike></span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="583327384%2FFunctions%2F-864720431" anchor-label="writeNullValue" id="583327384%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-null-value.html"><span>write</span><wbr></wbr><span>Null</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="583327384%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-null-value.html"><span class="token function">writeNullValue</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <code class="lang-kotlin">null</code> as value.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -244,7 +574,37 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-short.html"><span class="token function">writeShort</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">short<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-toml-writer/write-short.html">short</a> <strong>as literal</strong>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-short.html"><span class="token function"><strike>writeShort</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">short<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-598689538%2FFunctions%2F-864720431" anchor-label="writeShortValue" id="-598689538%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-short-value.html"><span>write</span><wbr></wbr><span>Short</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-598689538%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-short-value.html"><span class="token function">writeShortValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">short<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-short-value.html">short</a> as value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="394674108%2FFunctions%2F-864720431" anchor-label="writeSpace" id="394674108%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-space.html"><span>write</span><wbr></wbr><span><span>Space</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="394674108%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-space.html"><span class="token function">writeSpace</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes a whitespace.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -259,7 +619,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="write-string.html"><span class="token function">writeString</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="write-string.html">string</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="write-string.html"><span class="token function">writeString</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="write-string.html">string</a> directly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1618411038%2FFunctions%2F-864720431" anchor-label="writeStringValue" id="-1618411038%2FFunctions%2F-864720431" data-filterable-set=":core:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":core:dokkaHtml/commonMain" data-filterable-set=":core:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-abstract-toml-writer/write-string-value.html"><span>write</span><wbr></wbr><span>String</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1618411038%2FFunctions%2F-864720431"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-string-value.html"><span class="token function">writeStringValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">string<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">isMultiline<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">isLiteral<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-string-value.html">string</a> <strong>as value</strong>.</p></div></div></div>
                 </div>
               </div>
             </div>

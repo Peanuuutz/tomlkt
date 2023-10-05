@@ -13,6 +13,7 @@ import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartInlineTable
 import net.peanuuutz.tomlkt.internal.StartTableHead
 import net.peanuuutz.tomlkt.internal.doubleQuoted
+import net.peanuuutz.tomlkt.internal.doubleQuotedIfNotPure
 import net.peanuuutz.tomlkt.internal.escape
 import net.peanuuutz.tomlkt.internal.processIntegerString
 import net.peanuuutz.tomlkt.internal.singleQuoted
@@ -33,7 +34,7 @@ public abstract class AbstractTomlWriter : TomlWriter {
     // -------- Key --------
 
     final override fun writeKey(key: String) {
-        writeString(key)
+        writeString(key.escape().doubleQuotedIfNotPure())
     }
 
     final override fun writeKeySeparator() {
