@@ -33,8 +33,6 @@ import net.peanuuutz.tomlkt.TomlComment
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlInline
 import net.peanuuutz.tomlkt.TomlInteger
-import net.peanuuutz.tomlkt.TomlInteger.Base
-import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlLiteralString
 import net.peanuuutz.tomlkt.TomlMultilineString
@@ -42,7 +40,6 @@ import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.TomlWriter
 import net.peanuuutz.tomlkt.internal.anyIsInstance
-import net.peanuuutz.tomlkt.internal.doubleQuoted
 import net.peanuuutz.tomlkt.internal.doubleQuotedIfNotPure
 import net.peanuuutz.tomlkt.internal.escape
 import net.peanuuutz.tomlkt.internal.firstIsInstanceOrNull
@@ -52,7 +49,6 @@ import net.peanuuutz.tomlkt.internal.isExactlyTomlTable
 import net.peanuuutz.tomlkt.internal.isTable
 import net.peanuuutz.tomlkt.internal.isTableLike
 import net.peanuuutz.tomlkt.internal.isUnsignedInteger
-import net.peanuuutz.tomlkt.internal.singleQuoted
 import net.peanuuutz.tomlkt.internal.throwEmptyArrayOfTableInMap
 import net.peanuuutz.tomlkt.internal.throwNullInArrayOfTable
 import net.peanuuutz.tomlkt.internal.throwPolymorphicCollection
@@ -66,49 +62,49 @@ internal abstract class AbstractTomlFileEncoder(
     val writer: TomlWriter
 ) : AbstractTomlEncoder(toml) {
     final override fun encodeBoolean(value: Boolean) {
-        writer.writeBoolean(value)
+        writer.writeBooleanValue(value)
     }
 
     final override fun encodeByte(value: Byte) {
-        writer.writeByte(value)
+        writer.writeByteValue(value)
     }
 
     final override fun encodeShort(value: Short) {
-        writer.writeShort(value)
+        writer.writeShortValue(value)
     }
 
     final override fun encodeInt(value: Int) {
-        writer.writeInt(value)
+        writer.writeIntValue(value)
     }
 
     final override fun encodeLong(value: Long) {
-        writer.writeLong(value)
+        writer.writeLongValue(value)
     }
 
     final override fun encodeFloat(value: Float) {
-        writer.writeFloat(value)
+        writer.writeFloatValue(value)
     }
 
     final override fun encodeDouble(value: Double) {
-        writer.writeDouble(value)
+        writer.writeDoubleValue(value)
     }
 
     final override fun encodeChar(value: Char) {
-        writer.writeString(value.escape().doubleQuoted)
+        writer.writeCharValue(value)
     }
 
     final override fun encodeString(value: String) {
-        writer.writeString(value.escape().doubleQuoted)
+        writer.writeStringValue(value)
     }
 
     final override fun encodeNull() {
-        writer.writeNull()
+        writer.writeNullValue()
     }
 
     final override fun encodeTomlElement(value: TomlElement) {
         when (value) {
-            TomlNull -> {
-                writer.writeNull()
+            is TomlNull -> {
+                writer.writeNullValue()
             }
             is TomlLiteral -> {
                 writer.writeString(value.toString())
@@ -184,60 +180,52 @@ private class TomlFileInlineEncoder(
 private abstract class AbstractTomlFileCompositeEncoder(
     delegate: AbstractTomlFileEncoder
 ) : AbstractTomlFileEncoder(delegate.toml, delegate.writer), TomlCompositeEncoder {
-    private fun encodeByteWithBase(value: Byte, base: Base) {
-        require(value >= 0.toByte() || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeByteWithRepresentation(value: Byte, integer: TomlInteger) {
+        writer.writeByteValue(
+            byte = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
-    private fun encodeShortWithBase(value: Short, base: Base) {
-        require(value >= 0.toShort() || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeShortWithRepresentation(value: Short, integer: TomlInteger) {
+        writer.writeShortValue(
+            short = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
-    private fun encodeIntWithBase(value: Int, base: Base) {
-        require(value >= 0 || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeIntWithRepresentation(value: Int, integer: TomlInteger) {
+        writer.writeIntValue(
+            int = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
-    private fun encodeLongWithBase(value: Long, base: Base) {
-        require(value >= 0L || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $value"
-        }
-        writer.writeString(base.prefix)
-        writer.writeString(value.toString(base.value))
+    private fun encodeLongWithRepresentation(value: Long, integer: TomlInteger) {
+        writer.writeLongValue(
+            long = value,
+            base = integer.base,
+            group = integer.group,
+            uppercase = toml.config.uppercaseInteger
+        )
     }
 
     private fun encodeMultilineString(value: String) {
-        writer.writeString("\"\"\"")
-        writer.writeLineFeed()
-        writer.writeString(value.escape(multiline = true))
-        writer.writeString("\"\"\"")
+        writer.writeStringValue(value, isMultiline = true)
     }
 
     private fun encodeLiteralString(value: String) {
-        require('\'' !in value && '\n' !in value) {
-            "Cannot have '\\'' or '\\n' in literal string, but found $value"
-        }
-        writer.writeString(value.singleQuoted)
+        writer.writeStringValue(value, isLiteral = true)
     }
 
     private fun encodeMultilineLiteralString(value: String) {
-        require("'''" !in value) {
-            "Cannot have \"\\'\\'\\'\" in multiline literal string, but found $value"
-        }
-        writer.writeString("'''")
-        writer.writeLineFeed()
-        writer.writeString(value)
-        writer.writeString("'''")
+        writer.writeStringValue(value, isMultiline = true, isLiteral = true)
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
@@ -256,35 +244,34 @@ private abstract class AbstractTomlFileCompositeEncoder(
     }
 
     final override fun encodeByteElement(descriptor: SerialDescriptor, index: Int, value: Byte) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeByte, this::encodeByteWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeByte, this::encodeByteWithRepresentation)
     }
 
     final override fun encodeShortElement(descriptor: SerialDescriptor, index: Int, value: Short) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeShort, this::encodeShortWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeShort, this::encodeShortWithRepresentation)
     }
 
     final override fun encodeIntElement(descriptor: SerialDescriptor, index: Int, value: Int) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeInt, this::encodeIntWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeInt, this::encodeIntWithRepresentation)
     }
 
     final override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) {
-        encodeTomlIntegerElement(descriptor, index, value, this::encodeLong, this::encodeLongWithBase)
+        encodeTomlIntegerElement(descriptor, index, value, this::encodeLong, this::encodeLongWithRepresentation)
     }
 
     private inline fun <T> encodeTomlIntegerElement(
         descriptor: SerialDescriptor,
         index: Int,
         value: T,
-        encodeNormally: (T) -> Unit,
-        encodeWithBase: (T, Base) -> Unit
+        encodeRegularly: (T) -> Unit,
+        encodeWithRepresentation: (T, TomlInteger) -> Unit
     ) {
         encodeElement(descriptor, index) {
-            val integerAnnotation = descriptor.getElementAnnotations(index)
-                .firstIsInstanceOrNull<TomlInteger>()
-            if (integerAnnotation == null) {
-                encodeNormally(value)
+            val integer = descriptor.getElementAnnotations(index).firstIsInstanceOrNull<TomlInteger>()
+            if (integer == null) {
+                encodeRegularly(value)
             } else {
-                encodeWithBase(value, integerAnnotation.base)
+                encodeWithRepresentation(value, integer)
             }
         }
     }
@@ -361,13 +348,17 @@ private class TomlFileInlineElementEncoder(
 private class TomlFileFlowClassEncoder(
     delegate: AbstractTomlFileEncoder
 ) : AbstractTomlFileCompositeEncoder(delegate) {
-    init { writer.writeString("{ ") }
+    init {
+        writer.startInlineTable()
+        writer.writeSpace()
+    }
 
     override fun encodeDiscriminatorElement(discriminator: String, serialName: String, isEmptyStructure: Boolean) {
-        writer.writeKey(discriminator)
-        encodeString(serialName)
+        writer.startEntry(discriminator)
+        writer.writeStringValue(serialName)
         if (!isEmptyStructure) {
-            writer.writeString(", ")
+            writer.writeElementSeparator()
+            writer.writeSpace()
         }
     }
 
@@ -375,17 +366,19 @@ private class TomlFileFlowClassEncoder(
         val currentKey = descriptor.getElementName(index)
             .escape()
             .doubleQuotedIfNotPure()
-        writer.writeKey(currentKey)
+        writer.startEntry(currentKey)
     }
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
         if (index != descriptor.elementsCount - 1) {
-            writer.writeString(", ")
+            writer.writeElementSeparator()
+            writer.writeSpace()
         }
     }
 
     override fun endStructure(descriptor: SerialDescriptor) {
-        writer.writeString(" }")
+        writer.writeSpace()
+        writer.endInlineTable()
     }
 }
 
@@ -399,7 +392,10 @@ private class TomlFileFlowMapEncoder(
 
     private lateinit var currentKey: String
 
-    init { writer.writeString("{ ") }
+    init {
+        writer.startInlineTable()
+        writer.writeSpace()
+    }
 
     override fun <T> encodeSerializableElement(
         descriptor: SerialDescriptor,
@@ -413,10 +409,11 @@ private class TomlFileFlowMapEncoder(
                 .doubleQuotedIfNotPure()
         } else { // This element is value (of the entry).
             if (value.isNullLike.not() || toml.config.explicitNulls) {
-                writer.writeKey(currentKey)
+                writer.startEntry(currentKey)
                 encodeSerializableValue(serializer, value)
                 if (index != mapSize * 2 - 1) {
-                    writer.writeString(", ")
+                    writer.writeElementSeparator()
+                    writer.writeSpace()
                 }
             }
         }
@@ -434,7 +431,8 @@ private class TomlFileFlowMapEncoder(
     override fun endElement(descriptor: SerialDescriptor, index: Int) {}
 
     override fun endStructure(descriptor: SerialDescriptor) {
-        writer.writeString(" }")
+        writer.writeSpace()
+        writer.endInlineTable()
     }
 }
 
@@ -444,7 +442,10 @@ private class TomlFileFlowArrayEncoder(
     delegate: AbstractTomlFileEncoder,
     private val arraySize: Int
 ) : AbstractTomlFileCompositeEncoder(delegate) {
-    init { writer.writeString("[ ") }
+    init {
+        writer.startArray()
+        writer.writeSpace()
+    }
 
     override fun encodeDiscriminatorElement(discriminator: String, serialName: String, isEmptyStructure: Boolean) {
         throwPolymorphicCollection()
@@ -454,12 +455,14 @@ private class TomlFileFlowArrayEncoder(
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
         if (index != arraySize - 1) {
-            writer.writeString(", ")
+            writer.writeElementSeparator()
+            writer.writeSpace()
         }
     }
 
     override fun endStructure(descriptor: SerialDescriptor) {
-        writer.writeString(" ]")
+        writer.writeSpace()
+        writer.endArray()
     }
 }
 
@@ -473,7 +476,7 @@ private class TomlFileBlockArrayEncoder(
     private var currentLineItemsCount: Int = 0
 
     init {
-        writer.writeChar('[')
+        writer.startArray()
         writer.writeLineFeed()
     }
 
@@ -483,15 +486,15 @@ private class TomlFileBlockArrayEncoder(
 
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {
         if (currentLineItemsCount == 0) {
-            writer.writeString(toml.config.indentation.representation)
+            writer.writeIndentation(toml.config.indentation)
         } else {
-            writer.writeChar(' ')
+            writer.writeSpace()
         }
     }
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
         if (index != arraySize - 1) {
-            writer.writeChar(',')
+            writer.writeElementSeparator()
         }
         if (++currentLineItemsCount >= itemsPerLine) {
             writer.writeLineFeed()
@@ -503,7 +506,7 @@ private class TomlFileBlockArrayEncoder(
         if (currentLineItemsCount != 0) {
             writer.writeLineFeed()
         }
-        writer.writeChar(']')
+        writer.endArray()
     }
 }
 
@@ -548,7 +551,7 @@ private abstract class TomlFileTableLikeEncoder(
                         )
                     }
                     descriptor.elementsCount == 0 -> {
-                        writer.writeKey(currentElementPath)
+                        writer.startEntry(currentElementPath)
                         TomlFileFlowClassEncoder(this)
                     }
                     else -> {
@@ -612,7 +615,7 @@ private abstract class TomlFileTableLikeEncoder(
                         )
                     }
                     collectionSize == 0 -> {
-                        writer.writeKey(currentElementPath)
+                        writer.startEntry(currentElementPath)
                         TomlFileFlowMapEncoder(this, 0)
                     }
                     else -> {
@@ -662,8 +665,8 @@ private class TomlFileClassEncoder(
 
     override fun encodeDiscriminatorElement(discriminator: String, serialName: String, isEmptyStructure: Boolean) {
         currentElementKey = discriminator
-        appendKeyDirectly()
-        encodeString(serialName)
+        writer.startEntryDirectly()
+        writer.writeStringValue(serialName)
         if (!isEmptyStructure) {
             writer.writeLineFeed()
         }
@@ -678,7 +681,7 @@ private class TomlFileClassEncoder(
         shouldStructureCurrentElement = isStructured && index >= structuredTableLikeIndex
         processElementAnnotations(descriptor.getElementAnnotations(index))
         if (currentElementDescriptor.isCollection.not()) {
-            appendKey()
+            writer.startEntry()
         } // For non-null collections, defer to beginCollection().
     }
 
@@ -710,7 +713,9 @@ private class TomlFileClassEncoder(
                 writer.writeLineFeed()
             }
             for (line in commentLines) {
-                writer.writeString("# $line")
+                writer.startComment()
+                writer.writeSpace()
+                writer.writeString(line)
                 writer.writeLineFeed()
             }
         }
@@ -720,34 +725,36 @@ private class TomlFileClassEncoder(
         // descriptor == currentElementDescriptor.
         if (descriptor.isArrayOfTable) {
             if (collectionSize == 0 || !shouldStructureCurrentElement) {
-                appendKeyDirectly()
+                writer.startEntryDirectly()
             }
         } else {
-            appendKey()
+            writer.startEntry()
         }
         return super.beginCollection(descriptor, collectionSize)
     }
 
-    private fun appendKey() {
+    private fun TomlWriter.startEntry() {
         when {
             shouldInlineCurrentElement -> {
-                appendKeyDirectly()
+                startEntryDirectly()
             }
             currentElementDescriptor.isTable -> {
                 if (shouldStructureCurrentElement) {
-                    writer.writeLineFeed()
-                    writer.writeString("[$currentElementPath]")
-                    writer.writeLineFeed()
+                    writeLineFeed()
+                    startRegularTableHead()
+                    writeString(currentElementPath)
+                    endRegularTableHead()
+                    writeLineFeed()
                 }
             }
             else -> {
-                appendKeyDirectly()
+                startEntryDirectly()
             }
         }
     }
 
-    private fun appendKeyDirectly() {
-        writer.writeKey(if (isStructured) currentElementKey else currentElementPath)
+    private fun TomlWriter.startEntryDirectly() {
+        startEntry(if (isStructured) currentElementKey else currentElementPath)
     }
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
@@ -792,10 +799,10 @@ private class TomlFileMapEncoder(
             if (value.isNullLike.not() || toml.config.explicitNulls) {
                 when {
                     value.isNullLike -> {
-                        appendKeyDirectly()
+                        writer.startEntryDirectly()
                     }
                     valueDescriptor.isCollection.not() -> {
-                        appendKey()
+                        writer.startEntry()
                     }
                     // For non-null collections, defer to beginCollection().
                 }
@@ -820,34 +827,36 @@ private class TomlFileMapEncoder(
                     // Only the first array of table is allowed to be empty when in a map.
                     throwEmptyArrayOfTableInMap()
                 }
-                appendKeyDirectly()
+                writer.startEntryDirectly()
             }
         } else {
-            appendKey()
+            writer.startEntry()
         }
         return super.beginCollection(descriptor, collectionSize)
     }
 
-    private fun appendKey() {
+    private fun TomlWriter.startEntry() {
         when {
             shouldInlineCurrentElement -> {
-                appendKeyDirectly()
+                startEntryDirectly()
             }
             valueDescriptor.isTable -> {
                 if (isStructured) {
-                    writer.writeLineFeed()
-                    writer.writeString("[$currentElementPath]")
-                    writer.writeLineFeed()
+                    writeLineFeed()
+                    startRegularTableHead()
+                    writeString(currentElementPath)
+                    endRegularTableHead()
+                    writeLineFeed()
                 }
             }
             else -> {
-                appendKeyDirectly()
+                startEntryDirectly()
             }
         }
     }
 
-    private fun appendKeyDirectly() {
-        writer.writeKey(if (isStructured) currentElementKey else currentElementPath)
+    private fun TomlWriter.startEntryDirectly() {
+        startEntry(if (isStructured) currentElementKey else currentElementPath)
     }
 
     // This shouldn't be called.
@@ -891,7 +900,9 @@ private class TomlFileArrayOfTableEncoder(
 
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {
         writer.writeLineFeed()
-        writer.writeString("[[$currentElementPath]]")
+        writer.startArrayOfTableHead()
+        writer.writeString(path)
+        writer.endArrayOfTableHead()
         writer.writeLineFeed()
     }
 
@@ -998,6 +1009,9 @@ private fun calculateStructuredTableLikeIndex(descriptor: SerialDescriptor): Int
     return structuredIndex
 }
 
-private fun TomlWriter.writeKey(key: String) {
-    writeString("$key = ")
+private fun TomlWriter.startEntry(key: String) {
+    writeString(key)
+    writeSpace()
+    writeKeyValueSeparator()
+    writeSpace()
 }

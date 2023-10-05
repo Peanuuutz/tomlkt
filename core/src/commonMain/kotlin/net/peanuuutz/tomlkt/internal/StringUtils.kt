@@ -16,19 +16,29 @@
 
 package net.peanuuutz.tomlkt.internal
 
+import net.peanuuutz.tomlkt.TomlInteger.Base
+import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 import kotlin.math.pow
 
 internal const val Comment = '#'
 
-internal const val KeyValueDelimiter = '='
+internal const val KeySeparator = '.'
+
+internal const val KeyValueSeparator = '='
+
+internal const val ElementSeparator = ','
+
+internal const val StartTableHead = '['
+
+internal const val EndTableHead = ']'
 
 internal const val StartArray = '['
 
 internal const val EndArray = ']'
 
-internal const val StartTable = '{'
+internal const val StartInlineTable = '{'
 
-internal const val EndTable = '}'
+internal const val EndInlineTable = '}'
 
 internal const val DecimalConstraints: String = "0123456789"
 
@@ -64,10 +74,8 @@ internal val AsciiMapping: List<String> = buildList(128) {
     set('\\'.code, "\\\\")
 }
 
-internal const val LineFeedCode: Int = '\n'.code
-
 internal inline val String.singleQuoted: String
-    get() = "'$this'"
+    get() = "\'$this\'"
 
 internal inline val String.doubleQuoted: String
     get() = "\"$this\""
@@ -90,8 +98,8 @@ internal fun Char.escape(multiline: Boolean = false): String {
 
 internal fun String.escape(multiline: Boolean = false): String {
     val builder = StringBuilder()
-    for (i in indices) {
-        builder.append(get(i).escape(multiline))
+    for (c in this) {
+        builder.append(c.escape(multiline))
     }
     return builder.toString()
 }
@@ -174,7 +182,7 @@ internal fun Float.toStringModified(): String {
 internal fun Double.toStringModified(): String {
     return when {
         isNaN() -> "nan"
-        isInfinite() -> if (this > 0.0f) "inf" else "-inf"
+        isInfinite() -> if (this > 0.0) "inf" else "-inf"
         else -> toString()
     }
 }
@@ -185,6 +193,39 @@ internal fun Number.toStringModified(): String {
         is Double -> toStringModified()
         else -> toString()
     }
+}
+
+internal fun processIntegerString(
+    raw: String,
+    base: Base,
+    group: Int,
+    uppercase: Boolean
+): String {
+    val isNegative = raw[0] == '-'
+    val digits = if (!isNegative) {
+        raw
+    } else {
+        raw.substring(1)
+    }
+    val upper = if (base <= Dec || !uppercase) {
+        digits
+    } else {
+        digits.uppercase()
+    }
+    val grouped = if (group == 0) {
+        upper
+    } else {
+        upper.reversed()
+            .chunked(group, CharSequence::reversed)
+            .asReversed()
+            .joinToString(separator = "_")
+    }
+    val result = if (!isNegative) {
+        base.prefix + grouped
+    } else {
+        "-" + base.prefix + grouped
+    }
+    return result
 }
 
 internal fun String.toNumber(

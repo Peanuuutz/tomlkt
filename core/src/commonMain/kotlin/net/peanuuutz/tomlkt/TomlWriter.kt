@@ -16,86 +16,284 @@
 
 package net.peanuuutz.tomlkt
 
-import net.peanuuutz.tomlkt.internal.toStringModified
+import net.peanuuutz.tomlkt.TomlInteger.Base
+import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 
 /**
  * A custom writer used when encoding model class or [TomlElement].
  *
- * @see [TomlStringWriter]
+ * @see AbstractTomlWriter
+ * @see TomlStringWriter
  */
 public interface TomlWriter {
+    // -------- Core --------
+
     /**
-     * Writes [string].
+     * Writes [string] directly.
      */
     public fun writeString(string: String)
 
     /**
-     * Writes [boolean].
+     * Writes [char] directly.
      */
+    public fun writeChar(char: Char)
+
+    // -------- Key --------
+
+    /**
+     * Writes a [key].
+     *
+     * `key` is guaranteed to be escaped and quoted if needed.
+     */
+    public fun writeKey(key: String)
+
+    /**
+     * Writes a key separator (no whitespace).
+     */
+    public fun writeKeySeparator()
+
+    // -------- Table Head --------
+
+    /**
+     * Starts a regular table head (no whitespace).
+     */
+    public fun startRegularTableHead()
+
+    /**
+     * Ends a regular table head (no whitespace).
+     */
+    public fun endRegularTableHead()
+
+    /**
+     * Starts an array of table head (no whitespace).
+     */
+    public fun startArrayOfTableHead()
+
+    /**
+     * Ends an array of table head (no whitespace).
+     */
+    public fun endArrayOfTableHead()
+
+    // -------- Value --------
+
+    /**
+     * Writes [boolean] as value.
+     */
+    public fun writeBooleanValue(boolean: Boolean)
+
+    /**
+     * Writes [byte] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun writeByteValue(
+        byte: Byte,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
+
+    /**
+     * Writes [short] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun writeShortValue(
+        short: Short,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
+
+    /**
+     * Writes [int] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun writeIntValue(
+        int: Int,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
+
+    /**
+     * Writes [long] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
+    public fun writeLongValue(
+        long: Long,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    )
+
+    /**
+     * Writes [float] as value.
+     *
+     * Implementation should handle special values like [NaN][Float.NaN],
+     * [INFINITY][Float.POSITIVE_INFINITY] properly.
+     */
+    public fun writeFloatValue(float: Float)
+
+    /**
+     * Writes [double] as value.
+     *
+     * Implementation should handle special values like [NaN][Double.NaN],
+     * [INFINITY][Double.POSITIVE_INFINITY] properly.
+     */
+    public fun writeDoubleValue(double: Double)
+
+    /**
+     * Writes [char] **as value**.
+     *
+     * Unlike [writeChar], implementation should escape and quote `char`.
+     */
+    public fun writeCharValue(char: Char)
+
+    /**
+     * Writes [string] **as value**.
+     *
+     * Unlike [writeString], implementation should escape and quote `string`
+     * properly depending on [isMultiline] and [isLiteral].
+     */
+    public fun writeStringValue(
+        string: String,
+        isMultiline: Boolean = false,
+        isLiteral: Boolean = false
+    )
+
+    /**
+     * Writes `null` as value.
+     */
+    public fun writeNullValue()
+
+    @Deprecated(
+        message = "Use writeBooleanValue instead.",
+        replaceWith = ReplaceWith("writeBooleanValue")
+    )
     public fun writeBoolean(boolean: Boolean) {
-        writeString(boolean.toString())
+        writeBooleanValue(boolean)
     }
 
-    /**
-     * Writes [byte] **as literal**.
-     */
+    @Deprecated(
+        message = "Use writeByteValue instead.",
+        replaceWith = ReplaceWith("writeByteValue")
+    )
     public fun writeByte(byte: Byte) {
-        writeString(byte.toString())
+        writeByteValue(byte)
     }
 
-    /**
-     * Writes [short] **as literal**.
-     */
+    @Deprecated(
+        message = "Use writeShortValue instead.",
+        replaceWith = ReplaceWith("writeShortValue")
+    )
     public fun writeShort(short: Short) {
-        writeString(short.toString())
+        writeShortValue(short)
     }
 
-    /**
-     * Writes [int] **as literal**.
-     */
+    @Deprecated(
+        message = "Use writeIntValue instead.",
+        replaceWith = ReplaceWith("writeIntValue")
+    )
     public fun writeInt(int: Int) {
-        writeString(int.toString())
+        writeIntValue(int)
     }
 
-    /**
-     * Writes [long] **as literal**.
-     */
+    @Deprecated(
+        message = "Use writeLongValue instead.",
+        replaceWith = ReplaceWith("writeLongValue")
+    )
     public fun writeLong(long: Long) {
-        writeString(long.toString())
+        writeLongValue(long)
     }
 
-    /**
-     * Writes [float].
-     */
+    @Deprecated(
+        message = "Use writeFloatValue instead.",
+        replaceWith = ReplaceWith("writeFloatValue")
+    )
     public fun writeFloat(float: Float) {
-        writeString(float.toStringModified())
+        writeFloatValue(float)
     }
 
-    /**
-     * Writes [double].
-     */
+    @Deprecated(
+        message = "Use writeDoubleValue instead.",
+        replaceWith = ReplaceWith("writeDoubleValue")
+    )
     public fun writeDouble(double: Double) {
-        writeString(double.toStringModified())
+        writeDoubleValue(double)
     }
 
-    /**
-     * Writes [char].
-     */
-    public fun writeChar(char: Char) {
-        writeString(char.toString())
-    }
-
-    /**
-     * Writes "null".
-     */
+    @Deprecated(
+        message = "Use writeNullValue instead.",
+        replaceWith = ReplaceWith("writeNullValue")
+    )
     public fun writeNull() {
-        writeString("null")
+        writeNullValue()
     }
 
+    // -------- Structure --------
+
     /**
-     * Writes '\n'.
+     * Starts a block array or inline array (no whitespace).
      */
-    public fun writeLineFeed() {
-        writeString("\n")
-    }
+    public fun startArray()
+
+    /**
+     * Ends a block array or inline array (no whitespace).
+     */
+    public fun endArray()
+
+    /**
+     * Starts an inline table (no whitespace).
+     */
+    public fun startInlineTable()
+
+    /**
+     * Ends an inline table (no whitespace).
+     */
+    public fun endInlineTable()
+
+    /**
+     * Writes a key-value separator (no whitespace).
+     */
+    public fun writeKeyValueSeparator()
+
+    /**
+     * Writes an element separator (no whitespace).
+     */
+    public fun writeElementSeparator()
+
+    // -------- Comment --------
+
+    /**
+     * Starts a comment (no whitespace).
+     */
+    public fun startComment()
+
+    // -------- Control --------
+
+    /**
+     * Writes a whitespace.
+     */
+    public fun writeSpace()
+
+    /**
+     * Writes [indentation].
+     */
+    public fun writeIndentation(indentation: TomlIndentation)
+
+    /**
+     * Writes a line feed.
+     */
+    public fun writeLineFeed()
 }
