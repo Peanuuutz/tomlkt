@@ -41,7 +41,7 @@ public interface TomlWriter {
     // -------- Key --------
 
     /**
-     * Writes a [key].
+     * Writes [key].
      *
      * `key` is guaranteed to be escaped and quoted if needed.
      */
