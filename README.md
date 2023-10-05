@@ -10,7 +10,7 @@ deserialization.
 
 ## Setup
 
-<details>
+<details open>
 <summary>Gradle Kotlin (build.gradle.kts)</summary>
 
 ```kotlin
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.4")
+    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.5")
 }
 ```
 </details>
@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.4"
+    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.5"
 }
 ```
 </details>
@@ -45,7 +45,7 @@ dependencies {
 <dependency>
   <groupId>net.peanuuutz.tomlkt</groupId>
   <artifactId>tomlkt-jvm</artifactId>
-  <version>0.3.4</version>
+  <version>0.3.5</version>
 </dependency>
 ```
 </details>
