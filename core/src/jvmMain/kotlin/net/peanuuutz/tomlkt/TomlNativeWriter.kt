@@ -16,7 +16,6 @@
 
 package net.peanuuutz.tomlkt
 
-import net.peanuuutz.tomlkt.internal.LineFeedCode
 import java.io.Writer
 
 /**
@@ -42,9 +41,5 @@ public class TomlNativeWriter(
 
     override fun writeChar(char: Char) {
         nativeWriter.write(char.code)
-    }
-
-    override fun writeLineFeed() {
-        nativeWriter.write(LineFeedCode)
     }
 }

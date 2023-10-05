@@ -20,15 +20,23 @@ import kotlin.math.pow
 
 internal const val Comment = '#'
 
-internal const val KeyValueDelimiter = '='
+internal const val SegmentSeparator = '.'
+
+internal const val KeyValueSeparator = '='
+
+internal const val ElementSeparator = ','
+
+internal const val StartTableHead = '['
+
+internal const val EndTableHead = ']'
 
 internal const val StartArray = '['
 
 internal const val EndArray = ']'
 
-internal const val StartTable = '{'
+internal const val StartInlineTable = '{'
 
-internal const val EndTable = '}'
+internal const val EndInlineTable = '}'
 
 internal const val DecimalConstraints: String = "0123456789"
 
@@ -64,10 +72,8 @@ internal val AsciiMapping: List<String> = buildList(128) {
     set('\\'.code, "\\\\")
 }
 
-internal const val LineFeedCode: Int = '\n'.code
-
 internal inline val String.singleQuoted: String
-    get() = "'$this'"
+    get() = "\'$this\'"
 
 internal inline val String.doubleQuoted: String
     get() = "\"$this\""
@@ -90,8 +96,8 @@ internal fun Char.escape(multiline: Boolean = false): String {
 
 internal fun String.escape(multiline: Boolean = false): String {
     val builder = StringBuilder()
-    for (i in indices) {
-        builder.append(get(i).escape(multiline))
+    for (c in this) {
+        builder.append(c.escape(multiline))
     }
     return builder.toString()
 }
@@ -174,7 +180,7 @@ internal fun Float.toStringModified(): String {
 internal fun Double.toStringModified(): String {
     return when {
         isNaN() -> "nan"
-        isInfinite() -> if (this > 0.0f) "inf" else "-inf"
+        isInfinite() -> if (this > 0.0) "inf" else "-inf"
         else -> toString()
     }
 }

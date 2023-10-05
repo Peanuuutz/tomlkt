@@ -33,12 +33,16 @@ import net.peanuuutz.tomlkt.internal.DecimalConstraints
 import net.peanuuutz.tomlkt.internal.DecimalOrSignConstraints
 import net.peanuuutz.tomlkt.internal.DefiniteDateTimeConstraints
 import net.peanuuutz.tomlkt.internal.DefiniteNumberConstraints
+import net.peanuuutz.tomlkt.internal.ElementSeparator
 import net.peanuuutz.tomlkt.internal.EndArray
-import net.peanuuutz.tomlkt.internal.EndTable
+import net.peanuuutz.tomlkt.internal.EndInlineTable
+import net.peanuuutz.tomlkt.internal.EndTableHead
 import net.peanuuutz.tomlkt.internal.HexadecimalConstraints
-import net.peanuuutz.tomlkt.internal.KeyValueDelimiter
+import net.peanuuutz.tomlkt.internal.KeyValueSeparator
+import net.peanuuutz.tomlkt.internal.SegmentSeparator
 import net.peanuuutz.tomlkt.internal.StartArray
-import net.peanuuutz.tomlkt.internal.StartTable
+import net.peanuuutz.tomlkt.internal.StartInlineTable
+import net.peanuuutz.tomlkt.internal.StartTableHead
 import net.peanuuutz.tomlkt.internal.throwIncomplete
 import net.peanuuutz.tomlkt.internal.throwUnexpectedToken
 import net.peanuuutz.tomlkt.internal.toNumber
@@ -143,7 +147,7 @@ internal class TomlFileParser(
                 }
                 in BareKeyConstraints, '\"', '\'' -> {
                     val localPath = parsePath()
-                    throwUnexpectedTokenIf(getChar()) { it != KeyValueDelimiter }
+                    throwUnexpectedTokenIf(getChar()) { it != KeyValueSeparator }
                     proceed()
                     val key = localPath.last()
                     val value = parseValue(insideStructure = false)
@@ -154,10 +158,10 @@ internal class TomlFileParser(
                 Comment -> {
                     parseComment()
                 }
-                StartArray -> {
+                StartTableHead -> {
                     proceed()
                     throwIncompleteIf { isEof }
-                    val isArrayOfTable = getChar() == StartArray
+                    val isArrayOfTable = getChar() == StartTableHead
                     if (isArrayOfTable) {
                         proceed()
                     }
@@ -210,9 +214,9 @@ internal class TomlFileParser(
                 '\n' -> {
                     throwIncomplete()
                 }
-                EndArray -> {
+                EndTableHead -> {
                     if (isArrayOfTable) {
-                        expectNext(EndArray)
+                        expectNext(EndTableHead)
                     }
                     justEnded = true
                     proceed()
@@ -258,12 +262,12 @@ internal class TomlFileParser(
                     path.add(parseLiteralStringKey())
                     expectKey = false
                 }
-                '.' -> {
+                SegmentSeparator -> {
                     throwUnexpectedTokenIf(currentChar) { expectKey }
                     expectKey = true
                     proceed()
                 }
-                KeyValueDelimiter, EndArray -> {
+                KeyValueSeparator, EndArray -> {
                     throwUnexpectedTokenIf(currentChar) { expectKey }
                     justEnded = true
                     break
@@ -285,7 +289,7 @@ internal class TomlFileParser(
         val builder = StringBuilder()
         while (!isEof) {
             when (val currentChar = getChar()) {
-                ' ', '\t', '.', KeyValueDelimiter, EndArray -> {
+                ' ', '\t', SegmentSeparator, KeyValueSeparator, EndArray -> {
                     break
                 }
                 '\n' -> {
@@ -342,7 +346,7 @@ internal class TomlFileParser(
                 Comment -> {
                     parseComment()
                 }
-                ',', EndArray, EndTable -> {
+                ElementSeparator, EndArray, EndInlineTable -> {
                     throwUnexpectedTokenIf(currentChar) { !insideStructure }
                     break
                 }
@@ -404,7 +408,7 @@ internal class TomlFileParser(
                         StartArray -> {
                             parseArrayValue()
                         }
-                        StartTable -> {
+                        StartInlineTable -> {
                             parseInlineTableValue()
                         }
                         else -> {
@@ -503,7 +507,7 @@ internal class TomlFileParser(
         var isNumber = true
         while (!isEof) {
             when (val currentChar = getChar()) {
-                ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
+                ' ', '\t', '\n', ElementSeparator, Comment, EndArray, EndInlineTable -> {
                     break
                 }
                 '\r' -> {
@@ -555,7 +559,7 @@ internal class TomlFileParser(
         var isExponent = false
         while (!isEof) {
             when (val currentChar = getChar()) {
-                ' ', '\t', '\n', ',', Comment, EndArray, EndTable -> {
+                ' ', '\t', '\n', ElementSeparator, Comment, EndArray, EndInlineTable -> {
                     break
                 }
                 '\r' -> {
@@ -654,7 +658,7 @@ internal class TomlFileParser(
         var hasDateTimeSeparator = false
         while (!isEof) {
             when (val currentChar = getChar()) {
-                '\t', '\n', ',', Comment, EndArray, EndTable -> {
+                '\t', '\n', ElementSeparator, Comment, EndArray, EndInlineTable -> {
                     break
                 }
                 '\r' -> {
@@ -680,7 +684,7 @@ internal class TomlFileParser(
                     } else {
                         hasOffset = true
                     }
-                    builder.append('-')
+                    builder.append(currentChar)
                     proceed()
                 }
                 'T', 't' -> {
@@ -692,11 +696,11 @@ internal class TomlFileParser(
                     if (!hasOffset) {
                         hasTime = true
                     }
-                    builder.append(':')
+                    builder.append(currentChar)
                     proceed()
                 }
                 '.' -> {
-                    builder.append('.')
+                    builder.append(currentChar)
                     proceed()
                 }
                 'Z', 'z' -> {
@@ -706,7 +710,7 @@ internal class TomlFileParser(
                 }
                 '+' -> {
                     hasOffset = true
-                    builder.append('+')
+                    builder.append(currentChar)
                     proceed()
                 }
                 else -> {
@@ -965,7 +969,7 @@ internal class TomlFileParser(
                     proceed()
                     break
                 }
-                ',' -> {
+                ElementSeparator -> {
                     throwUnexpectedTokenIf(currentChar) { expectValue }
                     expectValue = true
                     proceed()
@@ -1001,13 +1005,13 @@ internal class TomlFileParser(
                 '\n' -> {
                     throwIncomplete()
                 }
-                EndTable -> {
+                EndInlineTable -> {
                     throwUnexpectedTokenIf(currentChar) { expectEntry && !justStarted }
                     justEnded = true
                     proceed()
                     break
                 }
-                ',' -> {
+                ElementSeparator -> {
                     throwUnexpectedTokenIf(currentChar) { expectEntry }
                     expectEntry = true
                     proceed()
@@ -1017,7 +1021,7 @@ internal class TomlFileParser(
                 }
                 else -> {
                     val localPath = parsePath()
-                    throwUnexpectedTokenIf(getChar()) { it != KeyValueDelimiter }
+                    throwUnexpectedTokenIf(getChar()) { it != KeyValueSeparator }
                     proceed()
                     val key = localPath.last()
                     val value = parseValue(insideStructure = true)

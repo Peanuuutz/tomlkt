@@ -16,7 +16,6 @@
 
 package net.peanuuutz.tomlkt
 
-import net.peanuuutz.tomlkt.internal.LineFeedCode
 import java.io.OutputStream
 
 /**
@@ -38,13 +37,5 @@ public class TomlStreamWriter(
 ) : TomlWriter {
     override fun writeString(string: String) {
         outputStream.write(string.toByteArray())
-    }
-
-    override fun writeChar(char: Char) {
-        outputStream.write(char.code)
-    }
-
-    override fun writeLineFeed() {
-        outputStream.write(LineFeedCode)
     }
 }

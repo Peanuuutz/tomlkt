@@ -38,10 +38,6 @@ public class TomlStringWriter : TomlWriter {
         builder.append(char)
     }
 
-    override fun writeLineFeed() {
-        builder.append('\n')
-    }
-
     override fun toString(): String {
         return builder.toString()
     }
