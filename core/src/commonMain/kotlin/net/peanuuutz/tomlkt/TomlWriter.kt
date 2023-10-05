@@ -43,7 +43,7 @@ public interface TomlWriter {
     /**
      * Writes [key].
      *
-     * `key` is guaranteed to be escaped and quoted if needed.
+     * Implementation should escape and quote `key` if it cannot be bare.
      */
     public fun writeKey(key: String)
 
