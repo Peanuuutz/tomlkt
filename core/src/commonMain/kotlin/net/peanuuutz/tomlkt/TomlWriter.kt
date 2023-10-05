@@ -28,34 +28,66 @@ import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 public interface TomlWriter {
     // -------- Core --------
 
+    /**
+     * Writes [string] directly.
+     */
     public fun writeString(string: String)
 
+    /**
+     * Writes [char] directly.
+     */
     public fun writeChar(char: Char)
 
     // -------- Key --------
 
-    public fun writeSegmentSeparator()
+    /**
+     * Writes a [key].
+     *
+     * `key` is guaranteed to be escaped and quoted if needed.
+     */
+    public fun writeKey(key: String)
 
-    public fun writeBareSegment(segment: String)
-
-    public fun writeDoubleQuotedSegment(segment: String)
-
-    public fun writeSingleQuotedSegment(segment: String)
+    /**
+     * Writes a key separator (no whitespace).
+     */
+    public fun writeKeySeparator()
 
     // -------- Table Head --------
 
+    /**
+     * Starts a regular table head (no whitespace).
+     */
     public fun startRegularTableHead()
 
+    /**
+     * Ends a regular table head (no whitespace).
+     */
     public fun endRegularTableHead()
 
+    /**
+     * Starts an array of table head (no whitespace).
+     */
     public fun startArrayOfTableHead()
 
+    /**
+     * Ends an array of table head (no whitespace).
+     */
     public fun endArrayOfTableHead()
 
     // -------- Value --------
 
+    /**
+     * Writes [boolean] as value.
+     */
     public fun writeBooleanValue(boolean: Boolean)
 
+    /**
+     * Writes [byte] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
     public fun writeByteValue(
         byte: Byte,
         base: Base = Dec,
@@ -63,6 +95,13 @@ public interface TomlWriter {
         uppercase: Boolean = true
     )
 
+    /**
+     * Writes [short] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
     public fun writeShortValue(
         short: Short,
         base: Base = Dec,
@@ -70,6 +109,13 @@ public interface TomlWriter {
         uppercase: Boolean = true
     )
 
+    /**
+     * Writes [int] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
     public fun writeIntValue(
         int: Int,
         base: Base = Dec,
@@ -77,6 +123,13 @@ public interface TomlWriter {
         uppercase: Boolean = true
     )
 
+    /**
+     * Writes [long] as value.
+     *
+     * @param group the size of a digit group separated by '_'. If set to 0,
+     * the digits will not be grouped.
+     */
+    @Suppress("OutdatedDocumentation")
     public fun writeLongValue(
         long: Long,
         base: Base = Dec,
@@ -84,18 +137,44 @@ public interface TomlWriter {
         uppercase: Boolean = true
     )
 
+    /**
+     * Writes [float] as value.
+     *
+     * Implementation should handle special values like [NaN][Float.NaN],
+     * [INFINITY][Float.POSITIVE_INFINITY] properly.
+     */
     public fun writeFloatValue(float: Float)
 
+    /**
+     * Writes [double] as value.
+     *
+     * Implementation should handle special values like [NaN][Double.NaN],
+     * [INFINITY][Double.POSITIVE_INFINITY] properly.
+     */
     public fun writeDoubleValue(double: Double)
 
+    /**
+     * Writes [char] **as value**.
+     *
+     * Unlike [writeChar], implementation should escape and quote `char`.
+     */
     public fun writeCharValue(char: Char)
 
+    /**
+     * Writes [string] **as value**.
+     *
+     * Unlike [writeString], implementation should escape and quote `string`
+     * properly depending on [isMultiline] and [isLiteral].
+     */
     public fun writeStringValue(
         string: String,
         isMultiline: Boolean = false,
         isLiteral: Boolean = false
     )
 
+    /**
+     * Writes `null` as value.
+     */
     public fun writeNullValue()
 
     @Deprecated(
@@ -164,27 +243,57 @@ public interface TomlWriter {
 
     // -------- Structure --------
 
+    /**
+     * Starts a block array or inline array (no whitespace).
+     */
     public fun startArray()
 
+    /**
+     * Ends a block array or inline array (no whitespace).
+     */
     public fun endArray()
 
+    /**
+     * Starts an inline table (no whitespace).
+     */
     public fun startInlineTable()
 
+    /**
+     * Ends an inline table (no whitespace).
+     */
     public fun endInlineTable()
 
+    /**
+     * Writes a key-value separator (no whitespace).
+     */
     public fun writeKeyValueSeparator()
 
+    /**
+     * Writes an element separator (no whitespace).
+     */
     public fun writeElementSeparator()
 
     // -------- Comment --------
 
+    /**
+     * Starts a comment (no whitespace).
+     */
     public fun startComment()
 
     // -------- Control --------
 
+    /**
+     * Writes a whitespace.
+     */
     public fun writeSpace()
 
+    /**
+     * Writes [indentation].
+     */
     public fun writeIndentation(indentation: TomlIndentation)
 
+    /**
+     * Writes a line feed.
+     */
     public fun writeLineFeed()
 }

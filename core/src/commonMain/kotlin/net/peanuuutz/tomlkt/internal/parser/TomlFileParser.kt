@@ -38,8 +38,8 @@ import net.peanuuutz.tomlkt.internal.EndArray
 import net.peanuuutz.tomlkt.internal.EndInlineTable
 import net.peanuuutz.tomlkt.internal.EndTableHead
 import net.peanuuutz.tomlkt.internal.HexadecimalConstraints
+import net.peanuuutz.tomlkt.internal.KeySeparator
 import net.peanuuutz.tomlkt.internal.KeyValueSeparator
-import net.peanuuutz.tomlkt.internal.SegmentSeparator
 import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartInlineTable
 import net.peanuuutz.tomlkt.internal.StartTableHead
@@ -262,7 +262,7 @@ internal class TomlFileParser(
                     path.add(parseLiteralStringKey())
                     expectKey = false
                 }
-                SegmentSeparator -> {
+                KeySeparator -> {
                     throwUnexpectedTokenIf(currentChar) { expectKey }
                     expectKey = true
                     proceed()
@@ -289,7 +289,7 @@ internal class TomlFileParser(
         val builder = StringBuilder()
         while (!isEof) {
             when (val currentChar = getChar()) {
-                ' ', '\t', SegmentSeparator, KeyValueSeparator, EndArray -> {
+                ' ', '\t', KeySeparator, KeyValueSeparator, EndArray -> {
                     break
                 }
                 '\n' -> {

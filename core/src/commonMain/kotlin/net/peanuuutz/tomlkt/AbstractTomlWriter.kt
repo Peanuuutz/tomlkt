@@ -7,8 +7,8 @@ import net.peanuuutz.tomlkt.internal.ElementSeparator
 import net.peanuuutz.tomlkt.internal.EndArray
 import net.peanuuutz.tomlkt.internal.EndInlineTable
 import net.peanuuutz.tomlkt.internal.EndTableHead
+import net.peanuuutz.tomlkt.internal.KeySeparator
 import net.peanuuutz.tomlkt.internal.KeyValueSeparator
-import net.peanuuutz.tomlkt.internal.SegmentSeparator
 import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartInlineTable
 import net.peanuuutz.tomlkt.internal.StartTableHead
@@ -18,6 +18,10 @@ import net.peanuuutz.tomlkt.internal.processIntegerString
 import net.peanuuutz.tomlkt.internal.singleQuoted
 import net.peanuuutz.tomlkt.internal.toStringModified
 
+/**
+ * The basic implementation of [TomlWriter], handling all the essential logic
+ * except [writeString] and (optional) [writeChar].
+ */
 public abstract class AbstractTomlWriter : TomlWriter {
     // -------- Core --------
 
@@ -28,20 +32,12 @@ public abstract class AbstractTomlWriter : TomlWriter {
 
     // -------- Key --------
 
-    final override fun writeSegmentSeparator() {
-        writeChar(SegmentSeparator)
+    final override fun writeKey(key: String) {
+        writeString(key)
     }
 
-    final override fun writeBareSegment(segment: String) {
-        writeString(segment)
-    }
-
-    final override fun writeDoubleQuotedSegment(segment: String) {
-        writeString(segment.doubleQuoted)
-    }
-
-    final override fun writeSingleQuotedSegment(segment: String) {
-        writeString(segment.singleQuoted)
+    final override fun writeKeySeparator() {
+        writeChar(KeySeparator)
     }
 
     // -------- Table Head --------

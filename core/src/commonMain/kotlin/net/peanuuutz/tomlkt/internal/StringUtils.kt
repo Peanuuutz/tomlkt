@@ -22,7 +22,7 @@ import kotlin.math.pow
 
 internal const val Comment = '#'
 
-internal const val SegmentSeparator = '.'
+internal const val KeySeparator = '.'
 
 internal const val KeyValueSeparator = '='
 
