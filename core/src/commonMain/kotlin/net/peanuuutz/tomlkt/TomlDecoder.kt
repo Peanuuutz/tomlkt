@@ -21,13 +21,19 @@ import kotlin.contracts.contract
 
 /**
  * A special [Decoder] which is used internally by decoding process of [Toml],
- * providing an extra [decodeTomlElement] to decode [TomlElement] from the
- * current position.
+ * providing an extra [decodeTomlElement] to decode [TomlElement] from current
+ * position.
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlDecoder : Decoder {
+    /**
+     * The [Toml] instance used to create this decoder.
+     */
     public val toml: Toml
 
+    /**
+     * Decodes [TomlElement] from current position.
+     */
     public fun decodeTomlElement(): TomlElement
 }
 

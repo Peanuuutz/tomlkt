@@ -21,13 +21,19 @@ import kotlin.contracts.contract
 
 /**
  * A special [Encoder] which is used internally by encoding process of [Toml],
- * providing an extra [encodeTomlElement] to encode [TomlElement] to the current
+ * providing an extra [encodeTomlElement] to encode [TomlElement] to current
  * position.
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlEncoder : Encoder {
+    /**
+     * The [Toml] instance used to create this encoder.
+     */
     public val toml: Toml
 
+    /**
+     * Encodes [value] to current position.
+     */
     public fun encodeTomlElement(value: TomlElement)
 }
 

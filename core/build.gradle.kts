@@ -38,6 +38,7 @@ kotlin {
     macosArm64()
     macosX64()
     ios()
+    linuxArm64()
     linuxX64()
 
     sourceSets {

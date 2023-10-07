@@ -14,26 +14,26 @@ console-reports:
 comments:
   active: true
   OutdatedDocumentation:
-    active: true
-    matchTypeParameters: true
+    active: false
+    matchTypeParameters: false
     matchDeclarationsOrder: true
     allowParamOnConstructorProperties: false
   UndocumentedPublicClass:
-    active: false
+    active: true
     excludes: []
     searchInNestedClass: true
     searchInInnerClass: true
     searchInInnerObject: true
     searchInInnerInterface: true
-    searchInProtectedClass: false
+    searchInProtectedClass: true
   UndocumentedPublicFunction:
-    active: false
+    active: true
     excludes: []
-    searchProtectedFunction: false
+    searchProtectedFunction: true
   UndocumentedPublicProperty:
-    active: false
+    active: true
     excludes: []
-    searchProtectedProperty: false
+    searchProtectedProperty: true
 
 coroutines:
   active: true
