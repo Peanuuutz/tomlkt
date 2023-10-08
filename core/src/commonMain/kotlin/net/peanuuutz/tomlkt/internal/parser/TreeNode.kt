@@ -17,9 +17,8 @@
 package net.peanuuutz.tomlkt.internal.parser
 
 import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.internal.Path
 import net.peanuuutz.tomlkt.internal.throwConflictEntry
-
-internal typealias Path = List<String>
 
 internal sealed class TreeNode(val key: String) {
     final override fun equals(other: Any?): Boolean {

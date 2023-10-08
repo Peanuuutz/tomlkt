@@ -40,6 +40,7 @@ import net.peanuuutz.tomlkt.internal.EndTableHead
 import net.peanuuutz.tomlkt.internal.HexadecimalConstraints
 import net.peanuuutz.tomlkt.internal.KeySeparator
 import net.peanuuutz.tomlkt.internal.KeyValueSeparator
+import net.peanuuutz.tomlkt.internal.Path
 import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartInlineTable
 import net.peanuuutz.tomlkt.internal.StartTableHead

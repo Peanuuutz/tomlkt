@@ -39,8 +39,9 @@ import net.peanuuutz.tomlkt.TomlMultilineString
 import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.TomlWriter
+import net.peanuuutz.tomlkt.internal.MutablePath
+import net.peanuuutz.tomlkt.internal.Path
 import net.peanuuutz.tomlkt.internal.anyIsInstance
-import net.peanuuutz.tomlkt.internal.doubleQuotedIfNotPure
 import net.peanuuutz.tomlkt.internal.escape
 import net.peanuuutz.tomlkt.internal.firstIsInstanceOrNull
 import net.peanuuutz.tomlkt.internal.isArrayOfTable
@@ -364,8 +365,6 @@ private class TomlFileFlowClassEncoder(
 
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {
         val currentKey = descriptor.getElementName(index)
-            .escape()
-            .doubleQuotedIfNotPure()
         writer.startEntry(currentKey)
     }
 
@@ -405,8 +404,6 @@ private class TomlFileFlowMapEncoder(
     ) {
         if (isKey) { // This element is key.
             currentKey = value.toTomlKey()
-                .escape()
-                .doubleQuotedIfNotPure()
         } else { // This element is value (of the entry).
             if (value.isNullLike.not() || toml.config.explicitNulls) {
                 writer.startEntry(currentKey)
@@ -515,19 +512,28 @@ private class TomlFileBlockArrayEncoder(
 private abstract class TomlFileTableLikeEncoder(
     delegate: AbstractTomlFileEncoder,
     val isStructured: Boolean,
-    val path: String
+    val path: MutablePath?
 ) : AbstractTomlFileCompositeEncoder(delegate) {
-    lateinit var currentElementKey: String
+    var currentElementKey: String? = null
 
-    val currentElementPath: String
+    val currentElementPath: Path
         get() {
             val path = path
             val currentElementKey = currentElementKey
             return when {
-                currentElementKey.isEmpty() -> path
-                path.isEmpty() -> currentElementKey
-                isStructured && !shouldStructureCurrentElement -> currentElementKey
-                else -> "$path.$currentElementKey"
+                currentElementKey == null -> { // This is an array of table.
+                    path!!
+                }
+                path == null -> {
+                    listOf(element = currentElementKey)
+                }
+                isStructured && !shouldStructureCurrentElement -> {
+                    listOf(element = currentElementKey)
+                }
+                else -> {
+                    path[path.lastIndex] = currentElementKey
+                    path
+                }
             }
         }
 
@@ -543,10 +549,12 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowClassEncoder(this)
                     }
                     shouldStructureCurrentElement -> {
+                        val innerPath = currentElementPath.toMutableList()
+                        innerPath.add("")
                         TomlFileClassEncoder(
                             delegate = this,
                             isStructured = true,
-                            path = currentElementPath,
+                            path = innerPath,
                             structuredTableLikeIndex = calculateStructuredTableLikeIndex(descriptor)
                         )
                     }
@@ -555,10 +563,12 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowClassEncoder(this)
                     }
                     else -> {
+                        val innerPath = currentElementPath.toMutableList()
+                        innerPath.add("")
                         TomlFileClassEncoder(
                             delegate = this,
                             isStructured = false,
-                            path = currentElementPath,
+                            path = innerPath,
                             structuredTableLikeIndex = Int.MAX_VALUE
                         )
                     }
@@ -587,7 +597,7 @@ private abstract class TomlFileTableLikeEncoder(
                     shouldStructureCurrentElement && blockArray == null && descriptor.isArrayOfTable -> {
                         TomlFileArrayOfTableEncoder(
                             delegate = this,
-                            path = currentElementPath,
+                            path = currentElementPath.toMutableList(),
                             arraySize = collectionSize
                         )
                     }
@@ -606,10 +616,12 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowMapEncoder(this, collectionSize)
                     }
                     shouldStructureCurrentElement -> {
+                        val innerPath = currentElementPath.toMutableList()
+                        innerPath.add("")
                         TomlFileMapEncoder(
                             delegate = this,
                             isStructured = true,
-                            path = currentElementPath,
+                            path = innerPath,
                             mapSize = collectionSize,
                             valueDescriptor = descriptor.getElementDescriptor(1)
                         )
@@ -619,10 +631,12 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowMapEncoder(this, 0)
                     }
                     else -> {
+                        val innerPath = currentElementPath.toMutableList()
+                        innerPath.add("")
                         TomlFileMapEncoder(
                             delegate = this,
                             isStructured = false,
-                            path = currentElementPath,
+                            path = innerPath,
                             mapSize = collectionSize,
                             valueDescriptor = descriptor.getElementDescriptor(1)
                         )
@@ -644,7 +658,7 @@ private abstract class TomlFileTableLikeEncoder(
 private class TomlFileClassEncoder(
     delegate: AbstractTomlFileEncoder,
     isStructured: Boolean,
-    path: String,
+    path: MutablePath?,
     private val structuredTableLikeIndex: Int
 ) : TomlFileTableLikeEncoder(delegate, isStructured, path) {
     private lateinit var currentElementDescriptor: SerialDescriptor
@@ -675,8 +689,6 @@ private class TomlFileClassEncoder(
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {
         currentElementDescriptor = descriptor.getElementDescriptor(index)
         currentElementKey = descriptor.getElementName(index)
-            .escape()
-            .doubleQuotedIfNotPure()
         shouldInlineCurrentElement = shouldInlineCurrentElement || descriptor.shouldForceInlineAt(index)
         shouldStructureCurrentElement = isStructured && index >= structuredTableLikeIndex
         processElementAnnotations(descriptor.getElementAnnotations(index))
@@ -742,7 +754,7 @@ private class TomlFileClassEncoder(
                 if (shouldStructureCurrentElement) {
                     writeLineFeed()
                     startRegularTableHead()
-                    writeString(currentElementPath)
+                    writePath(currentElementPath)
                     endRegularTableHead()
                     writeLineFeed()
                 }
@@ -754,7 +766,11 @@ private class TomlFileClassEncoder(
     }
 
     private fun TomlWriter.startEntryDirectly() {
-        startEntry(if (isStructured) currentElementKey else currentElementPath)
+        if (isStructured) {
+            startEntry(currentElementKey!!)
+        } else {
+            startEntry(currentElementPath)
+        }
     }
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
@@ -771,7 +787,7 @@ private class TomlFileClassEncoder(
 private class TomlFileMapEncoder(
     delegate: AbstractTomlFileEncoder,
     isStructured: Boolean,
-    path: String,
+    path: MutablePath?,
     private val mapSize: Int,
     private val valueDescriptor: SerialDescriptor
 ) : TomlFileTableLikeEncoder(delegate, isStructured, path) {
@@ -793,8 +809,6 @@ private class TomlFileMapEncoder(
     ) {
         if (isKey) { // This element is key.
             currentElementKey = value.toTomlKey()
-                .escape()
-                .doubleQuotedIfNotPure()
         } else { // This element is value (of the entry).
             if (value.isNullLike.not() || toml.config.explicitNulls) {
                 when {
@@ -844,7 +858,7 @@ private class TomlFileMapEncoder(
                 if (isStructured) {
                     writeLineFeed()
                     startRegularTableHead()
-                    writeString(currentElementPath)
+                    writePath(currentElementPath)
                     endRegularTableHead()
                     writeLineFeed()
                 }
@@ -856,7 +870,11 @@ private class TomlFileMapEncoder(
     }
 
     private fun TomlWriter.startEntryDirectly() {
-        startEntry(if (isStructured) currentElementKey else currentElementPath)
+        if (isStructured) {
+            startEntry(currentElementKey!!)
+        } else {
+            startEntry(currentElementPath)
+        }
     }
 
     // This shouldn't be called.
@@ -870,11 +888,11 @@ private class TomlFileMapEncoder(
 
 private class TomlFileArrayOfTableEncoder(
     delegate: AbstractTomlFileEncoder,
-    path: String,
+    path: MutablePath,
     private val arraySize: Int
-) : TomlFileTableLikeEncoder(delegate, isStructured = true, path) {
+) : TomlFileTableLikeEncoder(delegate, isStructured = true, path = path) {
     init {
-        currentElementKey = ""
+        currentElementKey = null
         shouldStructureCurrentElement = true
     }
 
@@ -889,7 +907,7 @@ private class TomlFileArrayOfTableEncoder(
                 super.encodeSerializableElement(descriptor, index, serializer, value)
             }
             toml.config.explicitNulls -> {
-                throwNullInArrayOfTable(path)
+                throwNullInArrayOfTable(path!!)
             }
         }
     }
@@ -901,7 +919,7 @@ private class TomlFileArrayOfTableEncoder(
     override fun beginElement(descriptor: SerialDescriptor, index: Int) {
         writer.writeLineFeed()
         writer.startArrayOfTableHead()
-        writer.writeString(path)
+        writer.writePath(path!!)
         writer.endArrayOfTableHead()
         writer.writeLineFeed()
     }
@@ -927,7 +945,7 @@ private fun AbstractTomlFileEncoder.beginStructurePolymorphically(
                 TomlFileClassEncoder(
                     delegate = this,
                     isStructured = true,
-                    path = "",
+                    path = null,
                     structuredTableLikeIndex = calculateStructuredTableLikeIndex(descriptor)
                 )
             }
@@ -978,7 +996,7 @@ private fun AbstractTomlFileEncoder.beginCollectionPolymorphically(
                     TomlFileMapEncoder(
                         delegate = this,
                         isStructured = true,
-                        path = "",
+                        path = null,
                         mapSize = collectionSize,
                         valueDescriptor = descriptor.getElementDescriptor(1)
                     )
@@ -1010,8 +1028,24 @@ private fun calculateStructuredTableLikeIndex(descriptor: SerialDescriptor): Int
 }
 
 private fun TomlWriter.startEntry(key: String) {
-    writeString(key)
+    writeKey(key)
     writeSpace()
     writeKeyValueSeparator()
     writeSpace()
+}
+
+private fun TomlWriter.startEntry(path: Path) {
+    writePath(path)
+    writeSpace()
+    writeKeyValueSeparator()
+    writeSpace()
+}
+
+private fun TomlWriter.writePath(path: Path) {
+    val lastIndex = path.lastIndex
+    for (i in 0..<lastIndex) {
+        writeKey(path[i])
+        writeKeySeparator()
+    }
+    writeKey(path[lastIndex])
 }
