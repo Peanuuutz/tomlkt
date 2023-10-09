@@ -111,6 +111,10 @@ kotlin {
             dependsOn(kotlinxMain)
         }
 
+        val linuxArm64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
         val linuxX64Main by getting {
             dependsOn(kotlinxMain)
         }

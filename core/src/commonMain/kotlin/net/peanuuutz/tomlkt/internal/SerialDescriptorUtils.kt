@@ -28,8 +28,6 @@ import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.descriptors.getContextualDescriptor
 import net.peanuuutz.tomlkt.TomlConfig
 
-private const val TomlTableSerialName: String = "net.peanuuutz.tomlkt.TomlTable"
-
 internal val SerialDescriptor.isPrimitiveLike: Boolean
     get() {
         val kind = kind
@@ -60,12 +58,10 @@ internal val SerialDescriptor.isArrayOfTable: Boolean
 internal val SerialDescriptor.isTableLike: Boolean
     get() = isTable || isArrayOfTable
 
-internal val SerialDescriptor.isExactlyTomlTable: Boolean
+internal val SerialDescriptor.isTomlElement: Boolean
     get() {
-        if (!isNullable) {
-            return false
-        }
-        return serialName.removeSuffix("?") == TomlTableSerialName
+        val actualSerialName = if (!isNullable) serialName else serialName.removeSuffix("?")
+        return actualSerialName == TomlElementSerialName
     }
 
 internal fun SerialDescriptor.findRealDescriptor(config: TomlConfig): SerialDescriptor {
