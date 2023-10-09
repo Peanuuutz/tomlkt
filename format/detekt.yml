@@ -27,11 +27,11 @@ comments:
     searchInInnerInterface: true
     searchInProtectedClass: true
   UndocumentedPublicFunction:
-    active: true
+    active: false
     excludes: []
     searchProtectedFunction: true
   UndocumentedPublicProperty:
-    active: true
+    active: false
     excludes: []
     searchProtectedProperty: true
 
