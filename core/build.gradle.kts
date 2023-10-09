@@ -38,7 +38,7 @@ kotlin {
     macosArm64()
     macosX64()
     ios()
-    linuxArm64()
+//    linuxArm64()
     linuxX64()
 
     sourceSets {
@@ -111,9 +111,9 @@ kotlin {
             dependsOn(kotlinxMain)
         }
 
-        val linuxArm64Main by getting {
-            dependsOn(kotlinxMain)
-        }
+//        val linuxArm64Main by getting {
+//            dependsOn(kotlinxMain)
+//        }
 
         val linuxX64Main by getting {
             dependsOn(kotlinxMain)
