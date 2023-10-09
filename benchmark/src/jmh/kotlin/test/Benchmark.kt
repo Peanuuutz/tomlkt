@@ -1,9 +1,7 @@
 package test
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import kotlinx.serialization.decodeFromString
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.BenchmarkMode
 import org.openjdk.jmh.annotations.Fork
@@ -25,58 +23,53 @@ object TomlObjects {
         registerKotlinModule()
         registerModule(JavaTimeModule())
     }
+    val night = com.electronwill.nightconfig.toml.TomlParser()
 }
 
 /*
-    Benchmark                          Mode  Cnt      Score       Error  Units
-    Benchmark.jacksonWithType          avgt   10   7753.556 ±  104.444  ns/op
-    Benchmark.jacksonWithClass         avgt   10   7803.826 ±  312.212  ns/op
-    Benchmark.tomlktWithSerializer     avgt   10  13638.573 ±  203.072  ns/op
-    Benchmark.tomlktWithoutSerializer  avgt   10  13723.892 ±  320.052  ns/op
-    Benchmark.toml4j                   avgt   10  21123.156 ±  209.969  ns/op
-    Benchmark.ktomlWithSerializer      avgt   10  47823.952 ±  722.429  ns/op
-    Benchmark.ktomlWithoutSerializer   avgt   10  48057.838 ± 1090.022  ns/op
+    Benchmark                       Mode  Cnt      Score      Error  Units
+    Benchmark.jackson               avgt    5   5175.377 ±  156.576  ns/op
+    Benchmark.night                 avgt    5   7278.401 ±  257.462  ns/op
+    Benchmark.tomlkt                avgt    5   9494.927 ±  271.427  ns/op
+    Benchmark.toml4j                avgt    5  15858.802 ±  374.109  ns/op
+    Benchmark.ktoml                 avgt    5  43655.068 ± 8584.812  ns/op
+    Benchmark.tomlj                 avgt    5  92314.157 ± 4917.454  ns/op
  */
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 4)
 @Measurement(iterations = 5)
 @Threads(4)
-@Fork(2)
+@Fork(1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
 class Benchmark {
     @Benchmark
-    fun tomlktWithoutSerializer() {
-        TomlObjects.tomlkt.decodeFromString<Config>(SampleConfig)
-    }
-
-    @Benchmark
-    fun tomlktWithSerializer() {
-        TomlObjects.tomlkt.decodeFromString(Config.serializer(), SampleConfig)
+    fun tomlkt() {
+        TomlObjects.tomlkt.parseToTomlTable(SampleConfig)
     }
 
     @Benchmark
     fun toml4j() {
-        TomlObjects.toml4j.read(SampleConfig).to(Config::class.java)
+        TomlObjects.toml4j.read(SampleConfig)
     }
 
     @Benchmark
-    fun ktomlWithoutSerializer() {
-        TomlObjects.ktoml.decodeFromString<Config>(SampleConfig)
+    fun ktoml() {
+        TomlObjects.ktoml.tomlParser.parseString(SampleConfig)
     }
 
     @Benchmark
-    fun ktomlWithSerializer() {
-        TomlObjects.ktoml.decodeFromString(Config.serializer(), SampleConfig)
+    fun jackson() {
+        TomlObjects.jackson.readTree(SampleConfig)
     }
 
     @Benchmark
-    fun jacksonWithClass() {
-        TomlObjects.jackson.readValue(SampleConfig, Config::class.java)
+    fun night() {
+        TomlObjects.night.parse(SampleConfig)
     }
 
     @Benchmark
-    fun jacksonWithType() {
-        TomlObjects.jackson.readValue<Config>(SampleConfig)
+    fun tomlj() {
+        org.tomlj.Toml.parse(SampleConfig)
     }
 }

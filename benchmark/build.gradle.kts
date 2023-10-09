@@ -23,6 +23,11 @@ dependencies {
     jmh("com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.1")
     jmh("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.1")
     jmh("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1")
+    // night config
+    jmh("com.electronwill.night-config:toml:3.6.0")
+    // tomlj
+    jmh("org.tomlj:tomlj:1.1.0")
+
     // official JSON
     val serializationVersion: String by rootProject
     jmh("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
