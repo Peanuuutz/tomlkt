@@ -541,6 +541,9 @@ private abstract class TomlFileTableLikeEncoder(
 
     var shouldStructureCurrentElement: Boolean = false
 
+    open val blockArray: TomlBlockArray?
+        get() = null
+
     final override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         val compositeEncoder = when (val kind = descriptor.kind) {
             CLASS, is PolymorphicKind, OBJECT -> {
@@ -647,9 +650,6 @@ private abstract class TomlFileTableLikeEncoder(
         }
     }
 
-    protected open val blockArray: TomlBlockArray?
-        get() = null
-
     final override fun endStructure(descriptor: SerialDescriptor) {}
 }
 
@@ -663,9 +663,9 @@ private class TomlFileClassEncoder(
 ) : TomlFileTableLikeEncoder(delegate, isStructured, path) {
     private lateinit var currentElementDescriptor: SerialDescriptor
 
-    private var currentValue: Any? = ValuePlaceholder
-
     override var blockArray: TomlBlockArray? = null
+
+    private var currentValue: Any? = ValuePlaceholder
 
     override fun <T> encodeSerializableElement(
         descriptor: SerialDescriptor,
