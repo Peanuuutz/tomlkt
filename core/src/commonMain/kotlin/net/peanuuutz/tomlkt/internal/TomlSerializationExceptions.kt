@@ -66,7 +66,7 @@ internal fun throwPolymorphicCollection(): Nothing {
 
 internal class NullInArrayOfTableException(message: String) : TomlEncodingException(message)
 
-internal fun throwNullInArrayOfTable(path: List<String>): Nothing {
+internal fun throwNullInArrayOfTable(path: Path): Nothing {
     val pathString = path.joinToString(separator = ".")
     val message = "Null is not allowed in array of table. Please annotate the corresponding property " +
             "(at $pathString) with @TomlBlockArray or @TomlInline"
