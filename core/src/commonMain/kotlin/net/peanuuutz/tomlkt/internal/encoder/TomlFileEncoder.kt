@@ -827,9 +827,8 @@ private class TomlFileMapEncoder(
                     }
                     valueDescriptor.isCollection.not() && value.isTomlCollection.not() -> {
                         writer.startEntry()
-                    }
+                    }  // For non-null collections, defer to beginCollection().
                     else -> {
-                        // For non-null collections, defer to beginCollection().
                         currentValue = value
                     }
                 }
