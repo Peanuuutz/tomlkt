@@ -673,10 +673,13 @@ private class TomlFileClassEncoder(
         serializer: SerializationStrategy<T>,
         value: T
     ) {
-        if (value.isNullLike.not() || toml.config.explicitNulls.not()) {
-            currentValue = value
-        } else {
-            shouldInlineCurrentElement = true
+        when {
+            value.isNullLike.not() -> {
+                currentValue = value
+            }
+            toml.config.explicitNulls -> {
+                shouldInlineCurrentElement = true
+            }
         }
         super.encodeSerializableElement(descriptor, index, serializer, value)
     }
@@ -915,12 +918,13 @@ private class TomlFileArrayOfTableEncoder(
     ) {
         when {
             value.isNullLike.not() -> {
-                super.encodeSerializableElement(descriptor, index, serializer, value)
+                // Empty branch.
             }
             toml.config.explicitNulls -> {
                 throwNullInArrayOfTable(path!!)
             }
         }
+        super.encodeSerializableElement(descriptor, index, serializer, value)
     }
 
     override fun encodeDiscriminatorElement(discriminator: String, serialName: String, isEmptyStructure: Boolean) {
