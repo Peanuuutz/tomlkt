@@ -39,7 +39,7 @@ object TomlObjects {
 @Warmup(iterations = 4)
 @Measurement(iterations = 5)
 @Threads(4)
-@Fork(1)
+@Fork(2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
 class Benchmark {

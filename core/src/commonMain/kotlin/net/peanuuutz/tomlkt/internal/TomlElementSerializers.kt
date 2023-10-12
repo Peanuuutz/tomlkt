@@ -154,16 +154,11 @@ private fun TomlTable.sorted(): Map<String, TomlElement> {
         return map
     }
 
-    return when (size) {
-        0 -> emptyMap()
-        1 -> {
-            val (key, element) = iterator().next()
-            mapOf(pair = key to element)
-        }
-        else -> {
-            val entries = entries.toTypedArray()
-            entries.sortWith(TomlTableEntrySorter)
-            entries.toMap()
-        }
+    return if (size > 1) {
+        val entries = entries.toTypedArray()
+        entries.sortWith(TomlTableEntrySorter)
+        entries.toMap()
+    } else {
+        this
     }
 }
