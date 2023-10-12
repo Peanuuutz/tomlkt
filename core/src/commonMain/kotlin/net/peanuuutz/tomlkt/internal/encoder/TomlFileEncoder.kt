@@ -552,12 +552,10 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowClassEncoder(this)
                     }
                     shouldStructureCurrentElement -> {
-                        val innerPath = currentElementPath.toMutableList()
-                        innerPath.add("")
                         TomlFileClassEncoder(
                             delegate = this,
                             isStructured = true,
-                            path = innerPath,
+                            path = currentElementPath.toMutableList().apply { add("") },
                             structuredTableLikeIndex = calculateStructuredTableLikeIndex(descriptor)
                         )
                     }
@@ -566,12 +564,10 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowClassEncoder(this)
                     }
                     else -> {
-                        val innerPath = currentElementPath.toMutableList()
-                        innerPath.add("")
                         TomlFileClassEncoder(
                             delegate = this,
                             isStructured = false,
-                            path = innerPath,
+                            path = currentElementPath.toMutableList().apply { add("") },
                             structuredTableLikeIndex = Int.MAX_VALUE
                         )
                     }
@@ -619,12 +615,10 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowMapEncoder(this, collectionSize)
                     }
                     shouldStructureCurrentElement -> {
-                        val innerPath = currentElementPath.toMutableList()
-                        innerPath.add("")
                         TomlFileMapEncoder(
                             delegate = this,
                             isStructured = true,
-                            path = innerPath,
+                            path = currentElementPath.toMutableList().apply { add("") },
                             mapSize = collectionSize,
                             valueDescriptor = descriptor.getElementDescriptor(1)
                         )
@@ -634,12 +628,10 @@ private abstract class TomlFileTableLikeEncoder(
                         TomlFileFlowMapEncoder(this, 0)
                     }
                     else -> {
-                        val innerPath = currentElementPath.toMutableList()
-                        innerPath.add("")
                         TomlFileMapEncoder(
                             delegate = this,
                             isStructured = false,
-                            path = innerPath,
+                            path = currentElementPath.toMutableList().apply { add("") },
                             mapSize = collectionSize,
                             valueDescriptor = descriptor.getElementDescriptor(1)
                         )
