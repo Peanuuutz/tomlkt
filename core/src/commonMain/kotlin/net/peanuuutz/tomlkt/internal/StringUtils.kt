@@ -20,6 +20,10 @@ import net.peanuuutz.tomlkt.TomlInteger.Base
 import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
 import kotlin.math.pow
 
+internal typealias Path = List<String>
+
+internal typealias MutablePath = MutableList<String>
+
 internal const val Comment = '#'
 
 internal const val KeySeparator = '.'

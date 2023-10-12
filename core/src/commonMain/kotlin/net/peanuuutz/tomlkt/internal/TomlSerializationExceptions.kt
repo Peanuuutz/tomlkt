@@ -18,7 +18,6 @@ package net.peanuuutz.tomlkt.internal
 
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialKind
-import net.peanuuutz.tomlkt.internal.parser.Path
 import kotlin.reflect.KClass
 
 // -------- Encoding --------
@@ -67,9 +66,10 @@ internal fun throwPolymorphicCollection(): Nothing {
 
 internal class NullInArrayOfTableException(message: String) : TomlEncodingException(message)
 
-internal fun throwNullInArrayOfTable(path: String): Nothing {
+internal fun throwNullInArrayOfTable(path: Path): Nothing {
+    val pathString = path.joinToString(separator = ".")
     val message = "Null is not allowed in array of table. Please annotate the corresponding property " +
-            "(at $path) with @TomlBlockArray or @TomlInline"
+            "(at $pathString) with @TomlBlockArray or @TomlInline"
     throw NullInArrayOfTableException(message)
 }
 

@@ -42,9 +42,13 @@ import net.peanuuutz.tomlkt.asTomlLiteral
 import net.peanuuutz.tomlkt.asTomlNull
 import net.peanuuutz.tomlkt.asTomlTable
 
+// -------- TomlElementSerializer --------
+
+internal const val TomlElementSerialName: String = "net.peanuuutz.tomlkt.TomlElement"
+
 internal object TomlElementSerializer : KSerializer<TomlElement> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor(
-        serialName = "net.peanuuutz.tomlkt.TomlElement",
+        serialName = TomlElementSerialName,
         kind = SerialKind.CONTEXTUAL
     )
 
@@ -56,6 +60,8 @@ internal object TomlElementSerializer : KSerializer<TomlElement> {
         return decoder.asTomlDecoder().decodeTomlElement()
     }
 }
+
+// -------- TomlNullSerializer --------
 
 internal object TomlNullSerializer : KSerializer<TomlNull> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor(
@@ -72,6 +78,8 @@ internal object TomlNullSerializer : KSerializer<TomlNull> {
     }
 }
 
+// -------- TomlLiteralSerializer --------
+
 internal object TomlLiteralSerializer : KSerializer<TomlLiteral> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
         serialName = "net.peanuuutz.tomlkt.TomlLiteral",
@@ -86,6 +94,8 @@ internal object TomlLiteralSerializer : KSerializer<TomlLiteral> {
         return decoder.asTomlDecoder().decodeTomlElement().asTomlLiteral()
     }
 }
+
+// -------- TomlArraySerializer --------
 
 internal object TomlArraySerializer : KSerializer<TomlArray> {
     private val delegate: KSerializer<List<TomlElement>> = ListSerializer(
@@ -105,6 +115,8 @@ internal object TomlArraySerializer : KSerializer<TomlArray> {
     }
 }
 
+// -------- TomlTableSerializer --------
+
 internal object TomlTableSerializer : KSerializer<TomlTable> {
     private val delegate: KSerializer<Map<String, TomlElement>> = MapSerializer(
         keySerializer = String.serializer(),
@@ -116,10 +128,37 @@ internal object TomlTableSerializer : KSerializer<TomlTable> {
     }
 
     override fun serialize(encoder: Encoder, value: TomlTable) {
-        delegate.serialize(encoder.asTomlEncoder(), value)
+        // We sort the entries in a way that nested tables are at the end.
+        delegate.serialize(encoder.asTomlEncoder(), value.sorted())
     }
 
     override fun deserialize(decoder: Decoder): TomlTable {
         return decoder.asTomlDecoder().decodeTomlElement().asTomlTable()
+    }
+}
+
+private val TomlTableEntrySorter: Comparator<Map.Entry<String, TomlElement>> = compareBy { (_, element) ->
+    when (element) {
+        is TomlNull, is TomlLiteral -> 0
+        is TomlArray -> 0
+        is TomlTable -> 1
+    }
+}
+
+private fun TomlTable.sorted(): Map<String, TomlElement> {
+    fun <K, V> Array<out Map.Entry<K, V>>.toMap(): Map<K, V> {
+        val map = LinkedHashMap<K, V>(size)
+        for ((k, v) in this) {
+            map[k] = v
+        }
+        return map
+    }
+
+    return if (size > 1) {
+        val entries = entries.toTypedArray()
+        entries.sortWith(TomlTableEntrySorter)
+        entries.toMap()
+    } else {
+        this
     }
 }

@@ -27,4 +27,4 @@ private val UnsignedIntegerDescriptors: Set<SerialDescriptor> = setOf(
 )
 
 internal val SerialDescriptor.isUnsignedInteger: Boolean
-    get() = this.isInline && this in UnsignedIntegerDescriptors
+    get() = isInline && this in UnsignedIntegerDescriptors
