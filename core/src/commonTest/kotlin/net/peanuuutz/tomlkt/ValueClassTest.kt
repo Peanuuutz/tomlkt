@@ -56,7 +56,9 @@ class ValueClassTest {
     )
 
     val s21 = """
-        v = { i = 0 }
+        
+        [v]
+        i = 0
     """.trimIndent()
 
     @Test

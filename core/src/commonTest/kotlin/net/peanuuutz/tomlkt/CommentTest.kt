@@ -347,20 +347,23 @@ class CommentTest {
         i = 0
     )
 
-    // M1 must be inline, so the "single" comment is swallowed.
     val s101 = """
+        i = 0
+        
         # blocked
-        m1.i = 0
+        
+        [m1]
+        # single
         i = 0
     """.trimIndent()
 
     @Test
-    fun encodeBlocked() {
+    fun encodeSorted() {
         testEncode(M10.serializer(), m101, s101)
     }
 
     @Test
-    fun decodeBlocked() {
+    fun decodeSorted() {
         testDecode(M10.serializer(), s101, m101)
     }
 
@@ -413,21 +416,21 @@ class CommentTest {
         # what are
         # you doing
         i = -1
-        
-        # this is
-        # my life
-        
-        [[m1s]]
-        # single
-        i = 0
-        
+
         # oh
         # my
         # god
-        
+
         [m1]
         # single
         i = 1
+
+        # this is
+        # my life
+
+        [[m1s]]
+        # single
+        i = 0
     """.trimIndent()
 
     @Test

@@ -42,14 +42,14 @@ import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
  * int = 10086
  * ```
  *
- * @property text the comment text.
+ * @property text the comment text, could be multiline.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlComment(val text: String)
 
 /**
- * Forces the corresponding array-like or table-like property to be a one-liner.
+ * Forces the annotated array-like or table-like property to be a one-liner.
  *
  * ```kotlin
  * class Data(
@@ -80,12 +80,12 @@ public annotation class TomlInline
 
 /**
  * Modifies the encoding process of corresponding array-like property, either to
- * force array of tables to be encoded as block array, or to change how many
- * items will be encoded per line (this will override the default
+ * force array of table to be encoded as block array, or to change how many
+ * items should be encoded per line (this will override the default
  * [config][TomlConfigBuilder.itemsPerLineInBlockArray]).
  *
- * Note: If the corresponding property is marked [TomlInline], this annotation
- * will not take effect.
+ * Note that, if the annotated property is also marked with [TomlInline], this
+ * annotation will not take effect.
  *
  * ```kotlin
  * class NullablePairList<F, S>(
@@ -109,7 +109,7 @@ public annotation class TomlInline
 public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 
 /**
- * Marks the corresponding [String] property as multiline when encoded.
+ * Marks the annotated [String] property as multiline when encoded.
  *
  * ```kotlin
  * class MultilineStringData(
@@ -135,7 +135,7 @@ public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 public annotation class TomlMultilineString
 
 /**
- * Marks the corresponding [String] property as literal when encoded.
+ * Marks the annotated [String] property as literal when encoded.
  *
  * ```kotlin
  * class LiteralStringData(
@@ -156,7 +156,7 @@ public annotation class TomlMultilineString
 public annotation class TomlLiteralString
 
 /**
- * Sets the representation of the corresponding [Byte], [Short], [Int], [Long]
+ * Changes the representation of the annotated [Byte], [Short], [Int], [Long]
  * property.
  *
  * ```kotlin
@@ -179,7 +179,6 @@ public annotation class TomlLiteralString
  * @property group the size of a digit group separated by '_'. If set to 0, the
  * digits will not be grouped.
  */
-@Suppress("OutdatedDocumentation")
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInteger(
@@ -187,15 +186,30 @@ public annotation class TomlInteger(
     val group: Int = 0
 ) {
     /**
-     * The representation of a [TOML integer](https://toml.io/en/v1.0.0#integer).
+     * The base of the [integer](https://toml.io/en/v1.0.0#integer).
      */
     public enum class Base(
         public val value: Int,
         public val prefix: String
     ) {
+        /**
+         * Binary base.
+         */
         Bin(2, "0b"),
+
+        /**
+         * Octal base.
+         */
         Oct(8, "0o"),
+
+        /**
+         * Decimal base.
+         */
         Dec(10, ""),
+
+        /**
+         * Hexadecimal base.
+         */
         Hex(16, "0x"),
 
         @Deprecated(
@@ -225,7 +239,7 @@ public annotation class TomlInteger(
 }
 
 /**
- * Sets the key of the class discriminator of a specific type hierarchy.
+ * Changes the key of the class discriminator of a specific type hierarchy.
  *
  * ```kotlin
  * @Serializable
@@ -252,9 +266,9 @@ public annotation class TomlInteger(
  * string = "Hello"
  * ```
  *
- * Again, this annotation will affect the whole type **hierarchy**, so any
- * subclass will use the same discriminator. It is not possible to define
- * different discriminators in different parts of the hierarchy.
+ * Again, this annotation will affect the whole type hierarchy, so any subclass
+ * will use the same discriminator. It is not possible to define different
+ * discriminators in different parts of the hierarchy.
  *
  * To change the default discriminator, please refer to [Toml] factory function
  * and [TomlConfigBuilder.classDiscriminator].

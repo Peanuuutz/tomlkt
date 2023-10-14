@@ -44,11 +44,9 @@ import net.peanuuutz.tomlkt.asTomlTable
 
 // -------- TomlElementSerializer --------
 
-internal const val TomlElementSerialName: String = "net.peanuuutz.tomlkt.TomlElement"
-
 internal object TomlElementSerializer : KSerializer<TomlElement> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor(
-        serialName = TomlElementSerialName,
+        serialName = "net.peanuuutz.tomlkt.TomlElement",
         kind = SerialKind.CONTEXTUAL
     )
 
@@ -128,37 +126,10 @@ internal object TomlTableSerializer : KSerializer<TomlTable> {
     }
 
     override fun serialize(encoder: Encoder, value: TomlTable) {
-        // We sort the entries in a way that nested tables are at the end.
-        delegate.serialize(encoder.asTomlEncoder(), value.sorted())
+        delegate.serialize(encoder.asTomlEncoder(), value)
     }
 
     override fun deserialize(decoder: Decoder): TomlTable {
         return decoder.asTomlDecoder().decodeTomlElement().asTomlTable()
-    }
-}
-
-private val TomlTableEntrySorter: Comparator<Map.Entry<String, TomlElement>> = compareBy { (_, element) ->
-    when (element) {
-        is TomlNull, is TomlLiteral -> 0
-        is TomlArray -> 0
-        is TomlTable -> 1
-    }
-}
-
-private fun TomlTable.sorted(): Map<String, TomlElement> {
-    fun <K, V> Array<out Map.Entry<K, V>>.toMap(): Map<K, V> {
-        val map = LinkedHashMap<K, V>(size)
-        for ((k, v) in this) {
-            map[k] = v
-        }
-        return map
-    }
-
-    return if (size > 1) {
-        val entries = entries.toTypedArray()
-        entries.sortWith(TomlTableEntrySorter)
-        entries.toMap()
-    } else {
-        this
     }
 }

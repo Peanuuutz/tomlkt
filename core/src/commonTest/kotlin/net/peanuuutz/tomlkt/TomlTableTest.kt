@@ -127,9 +127,7 @@ class TomlTableTest {
         i = 0
         
         [t]
-        
-        [t.true]
-        
+        true = {  }
     """.trimIndent()
 
     @Test
@@ -177,14 +175,12 @@ class TomlTableTest {
         i = 0
         
         [t]
+        1 = {  }
         2 = 2
-        
-        [t.1]
-        
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeValueSorted() {
+    fun encodeEmptyMapLikeValue() {
         testEncode(M1.serializer(), m17, s17)
     }
 
@@ -195,9 +191,7 @@ class TomlTableTest {
 
     val s18 = """
         i = 0
-        
-        [t]
-        
+        t = {  }
     """.trimIndent()
 
     @Test
@@ -224,17 +218,19 @@ class TomlTableTest {
     )
 
     val s21 = """
-        t.1 = 1
         i = 0
+        
+        [t]
+        1 = 1
     """.trimIndent()
 
     @Test
-    fun encodeWithPrimitiveValueUnstructured() {
+    fun encodeWithPrimitiveValueSorted() {
         testEncode(M2.serializer(), m21, s21)
     }
 
     @Test
-    fun decodeWithPrimitiveValueUnstructured() {
+    fun decodeWithPrimitiveValueSorted() {
         testDecode(M2.serializer(), s21, m21)
     }
 
@@ -248,19 +244,21 @@ class TomlTableTest {
     )
 
     val s22 = """
-        t.1 = [
+        i = 0
+        
+        [t]
+        1 = [
             ""
         ]
-        i = 0
     """.trimIndent()
 
     @Test
-    fun encodeWithCollectionLikeValueUnstructured() {
+    fun encodeWithCollectionLikeValueSorted() {
         testEncode(M2.serializer(), m22, s22)
     }
 
     @Test
-    fun decodeWithCollectionLikeValueUnstructured() {
+    fun decodeWithCollectionLikeValueSorted() {
         testDecode(M2.serializer(), s22, m22)
     }
 
@@ -272,17 +270,19 @@ class TomlTableTest {
     )
 
     val s23 = """
-        t."\n" = [  ]
         i = 0
+        
+        [t]
+        "\n" = [  ]
     """.trimIndent()
 
     @Test
-    fun encodeWithEmptyCollectionLikeValueUnstructured() {
+    fun encodeWithEmptyCollectionLikeValueSorted() {
         testEncode(M2.serializer(), m23, s23)
     }
 
     @Test
-    fun decodeWithEmptyCollectionLikeValueUnstructured() {
+    fun decodeWithEmptyCollectionLikeValueSorted() {
         testDecode(M2.serializer(), s23, m23)
     }
 
@@ -296,17 +296,21 @@ class TomlTableTest {
     )
 
     val s24 = """
-        t.""."" = ""
         i = 0
+        
+        [t]
+        
+        [t.""]
+        "" = ""
     """.trimIndent()
 
     @Test
-    fun encodeWithMapLikeValueUnstructured() {
+    fun encodeWithMapLikeValueSorted() {
         testEncode(M2.serializer(), m24, s24)
     }
 
     @Test
-    fun decodeWithMapLikeValueUnstructured() {
+    fun decodeWithMapLikeValueSorted() {
         testDecode(M2.serializer(), s24, m24)
     }
 
@@ -318,17 +322,19 @@ class TomlTableTest {
     )
 
     val s25 = """
-        t."" = {  }
         i = 0
+        
+        [t]
+        "" = {  }
     """.trimIndent()
 
     @Test
-    fun encodeWithEmptyMapLikeValueUnstructured() {
+    fun encodeWithEmptyMapLikeValueSorted() {
         testEncode(M2.serializer(), m25, s25)
     }
 
     @Test
-    fun decodeWithEmptyMapLikeValueUnstructured() {
+    fun decodeWithEmptyMapLikeValueSorted() {
         testDecode(M2.serializer(), s25, m25)
     }
 
@@ -341,13 +347,17 @@ class TomlTableTest {
     )
 
     val s26 = """
-        t.2 = 2
-        t.1.1 = 1
         i = 0
+        
+        [t]
+        2 = 2
+        
+        [t.1]
+        1 = 1
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeValueSortedUnstructured() {
+    fun encodeComplicatedMapLikeValueSorted() {
         testEncode(M2.serializer(), m26, s26)
     }
 
@@ -360,13 +370,15 @@ class TomlTableTest {
     )
 
     val s27 = """
-        t.2 = 2
-        t.1 = {  }
         i = 0
+        
+        [t]
+        1 = {  }
+        2 = 2
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeValueSortedUnstructured() {
+    fun encodeEmptyComplicatedMapLikeValueSorted() {
         testEncode(M2.serializer(), m27, s27)
     }
 

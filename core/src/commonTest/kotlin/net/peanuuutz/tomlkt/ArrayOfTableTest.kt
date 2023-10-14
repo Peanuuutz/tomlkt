@@ -77,19 +77,19 @@ class ArrayOfTableTest {
     )
 
     val s21 = """
-        cs = [
-            { s = "😋" }
-        ]
         b = true
+        
+        [[cs]]
+        s = "😋"
     """.trimIndent()
 
     @Test
-    fun encodeCollectionLikeWithClassElementUnstructured() {
+    fun encodeCollectionLikeWithClassElementSorted() {
         testEncode(M2.serializer(), m21, s21)
     }
 
     @Test
-    fun decodeCollectionLikeWithClassElementUnstructured() {
+    fun decodeCollectionLikeWithClassElementSorted() {
         testDecode(M2.serializer(), s21, m21)
     }
 
@@ -114,12 +114,12 @@ class ArrayOfTableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyCollectionLikeWithClassElementUnstructured() {
+    fun encodeEmptyCollectionLikeWithClassElementUnsorted() {
         testEncode(M2.serializer(), m22, s23)
     }
 
     @Test
-    fun decodeEmptyCollectionLikeWithClassElementUnstructured() {
+    fun decodeEmptyCollectionLikeWithClassElementUnsorted() {
         testDecode(M2.serializer(), s23, m22)
     }
 
@@ -200,19 +200,19 @@ class ArrayOfTableTest {
     )
 
     val s41 = """
-        cs = [
-            {  }
-        ]
         b = true
+        
+        [[cs]]
+        
     """.trimIndent()
 
     @Test
-    fun encodeCollectionLikeWithEmptyClassElementUnstructured() {
+    fun encodeCollectionLikeWithEmptyClassElementSorted() {
         testEncode(M4.serializer(), m41, s41)
     }
 
     @Test
-    fun decodeCollectionLikeWithEmptyClassElementUnstructured() {
+    fun decodeCollectionLikeWithEmptyClassElementSorted() {
         testDecode(M4.serializer(), s41, m41)
     }
 
@@ -237,12 +237,12 @@ class ArrayOfTableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyCollectionLikeWithEmptyClassElementUnstructured() {
+    fun encodeEmptyCollectionLikeWithEmptyClassElementUnsorted() {
         testEncode(M4.serializer(), m42, s43)
     }
 
     @Test
-    fun decodeEmptyCollectionLikeWithEmptyClassElementUnstructured() {
+    fun decodeEmptyCollectionLikeWithEmptyClassElementUnsorted() {
         testDecode(M4.serializer(), s43, m42)
     }
 
@@ -338,19 +338,19 @@ class ArrayOfTableTest {
     )
 
     val s61 = """
-        ms = [
-            { 0 = "0" }
-        ]
         i = 0
+        
+        [[ms]]
+        0 = "0"
     """.trimIndent()
 
     @Test
-    fun encodeCollectionLikeWithMapLikeElementUnstructured() {
+    fun encodeCollectionLikeWithMapLikeElementSorted() {
         testEncode(M6.serializer(), m61, s61)
     }
 
     @Test
-    fun decodeCollectionLikeWithMapLikeElementUnstructured() {
+    fun decodeCollectionLikeWithMapLikeElementSorted() {
         testDecode(M6.serializer(), s61, m61)
     }
 
@@ -372,19 +372,19 @@ class ArrayOfTableTest {
     )
 
     val s63 = """
-        ms = [
-            {  }
-        ]
         i = 0
+        
+        [[ms]]
+        
     """.trimIndent()
 
     @Test
-    fun encodeCollectionLikeWithEmptyMapLikeElementUnstructured() {
+    fun encodeCollectionLikeWithEmptyMapLikeElementSorted() {
         testEncode(M6.serializer(), m62, s63)
     }
 
     @Test
-    fun decodeCollectionLikeWithEmptyMapLikeElementUnstructured() {
+    fun decodeCollectionLikeWithEmptyMapLikeElementSorted() {
         testDecode(M6.serializer(), s63, m62)
     }
 
@@ -409,12 +409,12 @@ class ArrayOfTableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyCollectionLikeWithMapLikeElementUnstructured() {
+    fun encodeEmptyCollectionLikeWithMapLikeElementUnsorted() {
         testEncode(M6.serializer(), m63, s65)
     }
 
     @Test
-    fun decodeEmptyCollectionLikeWithMapLikeElementUnstructured() {
+    fun decodeEmptyCollectionLikeWithMapLikeElementUnsorted() {
         testDecode(M6.serializer(), s65, m63)
     }
 }

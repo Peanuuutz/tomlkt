@@ -16,15 +16,10 @@
 
 package net.peanuuutz.tomlkt.internal
 
-import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.SerialKind.CONTEXTUAL
 import kotlinx.serialization.descriptors.SerialKind.ENUM
-import kotlinx.serialization.descriptors.StructureKind.CLASS
-import kotlinx.serialization.descriptors.StructureKind.LIST
-import kotlinx.serialization.descriptors.StructureKind.MAP
-import kotlinx.serialization.descriptors.StructureKind.OBJECT
 import kotlinx.serialization.descriptors.getContextualDescriptor
 import net.peanuuutz.tomlkt.TomlConfig
 
@@ -32,36 +27,6 @@ internal val SerialDescriptor.isPrimitiveLike: Boolean
     get() {
         val kind = kind
         return kind is PrimitiveKind || kind == ENUM
-    }
-
-internal val SerialDescriptor.isCollection: Boolean
-    get() {
-        val kind = kind
-        return kind == LIST || kind == MAP
-    }
-
-internal val SerialDescriptor.isTable: Boolean
-    get() {
-        val kind = kind
-        return kind == CLASS || kind is PolymorphicKind || kind == OBJECT || kind == MAP
-    }
-
-internal val SerialDescriptor.isArrayOfTable: Boolean
-    get() {
-        if (kind != LIST) {
-            return false
-        }
-        val elementDescriptor = getElementDescriptor(0)
-        return elementDescriptor.isTable && elementDescriptor.isInline.not()
-    }
-
-internal val SerialDescriptor.isTableLike: Boolean
-    get() = isTable || isArrayOfTable
-
-internal val SerialDescriptor.isTomlElement: Boolean
-    get() {
-        val actualSerialName = if (!isNullable) serialName else serialName.removeSuffix("?")
-        return actualSerialName == TomlElementSerialName
     }
 
 internal fun SerialDescriptor.findRealDescriptor(config: TomlConfig): SerialDescriptor {

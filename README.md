@@ -223,14 +223,13 @@ Better to keep super-table first!
 
 The working process of tomlkt:
 
-* Serialization: Model / TomlElement → (TomlFileEncoder) → File(String); Model →
-(TomlElementEncoder) → TomlElement.
-* Deserialization: File(String) → (TomlFileParser) → TomlElement → (TomlElementDecoder) → Model.
+* Serialization: Model → (TomlElementEncoder) → TomlElement → (TomlElementEmitter) → File.
+* Deserialization: File → (TomlElementParser) → TomlElement → (TomlElementDecoder) → Model.
 
 As you see, if you already have a TOML file, you can have no model class, but still gain access
 to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
 
-*Note: Due to no context of values in TomlTable(see TomlElement.kt), all of those are encoded as
-inline(meaning you can't get the same serialized structure between model class and TomlTable).*
+*Note: All the metadata coming from [annotations](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/Annotations.kt) is ignored in the parser, meaning that
+despite you could parse a file into an element, you cannot emit it back to file fully as is.*
 
 For other information, view [API docs](https://peanuuutz.github.io/tomlkt/).

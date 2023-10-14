@@ -82,56 +82,13 @@ public interface TomlWriter {
     public fun writeBooleanValue(boolean: Boolean)
 
     /**
-     * Writes [byte] as value.
+     * Writes [integer] as value.
      *
      * @param group the size of a digit group separated by '_'. If set to 0,
      * the digits will not be grouped.
      */
-    @Suppress("OutdatedDocumentation")
-    public fun writeByteValue(
-        byte: Byte,
-        base: Base = Dec,
-        group: Int = 0,
-        uppercase: Boolean = true
-    )
-
-    /**
-     * Writes [short] as value.
-     *
-     * @param group the size of a digit group separated by '_'. If set to 0,
-     * the digits will not be grouped.
-     */
-    @Suppress("OutdatedDocumentation")
-    public fun writeShortValue(
-        short: Short,
-        base: Base = Dec,
-        group: Int = 0,
-        uppercase: Boolean = true
-    )
-
-    /**
-     * Writes [int] as value.
-     *
-     * @param group the size of a digit group separated by '_'. If set to 0,
-     * the digits will not be grouped.
-     */
-    @Suppress("OutdatedDocumentation")
-    public fun writeIntValue(
-        int: Int,
-        base: Base = Dec,
-        group: Int = 0,
-        uppercase: Boolean = true
-    )
-
-    /**
-     * Writes [long] as value.
-     *
-     * @param group the size of a digit group separated by '_'. If set to 0,
-     * the digits will not be grouped.
-     */
-    @Suppress("OutdatedDocumentation")
-    public fun writeLongValue(
-        long: Long,
+    public fun writeIntegerValue(
+        integer: Long,
         base: Base = Dec,
         group: Int = 0,
         uppercase: Boolean = true
@@ -140,25 +97,10 @@ public interface TomlWriter {
     /**
      * Writes [float] as value.
      *
-     * Implementation should handle special values like [NaN][Float.NaN],
-     * [INFINITY][Float.POSITIVE_INFINITY] properly.
-     */
-    public fun writeFloatValue(float: Float)
-
-    /**
-     * Writes [double] as value.
-     *
      * Implementation should handle special values like [NaN][Double.NaN],
      * [INFINITY][Double.POSITIVE_INFINITY] properly.
      */
-    public fun writeDoubleValue(double: Double)
-
-    /**
-     * Writes [char] **as value**.
-     *
-     * Unlike [writeChar], implementation should escape and quote `char`.
-     */
-    public fun writeCharValue(char: Char)
+    public fun writeFloatValue(float: Double)
 
     /**
      * Writes [string] **as value**.
@@ -186,35 +128,35 @@ public interface TomlWriter {
     }
 
     @Deprecated(
-        message = "Use writeByteValue instead.",
-        replaceWith = ReplaceWith("writeByteValue")
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
     )
     public fun writeByte(byte: Byte) {
-        writeByteValue(byte)
+        writeIntegerValue(byte.toLong())
     }
 
     @Deprecated(
-        message = "Use writeShortValue instead.",
-        replaceWith = ReplaceWith("writeShortValue")
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
     )
     public fun writeShort(short: Short) {
-        writeShortValue(short)
+        writeIntegerValue(short.toLong())
     }
 
     @Deprecated(
-        message = "Use writeIntValue instead.",
-        replaceWith = ReplaceWith("writeIntValue")
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
     )
     public fun writeInt(int: Int) {
-        writeIntValue(int)
+        writeIntegerValue(int.toLong())
     }
 
     @Deprecated(
-        message = "Use writeLongValue instead.",
-        replaceWith = ReplaceWith("writeLongValue")
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
     )
     public fun writeLong(long: Long) {
-        writeLongValue(long)
+        writeIntegerValue(long)
     }
 
     @Deprecated(
@@ -222,15 +164,15 @@ public interface TomlWriter {
         replaceWith = ReplaceWith("writeFloatValue")
     )
     public fun writeFloat(float: Float) {
-        writeFloatValue(float)
+        writeFloatValue(float.toDouble())
     }
 
     @Deprecated(
-        message = "Use writeDoubleValue instead.",
-        replaceWith = ReplaceWith("writeDoubleValue")
+        message = "Use writeFloatValue instead.",
+        replaceWith = ReplaceWith("writeFloatValue")
     )
     public fun writeDouble(double: Double) {
-        writeDoubleValue(double)
+        writeFloatValue(double)
     }
 
     @Deprecated(
@@ -239,6 +181,82 @@ public interface TomlWriter {
     )
     public fun writeNull() {
         writeNullValue()
+    }
+
+    @Deprecated(
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
+    )
+    public fun writeByteValue(
+        byte: Byte,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    ) {
+        writeIntegerValue(byte.toLong(), base, group, uppercase)
+    }
+
+    @Deprecated(
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
+    )
+    public fun writeShortValue(
+        short: Short,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    ) {
+        writeIntegerValue(short.toLong(), base, group, uppercase)
+    }
+
+    @Deprecated(
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
+    )
+    public fun writeIntValue(
+        int: Int,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    ) {
+        writeIntegerValue(int.toLong(), base, group, uppercase)
+    }
+
+    @Deprecated(
+        message = "Use writeIntegerValue instead.",
+        replaceWith = ReplaceWith("writeIntegerValue")
+    )
+    public fun writeLongValue(
+        long: Long,
+        base: Base = Dec,
+        group: Int = 0,
+        uppercase: Boolean = true
+    ) {
+        writeIntegerValue(long, base, group, uppercase)
+    }
+
+    @Deprecated(
+        message = "Use writeFloatValue(Double) instead.",
+        replaceWith = ReplaceWith("writeFloatValue")
+    )
+    public fun writeFloatValue(float: Float) {
+        writeFloatValue(float.toDouble())
+    }
+
+    @Deprecated(
+        message = "Use writeFloatValue(Double) instead.",
+        replaceWith = ReplaceWith("writeFloatValue")
+    )
+    public fun writeDoubleValue(double: Double) {
+        writeFloatValue(double)
+    }
+
+    @Deprecated(
+        message = "Use writeStringValue instead.",
+        replaceWith = ReplaceWith("writeStringValue")
+    )
+    public fun writeCharValue(char: Char) {
+        writeStringValue(char.toString())
     }
 
     // -------- Structure --------

@@ -62,27 +62,6 @@ internal fun throwPolymorphicCollection(): Nothing {
     throw PolymorphicCollectionException()
 }
 
-// ---- NullInArrayOfTableException ----
-
-internal class NullInArrayOfTableException(message: String) : TomlEncodingException(message)
-
-internal fun throwNullInArrayOfTable(path: Path): Nothing {
-    val pathString = path.joinToString(separator = ".")
-    val message = "Null is not allowed in array of table. Please annotate the corresponding property " +
-            "(at $pathString) with @TomlBlockArray or @TomlInline"
-    throw NullInArrayOfTableException(message)
-}
-
-// ---- EmptyArrayOfTableInMapException ----
-
-private const val EmptyArrayOfTableInMap: String = "At most one empty array of table is allowed in a map"
-
-internal class EmptyArrayOfTableInMapException : TomlEncodingException(EmptyArrayOfTableInMap)
-
-internal fun throwEmptyArrayOfTableInMap(): Nothing {
-    throw EmptyArrayOfTableInMapException()
-}
-
 // -------- Decoding --------
 
 internal sealed class TomlDecodingException(message: String) : SerializationException(message)
