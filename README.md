@@ -105,7 +105,7 @@ fun main() {
 
 ## Features
 
-| TOML format             | Serialization      | Deserialization                   |
+| TOML Data Type          | Serialization      | Deserialization                   |
 |-------------------------|--------------------|-----------------------------------|
 | [Comment](#Comment)     | :heavy_check_mark: | :heavy_check_mark:                |
 | Key                     | :heavy_check_mark: | :heavy_check_mark:                |
@@ -219,7 +219,7 @@ the whole [tree](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/common
 
 Better to keep super-table first!
 
-### Extra features
+### Extra Features
 
 The working process of tomlkt:
 

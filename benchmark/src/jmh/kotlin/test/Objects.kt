@@ -6,7 +6,6 @@ import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -21,14 +20,7 @@ import org.intellij.lang.annotations.Language
 import java.time.ZoneOffset
 
 fun main() {
-    val string = """
-        x = 0.0
-        y = 0.0
-    """.trimIndent()
 
-    val value = TomlObjects.tomlkt.decodeFromString<Config>(SampleConfig)
-
-    println(value)
 }
 
 object PlacementSerializer : TomlContentPolymorphicSerializer<Placement>(Placement::class) {
