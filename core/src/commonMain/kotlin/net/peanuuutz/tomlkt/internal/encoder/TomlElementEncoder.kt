@@ -188,7 +188,8 @@ private class TomlElementInlineElementEncoder(
 
 private class TomlElementClassEncoder(
     delegate: AbstractTomlElementEncoder,
-    private val builder: MutableMap<String, TomlElement>
+    private val builder: MutableMap<String, TomlElement>,
+    private val annotations: MutableMap<String, List<Annotation>>
 ) : AbstractTomlElementCompositeEncoder(delegate) {
     private lateinit var currentKey: String
 
@@ -201,7 +202,9 @@ private class TomlElementClassEncoder(
     }
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
+        val currentKey = currentKey
         builder[currentKey] = element
+        annotations[currentKey] = descriptor.getElementAnnotations(index)
     }
 }
 
@@ -209,7 +212,8 @@ private class TomlElementClassEncoder(
 
 private class TomlElementMapEncoder(
     delegate: AbstractTomlElementEncoder,
-    private val builder: MutableMap<String, TomlElement>
+    private val builder: MutableMap<String, TomlElement>,
+    private val annotations: MutableMap<String, List<Annotation>>
 ) : AbstractTomlElementCompositeEncoder(delegate) {
     private var isKey: Boolean = true
 
@@ -224,10 +228,10 @@ private class TomlElementMapEncoder(
         if (isKey) { // This element is key.
             currentKey = value.toTomlKey()
         } else { // This element is value (of the entry).
-            if (value.isNullLike.not() || toml.config.explicitNulls) {
-                encodeSerializableValue(serializer, value)
-                builder[currentKey] = element
-            }
+            encodeSerializableValue(serializer, value)
+            val currentKey = currentKey
+            builder[currentKey] = element
+            annotations[currentKey] = descriptor.getElementAnnotations(index)
         }
         isKey = !isKey
     }
@@ -247,7 +251,8 @@ private class TomlElementMapEncoder(
 
 private class TomlElementArrayEncoder(
     delegate: AbstractTomlElementEncoder,
-    private val builder: MutableList<TomlElement>
+    private val builder: MutableList<TomlElement>,
+    private val annotations: MutableList<List<Annotation>>
 ) : AbstractTomlElementCompositeEncoder(delegate) {
     override fun encodeDiscriminatorElement(discriminator: String, serialName: String, isEmptyStructure: Boolean) {
         throwPolymorphicCollection()
@@ -257,6 +262,7 @@ private class TomlElementArrayEncoder(
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
         builder.add(element)
+        annotations.add(descriptor.getElementAnnotations(index))
     }
 }
 
@@ -268,8 +274,9 @@ private fun AbstractTomlElementEncoder.beginStructurePolymorphically(
     val compositeEncoder = when (val kind = descriptor.kind) {
         CLASS, is PolymorphicKind, OBJECT -> {
             val builder = mutableMapOf<String, TomlElement>()
-            element = TomlTable(builder)
-            TomlElementClassEncoder(this, builder)
+            val annotations = mutableMapOf<String, List<Annotation>>()
+            element = TomlTable(builder, annotations)
+            TomlElementClassEncoder(this, builder, annotations)
         }
         else -> throwUnsupportedSerialKind(kind)
     }
@@ -290,13 +297,15 @@ private fun AbstractTomlElementEncoder.beginCollectionPolymorphically(
     return when (val kind = descriptor.kind) {
         LIST -> {
             val builder = mutableListOf<TomlElement>()
-            element = TomlArray(builder)
-            TomlElementArrayEncoder(this, builder)
+            val annotations = mutableListOf<List<Annotation>>()
+            element = TomlArray(builder, annotations)
+            TomlElementArrayEncoder(this, builder, annotations)
         }
         MAP -> {
             val builder = mutableMapOf<String, TomlElement>()
-            element = TomlTable(builder)
-            TomlElementMapEncoder(this, builder)
+            val annotations = mutableMapOf<String, List<Annotation>>()
+            element = TomlTable(builder, annotations)
+            TomlElementMapEncoder(this, builder, annotations)
         }
         else -> throwUnsupportedSerialKind(kind)
     }

@@ -46,9 +46,9 @@ class PolymorphicTest {
     }
 
     val e11 = TomlTable(
-        value = mapOf(
+        map = mapOf(
             "b" to TomlTable(
-                value = mapOf(
+                map = mapOf(
                     "type" to "net.peanuuutz.tomlkt.PolymorphicTest.S1",
                     "i" to 0
                 )
@@ -184,9 +184,9 @@ class PolymorphicTest {
     }
 
     val e41 = TomlTable(
-        value = mapOf(
+        map = mapOf(
             "b" to TomlTable(
-                value = mapOf(
+                map = mapOf(
                     "type" to "net.peanuuutz.tomlkt.PolymorphicTest.S3",
                     "i" to -1
                 )
@@ -231,8 +231,10 @@ class PolymorphicTest {
         
         [b]
         type = "net.peanuuutz.tomlkt.PolymorphicTest.S4"
-        c.s = ""
         i = 1
+        
+        [b.c]
+        s = ""
     """.trimIndent()
 
     @Test

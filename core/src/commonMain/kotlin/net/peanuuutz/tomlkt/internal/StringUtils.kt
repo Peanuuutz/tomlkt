@@ -18,11 +18,10 @@ package net.peanuuutz.tomlkt.internal
 
 import net.peanuuutz.tomlkt.TomlInteger.Base
 import net.peanuuutz.tomlkt.TomlInteger.Base.Dec
+import net.peanuuutz.tomlkt.TomlLiteral
 import kotlin.math.pow
 
 internal typealias Path = List<String>
-
-internal typealias MutablePath = MutableList<String>
 
 internal const val Comment = '#'
 
@@ -191,14 +190,6 @@ internal fun Double.toStringModified(): String {
     }
 }
 
-internal fun Number.toStringModified(): String {
-    return when (this) {
-        is Float -> toStringModified()
-        is Double -> toStringModified()
-        else -> toString()
-    }
-}
-
 internal fun processIntegerString(
     raw: String,
     base: Base,
@@ -232,29 +223,38 @@ internal fun processIntegerString(
     return result
 }
 
-internal fun String.toNumber(
-    positive: Boolean,
+internal fun createNumberTomlLiteral(
+    content: String,
+    isPositive: Boolean,
     radix: Int,
     isDouble: Boolean,
     isExponent: Boolean
-): Number {
-    return if (isDouble) {
-        var factor = if (positive) 1.0 else -1.0
-        if (isExponent) {
-            val strings = split('e', ignoreCase = true)
+): TomlLiteral {
+    if (isDouble) {
+        var factor = if (isPositive) 1.0 else -1.0
+        val double = if (isExponent) {
+            val strings = content.split('e', ignoreCase = true)
             factor *= 10.0.pow(strings[1].toInt())
             strings[0].toDouble() * factor
         } else {
-            toDouble() * factor
+            content.toDouble() * factor
         }
+        return TomlLiteral(double)
     } else {
-        var factor = if (positive) 1L else -1L
-        if (isExponent) {
-            val strings = split('e', ignoreCase = true)
+        var factor = if (isPositive) 1L else -1L
+        val long = if (isExponent) {
+            val strings = content.split('e', ignoreCase = true)
             factor *= 10.0.pow(strings[1].toInt()).toLong()
             strings[0].toLong(radix) * factor
         } else {
-            toLong(radix) * factor
+            val long = content.toLongOrNull(radix)
+            if (long == null) {
+                // This is a ULong.
+                require(isPositive) { "ULong cannot be negative" }
+                return TomlLiteral(content.toULong(radix))
+            }
+            long * factor
         }
+        return TomlLiteral(long)
     }
 }

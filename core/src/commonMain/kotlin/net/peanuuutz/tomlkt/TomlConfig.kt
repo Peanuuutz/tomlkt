@@ -28,7 +28,7 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
     // -------- Common --------
 
     /**
-     * Specifies the [SerializersModule] to be used in the [Toml] instance.
+     * Specifies the [SerializersModule] used in the serialization.
      *
      * [EmptySerializersModule] by default.
      */
@@ -105,9 +105,9 @@ public class TomlConfigBuilder @PublishedApi internal constructor(from: TomlConf
 }
 
 /**
- * Indicates indentation representation in string output.
+ * Defines the representation of an indentation.
  *
- * Ideally, programmer is supposed to use only spaces or tabs.
+ * Ideally, programmer should use only spaces or tabs.
  *
  * @property representation the string form of this `TomlIndentation`.
  */
@@ -125,17 +125,17 @@ public value class TomlIndentation(public val representation: String) {
 
     public companion object {
         /**
-         * Indentation with 4 spaces.
+         * An indentation with 4 spaces.
          */
         public val Space4: TomlIndentation = TomlIndentation("    ")
 
         /**
-         * Indentation with 2 spaces.
+         * An indentation with 2 spaces.
          */
         public val Space2: TomlIndentation = TomlIndentation("  ")
 
         /**
-         * Indentation with a tab (`\t`).
+         * An indentation with a tab (`\t`).
          */
         public val Tab: TomlIndentation = TomlIndentation("\t")
     }

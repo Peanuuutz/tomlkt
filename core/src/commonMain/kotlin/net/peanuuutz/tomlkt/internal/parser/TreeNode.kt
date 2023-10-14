@@ -56,7 +56,7 @@ internal class ArrayNode(key: String) : TreeNode(key) {
     }
 }
 
-internal class ValueNode(key: String, val value: TomlElement) : TreeNode(key)
+internal class ValueNode(key: String, val element: TomlElement) : TreeNode(key)
 
 // -------- Extensions --------
 

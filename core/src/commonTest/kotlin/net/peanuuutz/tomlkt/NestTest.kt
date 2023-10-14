@@ -76,9 +76,7 @@ class NestTest {
 
     val s13 = """
         s = "1"
-        
-        [clm]
-        
+        clm = {  }
     """.trimIndent()
 
     @Test
@@ -109,9 +107,11 @@ class NestTest {
     )
 
     val s21 = """
-        clm.1 = [
-            { s = "1" }
-        ]
+        s = "1"
+        
+        [clm]
+        
+        [[clm.1]]
         s = "1"
     """.trimIndent()
 
@@ -133,8 +133,10 @@ class NestTest {
     )
 
     val s22 = """
-        clm.1 = [  ]
         s = "1"
+        
+        [clm]
+        1 = [  ]
     """.trimIndent()
 
     @Test
@@ -245,9 +247,7 @@ class NestTest {
 
     val s33 = """
         s = "A"
-        
-        [clm]
-        
+        clm = {  }
     """.trimIndent()
 
     @Test
@@ -276,10 +276,12 @@ class NestTest {
     )
 
     val s41 = """
-        clm.1 = [
-            {  }
-        ]
         s = ""
+        
+        [clm]
+        
+        [[clm.1]]
+        
     """.trimIndent()
 
     @Test
@@ -300,8 +302,10 @@ class NestTest {
     )
 
     val s42 = """
-        clm.1 = [  ]
         s = ""
+        
+        [clm]
+        1 = [  ]
     """.trimIndent()
 
     @Test
@@ -332,5 +336,67 @@ class NestTest {
     @Test
     fun decodeDeeplyNested12() {
         testDecode(M4.serializer(), s43, m43)
+    }
+
+    @Serializable
+    data class M5(
+        val cs: List<C3>
+    )
+
+    @Serializable
+    data class C3(
+        val c: C3?
+    )
+
+    val m51 = M5(
+        cs = listOf(
+            C3(
+                c = C3(
+                    c = null
+                )
+            )
+        )
+    )
+
+    val s51 = """
+        
+        [[cs]]
+        
+        [cs.c]
+        c = null
+    """.trimIndent()
+
+    @Test
+    fun encodeDeeplyNested13() {
+        testEncode(M5.serializer(), m51, s51)
+    }
+
+    @Test
+    fun decodeDeeplyNested13() {
+        testDecode(M5.serializer(), s51, m51)
+    }
+
+    val m52 = M5(
+        cs = listOf(
+            C3(
+                c = null
+            )
+        )
+    )
+
+    val s52 = """
+        
+        [[cs]]
+        c = null
+    """.trimIndent()
+
+    @Test
+    fun encodeDeeplyNested14() {
+        testEncode(M5.serializer(), m52, s52)
+    }
+
+    @Test
+    fun decodeDeeplyNested14() {
+        testDecode(M5.serializer(), s52, m52)
     }
 }

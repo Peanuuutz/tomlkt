@@ -119,7 +119,6 @@ public inline fun <reified T> Toml.encodeToNativeWriter(
  *
  * @see TomlNativeReader
  */
-@Suppress("OutdatedDocumentation")
 public fun <T> Toml.decodeFromNativeReader(
     deserializer: DeserializationStrategy<T>,
     nativeReader: Reader
@@ -145,7 +144,6 @@ public fun <T> Toml.decodeFromNativeReader(
  *
  * @see TomlNativeReader
  */
-@Suppress("OutdatedDocumentation")
 public inline fun <reified T> Toml.decodeFromNativeReader(nativeReader: Reader): T {
     return decodeFromNativeReader(serializersModule.serializer(), nativeReader)
 }
@@ -170,7 +168,6 @@ public inline fun <reified T> Toml.decodeFromNativeReader(nativeReader: Reader):
  *
  * @see get
  */
-@Suppress("OutdatedDocumentation")
 public fun <T> Toml.decodeFromNativeReader(
     deserializer: DeserializationStrategy<T>,
     nativeReader: Reader,
@@ -202,7 +199,6 @@ public fun <T> Toml.decodeFromNativeReader(
  *
  * @see get
  */
-@Suppress("OutdatedDocumentation")
 public inline fun <reified T> Toml.decodeFromNativeReader(
     nativeReader: Reader,
     vararg keys: Any?

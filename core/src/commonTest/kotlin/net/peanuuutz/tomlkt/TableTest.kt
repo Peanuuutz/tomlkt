@@ -164,17 +164,19 @@ class TableTest {
     )
 
     val s21 = """
-        c.s = "huh"
         b = false
+        
+        [c]
+        s = "huh"
     """.trimIndent()
 
     @Test
-    fun encodeClassUnstructured() {
+    fun encodeClassSorted() {
         testEncode(M2.serializer(), m21, s21)
     }
 
     @Test
-    fun decodeClassUnstructured() {
+    fun decodeClassSorted() {
         testDecode(M2.serializer(), s21, m21)
     }
 
@@ -214,9 +216,7 @@ class TableTest {
 
     val s31 = """
         b = true
-        
-        [c]
-        
+        c = {  }
     """.trimIndent()
 
     @Test
@@ -276,9 +276,7 @@ class TableTest {
 
     val s42 = """
         s = "1"
-        
-        [sm]
-        
+        sm = {  }
     """.trimIndent()
 
     @Test
@@ -305,17 +303,19 @@ class TableTest {
     )
 
     val s51 = """
-        sm.a = ""
         s = ""
+        
+        [sm]
+        a = ""
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithPrimitiveValueUnstructured() {
+    fun encodeMapLikeWithPrimitiveValueSorted() {
         testEncode(M5.serializer(), m51, s51)
     }
 
     @Test
-    fun decodeMapLikeWithPrimitiveValueUnstructured() {
+    fun decodeMapLikeWithPrimitiveValueSorted() {
         testDecode(M5.serializer(), s51, m51)
     }
 
@@ -340,12 +340,12 @@ class TableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeWithPrimitiveValueUnstructured() {
+    fun encodeEmptyMapLikeWithPrimitiveValueUnsorted() {
         testEncode(M5.serializer(), m52, s53)
     }
 
     @Test
-    fun decodeEmptyMapLikeWithPrimitiveValueUnstructured() {
+    fun decodeEmptyMapLikeWithPrimitiveValueUnsorted() {
         testDecode(M5.serializer(), s53, m52)
     }
 
@@ -402,9 +402,7 @@ class TableTest {
 
     val s63 = """
         s = ""
-        
-        [cm]
-        
+        cm = {  }
     """.trimIndent()
 
     @Test
@@ -445,17 +443,21 @@ class TableTest {
     )
 
     val s71 = """
-        cm.1.s = "1"
         s = ""
+        
+        [cm]
+        
+        [cm.1]
+        s = "1"
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithClassValueUnstructured() {
+    fun encodeMapLikeWithClassValueSorted() {
         testEncode(M7.serializer(), m71, s71)
     }
 
     @Test
-    fun decodeMapLikeWithClassValueUnstructured() {
+    fun decodeMapLikeWithClassValueSorted() {
         testDecode(M7.serializer(), s71, m71)
     }
 
@@ -490,12 +492,12 @@ class TableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeWithClassValueUnstructured() {
+    fun encodeEmptyMapLikeWithClassValueUnsorted() {
         testEncode(M7.serializer(), m72, s74)
     }
 
     @Test
-    fun decodeEmptyMapLikeWithClassValueUnstructured() {
+    fun decodeEmptyMapLikeWithClassValueUnsorted() {
         testDecode(M7.serializer(), s74, m72)
     }
 
@@ -516,9 +518,7 @@ class TableTest {
         s = ""
         
         [cm]
-        
-        [cm.1]
-        
+        1 = {  }
     """.trimIndent()
 
     @Test
@@ -550,9 +550,7 @@ class TableTest {
 
     val s83 = """
         s = ""
-        
-        [cm]
-        
+        cm = {  }
     """.trimIndent()
 
     @Test
@@ -579,17 +577,19 @@ class TableTest {
     )
 
     val s91 = """
-        cm.1 = {  }
         s = ""
+        
+        [cm]
+        1 = {  }
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithEmptyClassValueUnstructured() {
+    fun encodeMapLikeWithEmptyClassValueSorted() {
         testEncode(M9.serializer(), m91, s91)
     }
 
     @Test
-    fun decodeMapLikeWithEmptyClassValueUnstructured() {
+    fun decodeMapLikeWithEmptyClassValueSorted() {
         testDecode(M9.serializer(), s91, m91)
     }
 
@@ -614,12 +614,12 @@ class TableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeWithEmptyClassValueUnstructured() {
+    fun encodeEmptyMapLikeWithEmptyClassValueUnsorted() {
         testEncode(M9.serializer(), m92, s93)
     }
 
     @Test
-    fun decodeEmptyMapLikeWithEmptyClassValueUnstructured() {
+    fun decodeEmptyMapLikeWithEmptyClassValueUnsorted() {
         testDecode(M9.serializer(), s93, m92)
     }
 
@@ -700,9 +700,7 @@ class TableTest {
 
     val s104 = """
         s = ""
-        
-        [lm]
-        
+        lm = {  }
     """.trimIndent()
 
     @Test
@@ -731,19 +729,21 @@ class TableTest {
     )
 
     val s111 = """
-        lm.0 = [
+        s = ""
+        
+        [lm]
+        0 = [
             "1"
         ]
-        s = ""
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithCollectionLikeValueUnstructured() {
+    fun encodeMapLikeWithCollectionLikeValueSorted() {
         testEncode(M11.serializer(), m111, s111)
     }
 
     @Test
-    fun decodeMapLikeWithCollectionLikeValueUnstructured() {
+    fun decodeMapLikeWithCollectionLikeValueSorted() {
         testDecode(M11.serializer(), s111, m111)
     }
 
@@ -775,17 +775,19 @@ class TableTest {
     )
 
     val s114 = """
-        lm.1 = [  ]
         s = "1"
+        
+        [lm]
+        1 = [  ]
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithEmptyCollectionLikeValueUnstructured() {
+    fun encodeMapLikeWithEmptyCollectionLikeValueSorted() {
         testEncode(M11.serializer(), m112, s114)
     }
 
     @Test
-    fun decodeMapLikeWithEmptyCollectionLikeValueUnstructured() {
+    fun decodeMapLikeWithEmptyCollectionLikeValueSorted() {
         testDecode(M11.serializer(), s114, m112)
     }
 
@@ -810,12 +812,12 @@ class TableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeWithCollectionLikeValueUnstructured() {
+    fun encodeEmptyMapLikeWithCollectionLikeValueUnsorted() {
         testEncode(M11.serializer(), m113, s116)
     }
 
     @Test
-    fun decodeEmptyMapLikeWithCollectionLikeValueUnstructured() {
+    fun decodeEmptyMapLikeWithCollectionLikeValueUnsorted() {
         testDecode(M11.serializer(), s116, m113)
     }
 
@@ -876,9 +878,7 @@ class TableTest {
         i = 0
         
         [mm]
-        
-        [mm.1]
-        
+        1 = {  }
     """.trimIndent()
 
     @Test
@@ -910,9 +910,7 @@ class TableTest {
 
     val s125 = """
         i = 0
-        
-        [mm]
-        
+        mm = {  }
     """.trimIndent()
 
     @Test
@@ -941,17 +939,21 @@ class TableTest {
     )
 
     val s131 = """
-        mm.1."" = ""
         i = 0
+        
+        [mm]
+        
+        [mm.1]
+        "" = ""
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithMapLikeValueUnstructured() {
+    fun encodeMapLikeWithMapLikeValueSorted() {
         testEncode(M13.serializer(), m131, s131)
     }
 
     @Test
-    fun decodeMapLikeWithMapLikeValueUnstructured() {
+    fun decodeMapLikeWithMapLikeValueSorted() {
         testDecode(M13.serializer(), s131, m131)
     }
 
@@ -983,17 +985,19 @@ class TableTest {
     )
 
     val s134 = """
-        mm.1 = {  }
         i = 0
+        
+        [mm]
+        1 = {  }
     """.trimIndent()
 
     @Test
-    fun encodeMapLikeWithEmptyMapLikeValueUnstructured() {
+    fun encodeMapLikeWithEmptyMapLikeValueSorted() {
         testEncode(M13.serializer(), m132, s134)
     }
 
     @Test
-    fun decodeMapLikeWithEmptyMapLikeValueUnstructured() {
+    fun decodeMapLikeWithEmptyMapLikeValueSorted() {
         testDecode(M13.serializer(), s134, m132)
     }
 
@@ -1018,12 +1022,12 @@ class TableTest {
     """.trimIndent()
 
     @Test
-    fun encodeEmptyMapLikeWithMapLikeValueUnstructured() {
+    fun encodeEmptyMapLikeWithMapLikeValueUnsorted() {
         testEncode(M13.serializer(), m133, s136)
     }
 
     @Test
-    fun decodeEmptyMapLikeWithMapLikeValueUnstructured() {
+    fun decodeEmptyMapLikeWithMapLikeValueUnsorted() {
         testDecode(M13.serializer(), s136, m133)
     }
 
@@ -1043,9 +1047,7 @@ class TableTest {
 
     val s141 = """
         c1 = { s = "inline" }
-        
-        [c2]
-        
+        c2 = {  }
     """.trimIndent()
 
     @Test
@@ -1103,9 +1105,7 @@ class TableTest {
         cm1 = { a = { s = "no" } }
         
         [cm2]
-        
-        [cm2.b]
-        
+        b = {  }
     """.trimIndent()
 
     @Test
@@ -1199,9 +1199,7 @@ class TableTest {
 
     val s191 = """
         mm1 = { 1 = { 1 = "1" } }
-        
-        [mm2]
-        
+        mm2 = {  }
     """.trimIndent()
 
     @Test
@@ -1218,9 +1216,7 @@ class TableTest {
 
     val s192 = """
         mm1 = { 2 = {  } }
-        
-        [mm2]
-        
+        mm2 = {  }
     """.trimIndent()
 
     @Test

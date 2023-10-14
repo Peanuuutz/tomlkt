@@ -20,9 +20,11 @@ import net.peanuuutz.tomlkt.NativeLocalDate
 import net.peanuuutz.tomlkt.NativeLocalDateTime
 import net.peanuuutz.tomlkt.NativeLocalTime
 import net.peanuuutz.tomlkt.NativeOffsetDateTime
+import net.peanuuutz.tomlkt.Toml
 import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlLiteral.Type
 import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlReader
 import net.peanuuutz.tomlkt.TomlTable
@@ -44,14 +46,15 @@ import net.peanuuutz.tomlkt.internal.Path
 import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartInlineTable
 import net.peanuuutz.tomlkt.internal.StartTableHead
+import net.peanuuutz.tomlkt.internal.createNumberTomlLiteral
 import net.peanuuutz.tomlkt.internal.throwIncomplete
 import net.peanuuutz.tomlkt.internal.throwUnexpectedToken
-import net.peanuuutz.tomlkt.internal.toNumber
 import net.peanuuutz.tomlkt.internal.unescape
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-internal class TomlFileParser(
+internal class TomlElementParser(
+    private val toml: Toml,
     private val reader: TomlReader,
     private val buffer: CharArray
 ) {
@@ -453,18 +456,12 @@ internal class TomlFileParser(
                 val content = if (sign == null) "inf" else sign.toString() + "inf"
                 expectNext("nf")
                 proceed()
-                TomlLiteral(
-                    content = content,
-                    isString = false
-                )
+                TomlLiteral(content, Type.Float)
             }
             'a' -> {
                 expectNext('n')
                 proceed()
-                TomlLiteral(
-                    content = "nan",
-                    isString = false
-                )
+                TomlLiteral("nan", Type.Float)
             }
             else -> {
                 throwUnexpectedToken(current)
@@ -482,10 +479,7 @@ internal class TomlFileParser(
             proceed()
             if (isEof) {
                 val content = if (sign == null) "0" else sign.toString() + "0"
-                return TomlLiteral(
-                    content = content,
-                    isString = false
-                )
+                return TomlLiteral(content, Type.Integer)
             }
             when (getChar()) {
                 'x' -> {
@@ -639,13 +633,13 @@ internal class TomlFileParser(
             }
         }
         val result = builder.toString()
-        val number = result.toNumber(
-            positive = sign != '-',
+        return createNumberTomlLiteral(
+            content = result,
+            isPositive = sign != '-',
             radix = radix,
             isDouble = isDouble,
             isExponent = isExponent
         )
-        return TomlLiteral(number)
     }
 
     /**
@@ -720,29 +714,30 @@ internal class TomlFileParser(
             }
         }
         val result = builder.toString()
-        when {
+        val type = when {
             hasDate && hasTime -> {
                 if (!hasOffset) {
                     NativeLocalDateTime(result)
+                    Type.LocalDateTime
                 } else {
                     NativeOffsetDateTime(result)
+                    Type.OffsetDateTime
                 }
             }
             hasDate -> {
                 NativeLocalDate(result)
+                Type.LocalDate
             }
             hasTime -> {
                 NativeLocalTime(result)
+                Type.LocalTime
             }
             else -> {
                 error("Malformed date time: $result")
             }
         }
         // Keeps the original text.
-        return TomlLiteral(
-            content = result,
-            isString = false
-        )
+        return TomlLiteral(result, type)
     }
 
     /**

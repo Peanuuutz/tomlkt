@@ -20,9 +20,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlin.contracts.contract
 
 /**
- * A special [Decoder] which is used internally by decoding process of [Toml],
- * providing an extra [decodeTomlElement] to decode [TomlElement] from current
- * position.
+ * A special [Decoder] used internally by the decoding process, providing an
+ * extra [decodeTomlElement] to decode [TomlElement] from current position.
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlDecoder : Decoder {
@@ -38,10 +37,12 @@ public interface TomlDecoder : Decoder {
 }
 
 /**
- * More convenient approach to cast [this] Decoder to [TomlDecoder].
+ * More convenient means to cast this [Decoder] to [TomlDecoder].
  */
 public fun Decoder.asTomlDecoder(): TomlDecoder {
     contract { returns() implies (this@asTomlDecoder is TomlDecoder) }
 
-    return this as? TomlDecoder ?: error("Expect TomlDecoder, but found ${this::class.simpleName}")
+    return requireNotNull(this as? TomlDecoder) {
+        "Expect TomlDecoder, but found ${this::class.simpleName}"
+    }
 }

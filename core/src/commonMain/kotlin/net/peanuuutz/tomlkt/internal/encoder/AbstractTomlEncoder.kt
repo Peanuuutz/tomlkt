@@ -23,11 +23,9 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.peanuuutz.tomlkt.Toml
-import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlEncoder
 import net.peanuuutz.tomlkt.TomlNull
-import net.peanuuutz.tomlkt.TomlTable
 import net.peanuuutz.tomlkt.internal.encodePolymorphically
 import net.peanuuutz.tomlkt.internal.findRealDescriptor
 import net.peanuuutz.tomlkt.internal.isPrimitiveLike
@@ -50,12 +48,6 @@ internal abstract class AbstractTomlEncoder(
         encodeSerializableValuePolymorphically(serializer, value)
     }
 }
-
-internal val Any?.isNullLike: Boolean
-    get() = this == null || this == TomlNull
-
-internal val Any?.isTomlCollection: Boolean
-    get() = this is TomlArray || this is TomlTable
 
 internal fun <T> AbstractTomlEncoder.encodeSerializableValuePolymorphically(
     serializer: SerializationStrategy<T>,
@@ -220,10 +212,8 @@ internal interface TomlCompositeEncoder : TomlEncoder, CompositeEncoder {
         serializer: SerializationStrategy<T>,
         value: T
     ) {
-        if (value.isNullLike.not() || toml.config.explicitNulls) {
-            encodeElement(descriptor, index) {
-                encodeSerializableValue(serializer, value)
-            }
+        encodeElement(descriptor, index) {
+            encodeSerializableValue(serializer, value)
         }
     }
 }

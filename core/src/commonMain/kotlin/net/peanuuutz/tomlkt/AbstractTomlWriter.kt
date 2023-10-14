@@ -67,18 +67,13 @@ public abstract class AbstractTomlWriter : TomlWriter {
         writeString(boolean.toString())
     }
 
-    final override fun writeByteValue(
-        byte: Byte,
-        base: Base,
-        group: Int,
-        uppercase: Boolean
-    ) {
+    final override fun writeIntegerValue(integer: Long, base: Base, group: Int, uppercase: Boolean) {
         require(group >= 0) { "Group size cannot be negative" }
-        require(byte >= 0.toByte() || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $byte"
+        require(integer >= 0L || base == Dec) {
+            "Negative integer cannot be represented by other bases, but found $integer"
         }
         val string = processIntegerString(
-            raw = byte.toString(base.value),
+            raw = integer.toString(base.value),
             base = base,
             group = group,
             uppercase = uppercase
@@ -86,73 +81,16 @@ public abstract class AbstractTomlWriter : TomlWriter {
         writeString(string)
     }
 
-    final override fun writeShortValue(
-        short: Short,
-        base: Base,
-        group: Int,
-        uppercase: Boolean
-    ) {
-        require(group >= 0) { "Group size cannot be negative" }
-        require(short >= 0.toShort() || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $short"
-        }
-        val string = processIntegerString(
-            raw = short.toString(base.value),
-            base = base,
-            group = group,
-            uppercase = uppercase
-        )
-        writeString(string)
-    }
-
-    final override fun writeIntValue(
-        int: Int,
-        base: Base,
-        group: Int,
-        uppercase: Boolean
-    ) {
-        require(group >= 0) { "Group size cannot be negative" }
-        require(int >= 0 || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $int"
-        }
-        val string = processIntegerString(
-            raw = int.toString(base.value),
-            base = base,
-            group = group,
-            uppercase = uppercase
-        )
-        writeString(string)
-    }
-
-    final override fun writeLongValue(
-        long: Long,
-        base: Base,
-        group: Int,
-        uppercase: Boolean
-    ) {
-        require(group >= 0) { "Group size cannot be negative" }
-        require(long >= 0L || base == Dec) {
-            "Negative integer cannot be represented by other bases, but found $long"
-        }
-        val string = processIntegerString(
-            raw = long.toString(base.value),
-            base = base,
-            group = group,
-            uppercase = uppercase
-        )
-        writeString(string)
-    }
-
-    final override fun writeFloatValue(float: Float) {
+    @Deprecated(
+        message = "Use writeFloatValue(Double) instead.",
+        replaceWith = ReplaceWith("writeFloatValue")
+    )
+    override fun writeFloatValue(float: Float) {
         writeString(float.toStringModified())
     }
 
-    final override fun writeDoubleValue(double: Double) {
-        writeString(double.toStringModified())
-    }
-
-    final override fun writeCharValue(char: Char) {
-        writeString(char.escape().doubleQuoted)
+    final override fun writeFloatValue(float: Double) {
+        writeString(float.toStringModified())
     }
 
     final override fun writeStringValue(string: String, isMultiline: Boolean, isLiteral: Boolean) {

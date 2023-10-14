@@ -20,9 +20,8 @@ import kotlinx.serialization.encoding.Encoder
 import kotlin.contracts.contract
 
 /**
- * A special [Encoder] which is used internally by encoding process of [Toml],
- * providing an extra [encodeTomlElement] to encode [TomlElement] to current
- * position.
+ * A special [Encoder] used internally by the encoding process, providing an
+ * extra [encodeTomlElement] to encode [TomlElement] to current position.
  */
 @SubclassOptInRequired(TomlSpecific::class)
 public interface TomlEncoder : Encoder {
@@ -38,10 +37,12 @@ public interface TomlEncoder : Encoder {
 }
 
 /**
- * More convenient approach to cast [this] Encoder to [TomlEncoder].
+ * More convenient means to cast this [Encoder] to [TomlEncoder].
  */
 public fun Encoder.asTomlEncoder(): TomlEncoder {
     contract { returns() implies (this@asTomlEncoder is TomlEncoder) }
 
-    return this as? TomlEncoder ?: error("Expect TomlEncoder, but found ${this::class.simpleName}")
+    return requireNotNull(this as? TomlEncoder) {
+        "Expect TomlEncoder, but found ${this::class.simpleName}"
+    }
 }

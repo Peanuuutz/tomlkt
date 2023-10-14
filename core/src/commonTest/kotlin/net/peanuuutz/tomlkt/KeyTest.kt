@@ -243,8 +243,10 @@ class KeyTest {
     )
 
     val s101 = """
-        c.k = "inner"
         i = 0
+        
+        [c]
+        k = "inner"
     """.trimIndent()
 
     @Test
@@ -277,8 +279,10 @@ class KeyTest {
     )
 
     val s111 = """
-        c." " = "?"
         i = -1
+        
+        [c]
+        " " = "?"
     """.trimIndent()
 
     @Test

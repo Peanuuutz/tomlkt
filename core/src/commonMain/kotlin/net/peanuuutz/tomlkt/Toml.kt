@@ -27,9 +27,9 @@ import net.peanuuutz.tomlkt.internal.NonPrimitiveKeyException
 import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
 import net.peanuuutz.tomlkt.internal.decoder.TomlElementDecoder
+import net.peanuuutz.tomlkt.internal.emitter.TomlElementEmitter
 import net.peanuuutz.tomlkt.internal.encoder.TomlElementEncoder
-import net.peanuuutz.tomlkt.internal.encoder.TomlFileEncoder
-import net.peanuuutz.tomlkt.internal.parser.TomlFileParser
+import net.peanuuutz.tomlkt.internal.parser.TomlElementParser
 
 /**
  * The main entry point to use TOML.
@@ -119,8 +119,8 @@ public sealed class Toml(
         value: T,
         writer: TomlWriter
     ) {
-        val encoder = TomlFileEncoder(this, writer)
-        encoder.encodeSerializableValue(serializer, value)
+        val element = encodeToTomlElement(serializer, value)
+        TomlElementEmitter(this, writer).emitElement(element)
     }
 
     /**
@@ -146,7 +146,6 @@ public sealed class Toml(
      * @throws TomlDecodingException if `string` cannot be parsed into
      * [TomlTable] or cannot be deserialized.
      */
-    @Suppress("OutdatedDocumentation")
     override fun <T> decodeFromString(
         deserializer: DeserializationStrategy<T>,
         string: String
@@ -171,7 +170,6 @@ public sealed class Toml(
      *
      * @see get
      */
-    @Suppress("OutdatedDocumentation")
     public fun <T> decodeFromString(
         deserializer: DeserializationStrategy<T>,
         string: String,
@@ -192,7 +190,6 @@ public sealed class Toml(
      * @throws TomlDecodingException if the content cannot be parsed into
      * [TomlTable] or cannot be deserialized.
      */
-    @Suppress("OutdatedDocumentation")
     public fun <T> decodeFromReader(
         deserializer: DeserializationStrategy<T>,
         reader: TomlReader
@@ -218,7 +215,6 @@ public sealed class Toml(
      *
      * @see get
      */
-    @Suppress("OutdatedDocumentation")
     public fun <T> decodeFromReader(
         deserializer: DeserializationStrategy<T>,
         reader: TomlReader,
@@ -263,7 +259,7 @@ public sealed class Toml(
     public fun parseToTomlTable(reader: TomlReader): TomlTable {
         val buffer = BufferPool.take()
         return try {
-            TomlFileParser(reader, buffer).parse()
+            TomlElementParser(this, reader, buffer).parse()
         } finally {
             BufferPool.release(buffer)
         }
@@ -271,11 +267,11 @@ public sealed class Toml(
 }
 
 /**
- * Factory function for customizing [Toml].
+ * Creates a [Toml] with [from] as default and [config] as configuration.
  *
- * @param from the [Toml] instance from which the default values are read.
+ * @param from the [Toml] instance from which the default values are used.
  * [Toml.Default] by default.
- * @param config builder DSL with `this` as [TomlConfigBuilder].
+ * @param config builder DSL with `this` being [TomlConfigBuilder].
  */
 public inline fun Toml(
     from: Toml = Toml,
@@ -324,7 +320,6 @@ public inline fun <reified T> Toml.encodeToTomlElement(value: T): TomlElement {
  *
  * @see get
  */
-@Suppress("OutdatedDocumentation")
 public inline fun <reified T> Toml.decodeFromString(
     string: String,
     vararg keys: Any?
@@ -342,7 +337,6 @@ public inline fun <reified T> Toml.decodeFromString(
  * @throws TomlDecodingException if the content cannot be parsed into
  * [TomlTable] or cannot be deserialized.
  */
-@Suppress("OutdatedDocumentation")
 public inline fun <reified T> Toml.decodeFromReader(reader: TomlReader): T {
     return decodeFromReader(serializersModule.serializer(), reader)
 }
@@ -364,7 +358,6 @@ public inline fun <reified T> Toml.decodeFromReader(reader: TomlReader): T {
  *
  * @see get
  */
-@Suppress("OutdatedDocumentation")
 public inline fun <reified T> Toml.decodeFromReader(
     reader: TomlReader,
     vararg keys: Any?

@@ -95,7 +95,7 @@ internal abstract class AbstractTomlElementDecoder(toml: Toml) : AbstractTomlDec
     }
 
     final override fun decodeNotNullMark(): Boolean {
-        return element != TomlNull
+        return element !is TomlNull
     }
 
     final override fun decodeTomlElement(): TomlElement {
@@ -195,7 +195,7 @@ private abstract class AbstractTomlElementCompositeDecoder(
         previousValue: T?
     ): T? {
         return decodeElement(descriptor, index) {
-            if (element == TomlNull) {
+            if (element is TomlNull) {
                 null
             } else {
                 decodeSerializableValue(deserializer)
