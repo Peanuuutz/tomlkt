@@ -31,6 +31,7 @@ import net.peanuuutz.tomlkt.TomlElement
 import net.peanuuutz.tomlkt.TomlLiteral
 import net.peanuuutz.tomlkt.TomlNull
 import net.peanuuutz.tomlkt.TomlTable
+import net.peanuuutz.tomlkt.internal.isTomlElement
 import net.peanuuutz.tomlkt.internal.isUnsignedInteger
 import net.peanuuutz.tomlkt.internal.throwPolymorphicCollection
 import net.peanuuutz.tomlkt.internal.throwUnsupportedSerialKind
@@ -103,6 +104,14 @@ internal abstract class AbstractTomlElementEncoder(toml: Toml) : AbstractTomlEnc
 
     final override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder {
         return beginCollectionPolymorphically(descriptor, collectionSize)
+    }
+
+    final override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+        if (serializer.isTomlElement.not()) {
+            super.encodeSerializableValue(serializer, value)
+        } else {
+            encodeTomlElement(value as TomlElement)
+        }
     }
 }
 
@@ -203,8 +212,10 @@ private class TomlElementClassEncoder(
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
         val currentKey = currentKey
+        val propertyAnnotations = descriptor.getElementAnnotations(index)
+        val intrinsicAnnotations = descriptor.getElementDescriptor(index).annotations
         builder[currentKey] = element
-        annotations[currentKey] = descriptor.getElementAnnotations(index)
+        annotations[currentKey] = propertyAnnotations + intrinsicAnnotations
     }
 }
 
@@ -231,7 +242,7 @@ private class TomlElementMapEncoder(
             encodeSerializableValue(serializer, value)
             val currentKey = currentKey
             builder[currentKey] = element
-            annotations[currentKey] = descriptor.getElementAnnotations(index)
+            annotations[currentKey] = descriptor.getElementDescriptor(index).annotations
         }
         isKey = !isKey
     }
@@ -262,7 +273,7 @@ private class TomlElementArrayEncoder(
 
     override fun endElement(descriptor: SerialDescriptor, index: Int) {
         builder.add(element)
-        annotations.add(descriptor.getElementAnnotations(index))
+        annotations.add(descriptor.getElementDescriptor(index).annotations)
     }
 }
 

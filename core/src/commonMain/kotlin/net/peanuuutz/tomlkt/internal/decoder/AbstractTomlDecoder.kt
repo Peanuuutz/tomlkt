@@ -41,7 +41,7 @@ internal abstract class AbstractTomlDecoder(
 
     var currentDiscriminator: String? = null
 
-    final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
+    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
         return decodeSerializableValuePolymorphically(deserializer)
     }
 }

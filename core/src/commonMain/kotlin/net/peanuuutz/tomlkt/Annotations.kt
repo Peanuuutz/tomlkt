@@ -76,7 +76,15 @@ public annotation class TomlComment(val text: String)
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class TomlInline
+public annotation class TomlInline {
+    public companion object {
+        /**
+         * Shared [TomlInline] instance for [TomlArray.annotations] and
+         * [TomlTable.annotations].
+         */
+        public val Instance: TomlInline = TomlInline()
+    }
+}
 
 /**
  * Modifies the encoding process of corresponding array-like property, either to
@@ -132,7 +140,15 @@ public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class TomlMultilineString
+public annotation class TomlMultilineString {
+    public companion object {
+        /**
+         * Shared [TomlMultilineString] instance for [TomlArray.annotations] and
+         * [TomlTable.annotations].
+         */
+        public val Instance: TomlMultilineString = TomlMultilineString()
+    }
+}
 
 /**
  * Marks the annotated [String] property as literal when encoded.
@@ -153,7 +169,15 @@ public annotation class TomlMultilineString
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-public annotation class TomlLiteralString
+public annotation class TomlLiteralString {
+    public companion object {
+        /**
+         * Shared [TomlLiteralString] instance for [TomlArray.annotations] and
+         * [TomlTable.annotations].
+         */
+        public val Instance: TomlLiteralString = TomlLiteralString()
+    }
+}
 
 /**
  * Changes the representation of the annotated [Byte], [Short], [Int], [Long]

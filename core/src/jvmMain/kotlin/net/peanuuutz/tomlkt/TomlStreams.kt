@@ -105,7 +105,7 @@ public inline fun <reified T> Toml.encodeToNativeWriter(
 }
 
 /**
- * Deserializes the content of the [nativeReader] into a value of type [T] using
+ * Deserializes the content of [nativeReader] into a value of type [T] using
  * [deserializer].
  *
  * Note that when finished, `nativeReader` is automatically
@@ -130,7 +130,7 @@ public fun <T> Toml.decodeFromNativeReader(
 }
 
 /**
- * Deserializes the content of the [nativeReader] into a value of type [T] using
+ * Deserializes the content of [nativeReader] into a value of type [T] using
  * the serializer retrieved from reified type parameter.
  *
  * Note that when finished, `nativeReader` is automatically
@@ -149,9 +149,9 @@ public inline fun <reified T> Toml.decodeFromNativeReader(nativeReader: Reader):
 }
 
 /**
- * Parses the content of the [nativeReader] into a [TomlTable] and deserializes
- * the corresponding element fetched with [keys] into a value of type [T]
- * using [deserializer].
+ * Parses the content of [nativeReader] into a [TomlTable] and deserializes the
+ * corresponding element fetched with [keys] into a value of type [T] using
+ * [deserializer].
  *
  * Note that when finished, `nativeReader` is automatically
  * [closed][Reader.close].
@@ -180,9 +180,9 @@ public fun <T> Toml.decodeFromNativeReader(
 }
 
 /**
- * Parses the content of the [nativeReader] into a [TomlTable] and deserializes
- * the corresponding element fetched with [keys] into a value of type [T]
- * using the serializer retrieved from reified type parameter.
+ * Parses the content of [nativeReader] into a [TomlTable] and deserializes the
+ * corresponding element fetched with [keys] into a value of type [T] using the
+ * serializer retrieved from reified type parameter.
  *
  * Note that when finished, `nativeReader` is automatically
  * [closed][Reader.close].
@@ -204,4 +204,18 @@ public inline fun <reified T> Toml.decodeFromNativeReader(
     vararg keys: Any?
 ): T {
     return decodeFromNativeReader(serializersModule.serializer(), nativeReader, keys = keys)
+}
+
+/**
+ * Parses the content of [nativeReader] into equivalent representation of
+ * [TomlTable].
+ *
+ * @throws TomlDecodingException if the content cannot be parsed into
+ * `TomlTable`.
+ */
+public fun Toml.parseToTomlTable(nativeReader: Reader): TomlTable {
+    return nativeReader.buffered().use { buffered ->
+        val reader = TomlNativeReader(buffered)
+        parseToTomlTable(reader)
+    }
 }

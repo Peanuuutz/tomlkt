@@ -44,7 +44,7 @@ internal abstract class AbstractTomlEncoder(
 
     var currentDiscriminator: String? = null
 
-    final override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+    override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         encodeSerializableValuePolymorphically(serializer, value)
     }
 }

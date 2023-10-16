@@ -16,12 +16,36 @@
 
 package net.peanuuutz.tomlkt.internal
 
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.SerialKind.CONTEXTUAL
 import kotlinx.serialization.descriptors.SerialKind.ENUM
 import kotlinx.serialization.descriptors.getContextualDescriptor
+import net.peanuuutz.tomlkt.TomlArray
 import net.peanuuutz.tomlkt.TomlConfig
+import net.peanuuutz.tomlkt.TomlElement
+import net.peanuuutz.tomlkt.TomlLiteral
+import net.peanuuutz.tomlkt.TomlNull
+import net.peanuuutz.tomlkt.TomlTable
+
+private val UnsignedIntegerDescriptors: Set<SerialDescriptor> = setOf(
+    UByte.serializer().descriptor,
+    UShort.serializer().descriptor,
+    UInt.serializer().descriptor,
+    ULong.serializer().descriptor
+)
+
+private val TomlElementSerializers: Set<KSerializer<*>> = setOf(
+    TomlElement.serializer(),
+    TomlNull.serializer(),
+    TomlLiteral.serializer(),
+    TomlArray.serializer(),
+    TomlTable.serializer()
+)
 
 internal val SerialDescriptor.isPrimitiveLike: Boolean
     get() {
@@ -41,3 +65,12 @@ internal fun SerialDescriptor.findRealDescriptor(config: TomlConfig): SerialDesc
         else -> this
     }
 }
+
+internal val SerialDescriptor.isUnsignedInteger: Boolean
+    get() = isInline && this in UnsignedIntegerDescriptors
+
+internal val SerializationStrategy<*>.isTomlElement: Boolean
+    get() = this in TomlElementSerializers
+
+internal val DeserializationStrategy<*>.isTomlElement: Boolean
+    get() = this in TomlElementSerializers

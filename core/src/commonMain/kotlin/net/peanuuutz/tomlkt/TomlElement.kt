@@ -835,6 +835,232 @@ public fun TomlArray.allAnnotated(vararg annotations: Annotation): TomlArray {
     return TomlArray(content, annotationsList)
 }
 
+/**
+ * Gets a [TomlLiteral] with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlLiteral`.
+ */
+public fun TomlArray.getLiteral(index: Int): TomlLiteral {
+    return checkNotNull(getLiteralOrNull(index)) { "Cannot find a TomlLiteral with index $index" }
+}
+
+/**
+ * Gets a [TomlLiteral] with [index] from this [TomlArray]. If the element does
+ * not exist, or it is not a `TomlLiteral`, this returns `null`.
+ */
+public fun TomlArray.getLiteralOrNull(index: Int): TomlLiteral? {
+    return getOrNull(index) as? TomlLiteral
+}
+
+/**
+ * Gets a boolean with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a boolean.
+ */
+public fun TomlArray.getBoolean(index: Int): Boolean {
+    return checkNotNull(getBooleanOrNull(index)) { "Cannot find a boolean with index $index" }
+}
+
+/**
+ * Gets a boolean with [index] from this [TomlArray]. If the element does not
+ * exist, or it is not a [TomlLiteral], or it cannot be converted to a boolean,
+ * this returns `null`.
+ */
+public fun TomlArray.getBooleanOrNull(index: Int): Boolean? {
+    return getLiteralOrNull(index)?.toBooleanOrNull()
+}
+
+/**
+ * Gets an integer (TOML integer, which is [Long]) with [index] from this
+ * [TomlArray].
+ *
+ * **NOTE**: if the original value comes from a [ULong], this function also
+ * throws [IllegalStateException], because a TOML integer is actually a
+ * **signed** `Long`, but `ULong` exceeds the range of it. Please use
+ * [TomlLiteral.toULongOrNull] instead.
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to an integer.
+ */
+public fun TomlArray.getInteger(index: Int): Long {
+    return checkNotNull(getIntegerOrNull(index)) { "Cannot find an integer with index $index" }
+}
+
+/**
+ * Gets an integer (TOML integer, which is [Long]) with [index] from this
+ * [TomlArray]. If the element does not exist, or it is not a [TomlLiteral], or
+ * it cannot be converted to an integer, this returns `null`.
+ *
+ * **NOTE**: if the original value comes from a [ULong], this function also
+ * returns `null`, because a TOML integer is actually a **signed** `Long`, but
+ * `ULong` exceeds the range of it. Please use [TomlLiteral.toULongOrNull]
+ * instead.
+ */
+public fun TomlArray.getIntegerOrNull(index: Int): Long? {
+    return getLiteralOrNull(index)?.toLongOrNull()
+}
+
+/**
+ * Gets a float (TOML float, which is [Double]) with [index] from this
+ * [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a float.
+ */
+public fun TomlArray.getFloat(index: Int): Double {
+    return checkNotNull(getFloatOrNull(index)) { "Cannot find a float with index $index" }
+}
+
+/**
+ * Gets a float (TOML float, which is [Double]) with [index] from this
+ * [TomlArray]. If the element does not exist, or it is not a [TomlLiteral], or
+ * it cannot be converted to a float, this returns `null`.
+ */
+public fun TomlArray.getFloatOrNull(index: Int): Double? {
+    return getLiteralOrNull(index)?.toDoubleOrNull()
+}
+
+/**
+ * Gets a string with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a string.
+ */
+public fun TomlArray.getString(index: Int): String {
+    return checkNotNull(getStringOrNull(index)) { "Cannot find a string with index $index" }
+}
+
+/**
+ * Gets a string with [index] from this [TomlArray]. If the element does not
+ * exist, or it is not a [TomlLiteral], or it cannot be converted to a string,
+ * this returns `null`.
+ */
+public fun TomlArray.getStringOrNull(index: Int): String? {
+    return getLiteralOrNull(index)?.toString()
+}
+
+/**
+ * Gets a [TomlLocalDateTime] with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlLocalDateTime`.
+ */
+public fun TomlArray.getLocalDateTime(index: Int): TomlLocalDateTime {
+    return checkNotNull(getLocalDateTimeOrNull(index)) {
+        "Cannot find a TomlLocalDateTime with index $index"
+    }
+}
+
+/**
+ * Gets a [TomlLocalDateTime] with [index] from this [TomlArray]. If the element
+ * does not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlLocalDateTime`, this returns `null`.
+ */
+public fun TomlArray.getLocalDateTimeOrNull(index: Int): TomlLocalDateTime? {
+    return getLiteralOrNull(index)?.toLocalDateTimeOrNull()
+}
+
+/**
+ * Gets a [TomlOffsetDateTime] with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlOffsetDateTime`.
+ */
+public fun TomlArray.getOffsetDateTime(index: Int): TomlOffsetDateTime {
+    return checkNotNull(getOffsetDateTimeOrNull(index)) {
+        "Cannot find a TomlOffsetDateTime with index $index"
+    }
+}
+
+/**
+ * Gets a [TomlOffsetDateTime] with [index] from this [TomlArray]. If the
+ * element does not exist, or it is not a [TomlLiteral], or it cannot be
+ * converted to a `TomlOffsetDateTime`, this returns `null`.
+ */
+public fun TomlArray.getOffsetDateTimeOrNull(index: Int): TomlOffsetDateTime? {
+    return getLiteralOrNull(index)?.toOffsetDateTimeOrNull()
+}
+
+/**
+ * Gets a [TomlLocalDate] with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlLocalDate`.
+ */
+public fun TomlArray.getLocalDate(index: Int): TomlLocalDate {
+    return checkNotNull(getLocalDateOrNull(index)) {
+        "Cannot find a TomlLocalDate with index $index"
+    }
+}
+
+/**
+ * Gets a [TomlLocalDate] with [index] from this [TomlArray]. If the element
+ * does not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlLocalDate`, this returns `null`.
+ */
+public fun TomlArray.getLocalDateOrNull(index: Int): TomlLocalDate? {
+    return getLiteralOrNull(index)?.toLocalDateOrNull()
+}
+
+/**
+ * Gets a [TomlLocalTime] with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlLocalTime`.
+ */
+public fun TomlArray.getLocalTime(index: Int): TomlLocalTime {
+    return checkNotNull(getLocalTimeOrNull(index)) {
+        "Cannot find a TomlLocalTime with index $index"
+    }
+}
+
+/**
+ * Gets a [TomlLocalTime] with [index] from this [TomlArray]. If the element
+ * does not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlLocalTime`, this returns `null`.
+ */
+public fun TomlArray.getLocalTimeOrNull(index: Int): TomlLocalTime? {
+    return getLiteralOrNull(index)?.toLocalTimeOrNull()
+}
+
+/**
+ * Gets a [TomlArray] with [index] from this `TomlArray`.
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlArray`.
+ */
+public fun TomlArray.getArray(index: Int): TomlArray {
+    return checkNotNull(getArrayOrNull(index)) { "Cannot find a TomlArray with index $index" }
+}
+
+/**
+ * Gets a [TomlArray] with [index] from this `TomlArray`. If the element does
+ * not exist, or it is not a `TomlArray`, this returns `null`.
+ */
+public fun TomlArray.getArrayOrNull(index: Int): TomlArray? {
+    return getOrNull(index) as? TomlArray
+}
+
+/**
+ * Gets a [TomlTable] with [index] from this [TomlArray].
+ *
+ * @throws IllegalStateException if the corresponding element does not conform
+ * to a `TomlTable`.
+ */
+public fun TomlArray.getTable(index: Int): TomlTable {
+    return checkNotNull(getTableOrNull(index)) { "Cannot find a TomlTable with index $index" }
+}
+
+/**
+ * Gets a [TomlTable] with [index] from this [TomlArray]. If the element does
+ * not exist, or it is not a `TomlTable`, this returns `null`.
+ */
+public fun TomlArray.getTableOrNull(index: Int): TomlTable? {
+    return getOrNull(index) as? TomlTable
+}
+
 // -------- TomlTable --------
 
 /**
@@ -941,34 +1167,6 @@ public fun TomlTable(vararg entries: Pair<*, *>): TomlTable {
 // ---- Extensions for TomlTable ----
 
 /**
- * Gets the element along the path constructed by [keys].
- *
- * Given the following TOML file:
- *
- * ```toml
- * i = 0
- *
- * [data]
- * list = [
- *     "any",
- *     { type: "integer", value: 0 }
- * ]
- * ```
- *
- * With `keys = ["data", "list", 1, "value"]`, the above table emits 0 (in
- * [TomlLiteral]).
- *
- * @param keys the path which leads to the value. Each one item is a single
- * segment. If a [TomlArray] is met, any direct child segment must be [Int] or
- * [String] (will be parsed into integer).
- *
- * @throws NonPrimitiveKeyException if provided non-primitive keys.
- */
-public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
-    return getByPathRecursively(keys, 0)
-}
-
-/**
  * Annotates this [TomlTable] with [annotations].
  *
  * **NOTE**: this returns a new instance.
@@ -1017,6 +1215,292 @@ public fun TomlTable.allAnnotated(vararg annotations: Annotation): TomlTable {
     return TomlTable(content, annotationsMap)
 }
 
+/**
+ * Gets the element along the path constructed by [keys].
+ *
+ * Given the following TOML file:
+ *
+ * ```toml
+ * i = 0
+ *
+ * [data]
+ * list = [
+ *     "any",
+ *     { type: "integer", value: 0 }
+ * ]
+ * ```
+ *
+ * With `keys = ["data", "list", 1, "value"]`, the above table emits 0 (in
+ * [TomlLiteral]).
+ *
+ * @param keys the path which leads to the value. Each one item is a single
+ * segment. If a [TomlArray] is met, any direct child segment must be [Int] or
+ * [String] (will be parsed into integer).
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive keys.
+ */
+public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
+    return getByPathRecursively(keys, 0)
+}
+
+/**
+ * Gets a [TomlLiteral] with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlLiteral`.
+ */
+public fun TomlTable.getLiteral(key: Any?): TomlLiteral {
+    return checkNotNull(getLiteralOrNull(key)) { "Cannot find a TomlLiteral with key $key" }
+}
+
+/**
+ * Gets a [TomlLiteral] with [key] from this [TomlTable]. If the entry does not
+ * exist, or it is not a `TomlLiteral`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getLiteralOrNull(key: Any?): TomlLiteral? {
+    return get(key) as? TomlLiteral
+}
+
+/**
+ * Gets a boolean with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a boolean.
+ */
+public fun TomlTable.getBoolean(key: Any?): Boolean {
+    return checkNotNull(getBooleanOrNull(key)) { "Cannot find a boolean with key $key" }
+}
+
+/**
+ * Gets a boolean with [key] from this [TomlTable]. If the entry does not exist,
+ * or it is not a [TomlLiteral], or it cannot be converted to a boolean, this
+ * returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getBooleanOrNull(key: Any?): Boolean? {
+    return getLiteralOrNull(key)?.toBooleanOrNull()
+}
+
+/**
+ * Gets an integer (TOML integer, which is [Long]) with [key] from this
+ * [TomlTable].
+ *
+ * **NOTE**: if the original value comes from a [ULong], this function also
+ * throws [IllegalStateException], because a TOML integer is actually a
+ * **signed** `Long`, but `ULong` exceeds the range of it. Please use
+ * [TomlLiteral.toULongOrNull] instead.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * an integer.
+ */
+public fun TomlTable.getInteger(key: Any?): Long {
+    return checkNotNull(getIntegerOrNull(key)) { "Cannot find an integer with key $key" }
+}
+
+/**
+ * Gets an integer (TOML integer, which is [Long]) with [key] from this
+ * [TomlTable]. If the entry does not exist, or it is not a [TomlLiteral], or it
+ * cannot be converted to an integer, this returns `null`.
+ *
+ * **NOTE**: if the original value comes from a [ULong], this function also
+ * returns `null`, because a TOML integer is actually a **signed** `Long`, but
+ * `ULong` exceeds the range of it. Please use [TomlLiteral.toULongOrNull]
+ * instead.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getIntegerOrNull(key: Any?): Long? {
+    return getLiteralOrNull(key)?.toLongOrNull()
+}
+
+/**
+ * Gets a float (TOML float, which is [Double]) with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a float.
+ */
+public fun TomlTable.getFloat(key: Any?): Double {
+    return checkNotNull(getFloatOrNull(key)) { "Cannot find a float with key $key" }
+}
+
+/**
+ * Gets a float (TOML float, which is [Double]) with [key] from this [TomlTable].
+ * If the entry does not exist, or it is not a [TomlLiteral], or it cannot be
+ * converted to a float, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getFloatOrNull(key: Any?): Double? {
+    return getLiteralOrNull(key)?.toDoubleOrNull()
+}
+
+/**
+ * Gets a string with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a string.
+ */
+public fun TomlTable.getString(key: Any?): String {
+    return checkNotNull(getStringOrNull(key)) { "Cannot find a string with key $key" }
+}
+
+/**
+ * Gets a string with [key] from this [TomlTable]. If the entry does not exist,
+ * or it is not a [TomlLiteral], or it cannot be converted to a string, this
+ * returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getStringOrNull(key: Any?): String? {
+    return getLiteralOrNull(key)?.toString()
+}
+
+/**
+ * Gets a [TomlLocalDateTime] with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlLocalDateTime`.
+ */
+public fun TomlTable.getLocalDateTime(key: Any?): TomlLocalDateTime {
+    return checkNotNull(getLocalDateTimeOrNull(key)) {
+        "Cannot find a TomlLocalDateTime with key $key"
+    }
+}
+
+/**
+ * Gets a [TomlLocalDateTime] with [key] from this [TomlTable]. If the entry
+ * does not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlLocalDateTime`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getLocalDateTimeOrNull(key: Any?): TomlLocalDateTime? {
+    return getLiteralOrNull(key)?.toLocalDateTimeOrNull()
+}
+
+/**
+ * Gets a [TomlOffsetDateTime] with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlOffsetDateTime`.
+ */
+public fun TomlTable.getOffsetDateTime(key: Any?): TomlOffsetDateTime {
+    return checkNotNull(getOffsetDateTimeOrNull(key)) {
+        "Cannot find a TomlOffsetDateTime with key $key"
+    }
+}
+
+/**
+ * Gets a [TomlOffsetDateTime] with [key] from this [TomlTable]. If the entry
+ * does not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlOffsetDateTime`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getOffsetDateTimeOrNull(key: Any?): TomlOffsetDateTime? {
+    return getLiteralOrNull(key)?.toOffsetDateTimeOrNull()
+}
+
+/**
+ * Gets a [TomlLocalDate] with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlLocalDate`.
+ */
+public fun TomlTable.getLocalDate(key: Any?): TomlLocalDate {
+    return checkNotNull(getLocalDateOrNull(key)) {
+        "Cannot find a TomlLocalDate with key $key"
+    }
+}
+
+/**
+ * Gets a [TomlLocalDate] with [key] from this [TomlTable]. If the entry does
+ * not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlLocalDate`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getLocalDateOrNull(key: Any?): TomlLocalDate? {
+    return getLiteralOrNull(key)?.toLocalDateOrNull()
+}
+
+/**
+ * Gets a [TomlLocalTime] with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlLocalTime`.
+ */
+public fun TomlTable.getLocalTime(key: Any?): TomlLocalTime {
+    return checkNotNull(getLocalTimeOrNull(key)) {
+        "Cannot find a TomlLocalTime with key $key"
+    }
+}
+
+/**
+ * Gets a [TomlLocalTime] with [key] from this [TomlTable]. If the entry does
+ * not exist, or it is not a [TomlLiteral], or it cannot be converted to a
+ * `TomlLocalTime`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getLocalTimeOrNull(key: Any?): TomlLocalTime? {
+    return getLiteralOrNull(key)?.toLocalTimeOrNull()
+}
+
+/**
+ * Gets a [TomlArray] with [key] from this [TomlTable].
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlArray`.
+ */
+public fun TomlTable.getArray(key: Any?): TomlArray {
+    return checkNotNull(getArrayOrNull(key)) { "Cannot find a TomlArray with key $key" }
+}
+
+/**
+ * Gets a [TomlArray] with [key] from this [TomlTable]. If the entry does not
+ * exist, or it is not a `TomlArray`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getArrayOrNull(key: Any?): TomlArray? {
+    return get(key) as? TomlArray
+}
+
+/**
+ * Gets a [TomlTable] with [key] from this `TomlTable`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ * @throws IllegalStateException if the corresponding entry does not conform to
+ * a `TomlTable`.
+ */
+public fun TomlTable.getTable(key: Any?): TomlTable {
+    return checkNotNull(getTableOrNull(key)) { "Cannot find a TomlTable with key $key" }
+}
+
+/**
+ * Gets a [TomlTable] with [key] from this `TomlTable`. If the entry does not
+ * exist, or it is not a `TomlTable`, this returns `null`.
+ *
+ * @throws NonPrimitiveKeyException if provided non-primitive key.
+ */
+public fun TomlTable.getTableOrNull(key: Any?): TomlTable? {
+    return get(key) as? TomlTable
+}
+
 // ======== Internal ========
 
 internal fun TomlArray(arrayNode: ArrayNode): TomlArray {
@@ -1040,14 +1524,14 @@ internal fun TomlTable(keyNode: KeyNode): TomlTable {
     return when (val size = children.size) {
         0 -> TomlTable.Empty
         1 -> {
-            val node = children.first()
-            val content = mapOf(pair = node.key to node.toTomlElement())
+            val (k, n) = children.entries.first()
+            val content = mapOf(pair = k to n.toTomlElement())
             TomlTable(content)
         }
         else -> {
             val content = buildMap(size) {
-                for (node in children) {
-                    put(node.key, node.toTomlElement())
+                for ((k, n) in children) {
+                    put(k, n.toTomlElement())
                 }
             }
             return TomlTable(content)
@@ -1100,14 +1584,14 @@ private tailrec fun TomlArray.getByPathRecursively(
 
 internal fun Any?.toTomlKey(): String {
     return when (this) {
-        is Boolean, is Number, is Char -> toString()
+        is Boolean, is Number, is UByte, is UShort, is UInt, is ULong, is Char -> toString()
         is String -> this
         else -> throwNonPrimitiveKey(this)
     }
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-private fun Any?.toTomlElement(): TomlElement {
+internal fun Any?.toTomlElement(): TomlElement {
     return when (this) {
         null -> TomlNull
         is TomlElement -> this

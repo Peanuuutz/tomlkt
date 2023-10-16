@@ -27,49 +27,61 @@ object TomlObjects {
 }
 
 /*
-    Benchmark                       Mode  Cnt      Score      Error  Units
-    Benchmark.jackson               avgt    5   5175.377 ±  156.576  ns/op
-    Benchmark.night                 avgt    5   7278.401 ±  257.462  ns/op
-    Benchmark.tomlkt                avgt    5   9494.927 ±  271.427  ns/op
-    Benchmark.toml4j                avgt    5  15858.802 ±  374.109  ns/op
-    Benchmark.ktoml                 avgt    5  43655.068 ± 8584.812  ns/op
-    Benchmark.tomlj                 avgt    5  92314.157 ± 4917.454  ns/op
+    SmallSampleConfig:
+
+    Benchmark          Mode  Cnt       Score      Error  Units
+    Benchmark.jackson  avgt    5    9151.851 ± 1123.198  ns/op
+    Benchmark.night    avgt    5   11480.495 ± 1424.068  ns/op
+    Benchmark.tomlkt   avgt    5   11555.185 ±  347.118  ns/op
+    Benchmark.toml4j   avgt    5   30508.511 ±  292.352  ns/op
+    Benchmark.ktoml    avgt    5   53619.175 ± 1512.321  ns/op
+    Benchmark.tomlj    avgt    5  146998.024 ± 2384.767  ns/op
+
+    LargeSampleConfig:
+
+    Benchmark          Mode  Cnt        Score       Error  Units
+    Benchmark.jackson  avgt    5   102626.482 ±  1935.074  ns/op
+    Benchmark.night    avgt    5   123354.484 ±  4292.667  ns/op
+    Benchmark.tomlkt   avgt    5   157744.955 ±  5007.944  ns/op
+    Benchmark.tomlj    avgt    5   953882.911 ± 13345.218  ns/op
+    Benchmark.toml4j   avgt    5  1124525.511 ± 62901.746  ns/op
+    Benchmark.ktoml    avgt    5  1193358.164 ± 12310.127  ns/op
  */
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 4)
 @Measurement(iterations = 5)
 @Threads(4)
-@Fork(2)
+@Fork(1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
 class Benchmark {
     @Benchmark
     fun tomlkt() {
-        TomlObjects.tomlkt.parseToTomlTable(SampleConfig)
+        TomlObjects.tomlkt.parseToTomlTable(SmallSampleConfig)
     }
 
     @Benchmark
     fun toml4j() {
-        TomlObjects.toml4j.read(SampleConfig)
+        TomlObjects.toml4j.read(SmallSampleConfig)
     }
 
     @Benchmark
     fun ktoml() {
-        TomlObjects.ktoml.tomlParser.parseString(SampleConfig)
+        TomlObjects.ktoml.tomlParser.parseString(SmallSampleConfig)
     }
 
     @Benchmark
     fun jackson() {
-        TomlObjects.jackson.readTree(SampleConfig)
+        TomlObjects.jackson.readTree(SmallSampleConfig)
     }
 
     @Benchmark
     fun night() {
-        TomlObjects.night.parse(SampleConfig)
+        TomlObjects.night.parse(SmallSampleConfig)
     }
 
     @Benchmark
     fun tomlj() {
-        org.tomlj.Toml.parse(SampleConfig)
+        org.tomlj.Toml.parse(SmallSampleConfig)
     }
 }

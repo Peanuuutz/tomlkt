@@ -3,8 +3,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/net.peanuuutz.tomlkt/tomlkt)](https://search.maven.org/artifact/net.peanuuutz.tomlkt/tomlkt)
 [![License](https://img.shields.io/github/license/Peanuuutz/tomlkt)](http://www.apache.org/licenses/LICENSE-2.0)
 
-Powerful and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML](https://toml.io/) serialization and
-deserialization.
+Powerful and easy to use [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) plugin for [TOML 1.0.0 compliance](https://toml.io/en/v1.0.0)
+encoding and decoding.
 
 *If you find any problem along usage, please raise an [issue](https://github.com/Peanuuutz/tomlkt/issues).* :wink:
 
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.6")
+    implementation("net.peanuuutz.tomlkt:tomlkt:0.3.7")
 }
 ```
 </details>
@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.6"
+    implementation "net.peanuuutz.tomlkt:tomlkt:0.3.7"
 }
 ```
 </details>
@@ -45,7 +45,7 @@ dependencies {
 <dependency>
   <groupId>net.peanuuutz.tomlkt</groupId>
   <artifactId>tomlkt-jvm</artifactId>
-  <version>0.3.6</version>
+  <version>0.3.7</version>
 </dependency>
 ```
 </details>
@@ -94,7 +94,7 @@ fun main() {
     }
     // Use toml to apply the change.
 
-    // Serialization.
+    // Encoding.
     val anotherUser = User("Anonymous", null)
     // Again, better to explicitly pass a serializer.
     val config = Toml.encodeToString(User.serializer(), anotherUser)
@@ -103,21 +103,21 @@ fun main() {
 }
 ```
 
-## Features
+## Supported TOML Features
 
-| TOML Data Type          | Serialization      | Deserialization                   |
-|-------------------------|--------------------|-----------------------------------|
-| [Comment](#Comment)     | :heavy_check_mark: | :heavy_check_mark:                |
-| Key                     | :heavy_check_mark: | :heavy_check_mark:                |
-| [String](#String)       | :heavy_check_mark: | :heavy_check_mark:                |
-| Integer                 | :heavy_check_mark: | :heavy_check_mark:                |
-| Float                   | :heavy_check_mark: | :heavy_check_mark:                |
-| Boolean                 | :heavy_check_mark: | :heavy_check_mark:                |
-| [Date Time](#Date-Time) | :heavy_check_mark: | :heavy_check_mark:                |
-| Array                   | :heavy_check_mark: | :heavy_check_mark:                |
-| [Table](#Table)         | :heavy_check_mark: | :heavy_check_mark::grey_question: |
-| Inline Table            | :heavy_check_mark: | :heavy_check_mark:                |
-| Array of Tables         | :heavy_check_mark: | :heavy_check_mark:                |
+| TOML Data Type          | Encoding           | Decoding           |
+|-------------------------|--------------------|--------------------|
+| [Comment](#Comment)     | :heavy_check_mark: | :heavy_check_mark: |
+| Key                     | :heavy_check_mark: | :heavy_check_mark: |
+| [String](#String)       | :heavy_check_mark: | :heavy_check_mark: |
+| Integer                 | :heavy_check_mark: | :heavy_check_mark: |
+| Float                   | :heavy_check_mark: | :heavy_check_mark: |
+| Boolean                 | :heavy_check_mark: | :heavy_check_mark: |
+| [Date Time](#Date-Time) | :heavy_check_mark: | :heavy_check_mark: |
+| Array                   | :heavy_check_mark: | :heavy_check_mark: |
+| Table                   | :heavy_check_mark: | :heavy_check_mark: |
+| Inline Table            | :heavy_check_mark: | :heavy_check_mark: |
+| Array of Tables         | :heavy_check_mark: | :heavy_check_mark: |
 
 ### Comment
 
@@ -127,7 +127,7 @@ Implemented as an annotation `@TomlComment` on **properties**:
 class IntData(
     @TomlComment("""
         An integer,
-        but is decoded into Long originally
+        but is decoded into Long originally.
     """)
     val int: Int
 )
@@ -138,7 +138,7 @@ The code above will be encoded into:
 
 ```toml
 # An integer,
-# but is decoded into Long originally
+# but is decoded into Long originally.
 int = 10086
 ```
 
@@ -195,41 +195,81 @@ The mapping of these expect types are as follows:
 simply use `TomlLiteral(TomlLocalDateTime)` to create a `TomlLiteral` from a `TomlLocalDateTime`
 (true for other types), and `TomlLiteral.toLocalDateTime()` for the other way.
 
-If you'd like to provide a custom serializer, use `NativeLocalDateTime` and the like as raw types.
+If you would like to provide a custom serializer, use `NativeLocalDateTime` and the like as raw
+types.
 
-### Table
-
-:grey_question:: There's an internal issue. When you define super-table **before** the sub-table:
-
-```toml
-[x]
-[x.y]
-```
-
-It will be successfully parsed, but if you define after that:
-
-```toml
-[x.y]
-[x]
-```
-
-It will throw `net.peanuuutz.tomlkt.internal.ConflictEntryException`. Due to the reading process
-of [TomlFileParser](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TomlFileParser.kt), each time a table head is parsed, the path will be immediately put into
-the whole [tree](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/internal/parser/TreeNode.kt), and meanwhile be checked if is already defined.
-
-Better to keep super-table first!
-
-### Extra Features
+### TomlElement
 
 The working process of tomlkt:
 
-* Serialization: Model → (TomlElementEncoder) → TomlElement → (TomlElementEmitter) → File.
-* Deserialization: File → (TomlElementParser) → TomlElement → (TomlElementDecoder) → Model.
+* Encoding: Model → (TomlElementEncoder) → TomlElement → (TomlElementEmitter) → File.
+* Decoding: File → (TomlElementParser) → TomlElement → (TomlElementDecoder) → Model.
 
-As you see, if you already have a TOML file, you can have no model class, but still gain access
-to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt).
+As shown, if you already have a TOML file, you can have no model class, but still gain access
+to every entry with the help of [TomlElement](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/TomlElement.kt). Simply parse the file with
+`Toml.parseToTomlTable`, then access entries via various `TomlTable` extensions. Also, if you
+are a framework author, you would also need the power of dynamic construction. For example, you
+can construct a `TomlTable` like this:
+
+```kotlin
+val table = buildTomlTable {
+    literal("title", "TOML Example")
+
+    table("database") {
+        literal("enabled", true)
+        array("ports", TomlInline.Instance) {
+            literal(8000)
+        }
+        
+        table("temperature") {
+            val commentForCpu = """
+                The max temperature for the core.
+                DO NOT SET OVER 100.0!
+            """.trimIndent()
+
+            literal("cpu", 79.5, TomlComment(commentForCpu))
+        }
+    }
+
+    array("servers", TomlComment("Available servers.")) {
+        table {
+            literal("ip", "10.0.0.1")
+            literal("role", "main")
+        }
+        table {
+            literal("ip", "10.0.0.2")
+        }
+    }
+}
+```
+
+The code above will be encoded into:
+
+```toml
+title = "TOML Example"
+
+[database]
+enabled = true
+ports = [ 8000 ]
+
+[database.temperature]
+# The max temperature for the core.
+# DO NOT SET OVER 100.0!
+cpu = 79.5
+
+# Available servers.
+
+[[servers]]
+ip = "10.0.0.1"
+role = "main"
+
+[[servers]]
+ip = "10.0.0.2"
+```
 
 *Note: All the metadata coming from [annotations](https://github.com/Peanuuutz/tomlkt/tree/master/core/src/commonMain/kotlin/net/peanuuutz/tomlkt/Annotations.kt) is ignored in the parser, meaning that
 despite you could parse a file into an element, you cannot emit it back to file fully as is.*
+
+### Others
 
 For other information, view [API docs](https://peanuuutz.github.io/tomlkt/).
