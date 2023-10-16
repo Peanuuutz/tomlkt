@@ -47,6 +47,7 @@ import net.peanuuutz.tomlkt.internal.StartArray
 import net.peanuuutz.tomlkt.internal.StartInlineTable
 import net.peanuuutz.tomlkt.internal.StartTableHead
 import net.peanuuutz.tomlkt.internal.createNumberTomlLiteral
+import net.peanuuutz.tomlkt.internal.throwConflictEntry
 import net.peanuuutz.tomlkt.internal.throwIncomplete
 import net.peanuuutz.tomlkt.internal.throwUnexpectedToken
 import net.peanuuutz.tomlkt.internal.unescape
@@ -55,14 +56,13 @@ import kotlin.contracts.contract
 
 internal class TomlElementParser(
     private val toml: Toml,
-    private val reader: TomlReader,
-    private val buffer: CharArray
+    private val reader: TomlReader
 ) {
-    private val bufferSize: Int = buffer.size
+    private var currentChar: Char = 0.toChar()
+
+    private var previousChar: Char = 0.toChar()
 
     private var currentLineNumber: Int = 1
-
-    private var currentIndex: Int = -1
 
     private var isEof: Boolean = false
 
@@ -74,19 +74,19 @@ internal class TomlElementParser(
         }
         val code = reader.read()
         if (code != -1) {
-            currentIndex++
-            buffer[currentIndex % bufferSize] = code.toChar()
+            previousChar = currentChar
+            currentChar = code.toChar()
         } else {
             isEof = true
         }
     }
 
-    private fun getChar(): Char {
-        return buffer[currentIndex % bufferSize]
+    private fun getCurrent(): Char {
+        return currentChar
     }
 
-    private fun getChar(offset: Int): Char {
-        return buffer[(currentIndex + offset) % bufferSize]
+    private fun getPrevious(): Char {
+        return previousChar
     }
 
     // endregion
@@ -117,10 +117,14 @@ internal class TomlElementParser(
         }
     }
 
+    private fun throwConflictEntry(path: Path): Nothing {
+        throwConflictEntry(path, currentLineNumber)
+    }
+
     private fun expectNext(expectedToken: Char) {
         proceed()
         throwIncompleteIf { isEof }
-        throwUnexpectedTokenIf(getChar()) { it != expectedToken }
+        throwUnexpectedTokenIf(getCurrent()) { it != expectedToken }
     }
 
     private fun expectNext(expectedTokens: String) {
@@ -132,12 +136,12 @@ internal class TomlElementParser(
     // endregion
 
     fun parse(): TomlTable {
-        val tree = KeyNode("")
+        val tree = KeyNode("", isLast = false)
         val arrayOfTableIndices = mutableMapOf<Path, Int>()
         var currentTablePath: Path? = null
         proceed()
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     proceed()
                 }
@@ -147,17 +151,19 @@ internal class TomlElementParser(
                 }
                 '\r' -> {
                     proceed()
-                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                    throwUnexpectedTokenIf(current) { isEof || getCurrent() != '\n' }
                 }
                 in BareKeyConstraints, '\"', '\'' -> {
                     val localPath = parsePath()
-                    throwUnexpectedTokenIf(getChar()) { it != KeyValueSeparator }
+                    throwUnexpectedTokenIf(getCurrent()) { it != KeyValueSeparator }
                     proceed()
                     val key = localPath.last()
-                    val value = parseValue(insideStructure = false)
+                    val value = parseValue(isInsideStructure = false)
                     val node = ValueNode(key, value)
                     val path = if (currentTablePath != null) currentTablePath + localPath else localPath
-                    tree.addByPath(path, node, arrayOfTableIndices)
+                    if (tree.addByPath(path, node, arrayOfTableIndices).not()) {
+                        throwConflictEntry(path)
+                    }
                 }
                 Comment -> {
                     parseComment()
@@ -165,15 +171,17 @@ internal class TomlElementParser(
                 StartTableHead -> {
                     proceed()
                     throwIncompleteIf { isEof }
-                    val isArrayOfTable = getChar() == StartTableHead
+                    val isArrayOfTable = getCurrent() == StartTableHead
                     if (isArrayOfTable) {
                         proceed()
                     }
                     val path = parseTableHead(isArrayOfTable)
                     if (!isArrayOfTable) {
                         val key = path.last()
-                        val node = KeyNode(key)
-                        tree.addByPath(path, node, arrayOfTableIndices)
+                        val node = KeyNode(key, isLast = true)
+                        if (tree.addByPath(path, node, arrayOfTableIndices).not()) {
+                            throwConflictEntry(path)
+                        }
                     } else {
                         val iterator = arrayOfTableIndices.keys.iterator()
                         for (key in iterator) {
@@ -186,18 +194,20 @@ internal class TomlElementParser(
                             arrayOfTableIndices[path] = 0
                             val key = path.last()
                             val node = ArrayNode(key)
-                            tree.addByPath(path, node, arrayOfTableIndices)
+                            if (tree.addByPath(path, node, arrayOfTableIndices).not()) {
+                                throwConflictEntry(path)
+                            }
                         } else {
                             arrayOfTableIndices[path] = currentIndex + 1
                         }
                         // A virtual node to act like the root of an array element.
-                        val node = KeyNode("")
+                        val node = KeyNode("", isLast = false)
                         tree.getByPath<ArrayNode>(path, arrayOfTableIndices).add(node)
                     }
                     currentTablePath = path
                 }
                 else -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
             }
         }
@@ -211,7 +221,7 @@ internal class TomlElementParser(
         var path: Path? = null
         var justEnded = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     proceed()
                 }
@@ -227,7 +237,7 @@ internal class TomlElementParser(
                     break
                 }
                 else -> {
-                    throwUnexpectedTokenIf(currentChar) { path != null }
+                    throwUnexpectedTokenIf(current) { path != null }
                     path = parsePath()
                 }
             }
@@ -244,7 +254,7 @@ internal class TomlElementParser(
         var justEnded = false
         var expectKey = true
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     proceed()
                 }
@@ -252,32 +262,32 @@ internal class TomlElementParser(
                     throwIncomplete()
                 }
                 in BareKeyConstraints -> {
-                    throwUnexpectedTokenIf(currentChar) { !expectKey }
+                    throwUnexpectedTokenIf(current) { !expectKey }
                     path.add(parseBareKey())
                     expectKey = false
                 }
                 '\"' -> {
-                    throwUnexpectedTokenIf(currentChar) { !expectKey }
+                    throwUnexpectedTokenIf(current) { !expectKey }
                     path.add(parseStringKey())
                     expectKey = false
                 }
                 '\'' -> {
-                    throwUnexpectedTokenIf(currentChar) { !expectKey }
+                    throwUnexpectedTokenIf(current) { !expectKey }
                     path.add(parseLiteralStringKey())
                     expectKey = false
                 }
                 KeySeparator -> {
-                    throwUnexpectedTokenIf(currentChar) { expectKey }
+                    throwUnexpectedTokenIf(current) { expectKey }
                     expectKey = true
                     proceed()
                 }
                 KeyValueSeparator, EndArray -> {
-                    throwUnexpectedTokenIf(currentChar) { expectKey }
+                    throwUnexpectedTokenIf(current) { expectKey }
                     justEnded = true
                     break
                 }
                 else -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
             }
         }
@@ -292,7 +302,7 @@ internal class TomlElementParser(
     private fun parseBareKey(): String {
         val builder = StringBuilder()
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t', KeySeparator, KeyValueSeparator, EndArray -> {
                     break
                 }
@@ -300,10 +310,10 @@ internal class TomlElementParser(
                     throwIncomplete()
                 }
                 '\r' -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
                 else -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
             }
@@ -333,10 +343,10 @@ internal class TomlElementParser(
     /**
      * Start right on the actual token, end right on '\n' or ',' or ']' or '}'.
      */
-    private fun parseValue(insideStructure: Boolean): TomlElement {
+    private fun parseValue(isInsideStructure: Boolean): TomlElement {
         var element: TomlElement? = null
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     proceed()
                 }
@@ -345,18 +355,18 @@ internal class TomlElementParser(
                 }
                 '\r' -> {
                     proceed()
-                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                    throwUnexpectedTokenIf(current) { isEof || getCurrent() != '\n' }
                 }
                 Comment -> {
                     parseComment()
                 }
                 ElementSeparator, EndArray, EndInlineTable -> {
-                    throwUnexpectedTokenIf(currentChar) { !insideStructure }
+                    throwUnexpectedTokenIf(current) { !isInsideStructure }
                     break
                 }
                 else -> {
-                    throwUnexpectedTokenIf(currentChar) { element != null }
-                    element = when (currentChar) {
+                    throwUnexpectedTokenIf(current) { element != null }
+                    element = when (current) {
                         't', 'f' -> {
                             parseBooleanValue()
                         }
@@ -369,7 +379,7 @@ internal class TomlElementParser(
                         'n' -> {
                             proceed()
                             throwIncompleteIf { isEof }
-                            when (val secondChar = getChar()) {
+                            when (val second = getCurrent()) {
                                 'a' -> {
                                     parseSpecialNumberValue(sign = null)
                                 }
@@ -377,29 +387,29 @@ internal class TomlElementParser(
                                     parseNullValue()
                                 }
                                 else -> {
-                                    throwUnexpectedToken(secondChar)
+                                    throwUnexpectedToken(second)
                                 }
                             }
                         }
                         '+', '-' -> {
                             proceed()
                             throwIncompleteIf { isEof }
-                            when (val secondChar = getChar()) {
+                            when (val second = getCurrent()) {
                                 in DecimalConstraints -> {
                                     // Pretend it could be a date time.
-                                    parseNumberOrDateTimeValue(currentChar)
+                                    parseNumberOrDateTimeValue(current)
                                 }
                                 'i' -> {
-                                    parseSpecialNumberValue(currentChar)
+                                    parseSpecialNumberValue(current)
                                 }
                                 'n' -> {
                                     // parseSpecialNumberValue starts on 'a'.
                                     proceed()
                                     throwIncompleteIf { isEof }
-                                    parseSpecialNumberValue(currentChar)
+                                    parseSpecialNumberValue(current)
                                 }
                                 else -> {
-                                    throwUnexpectedToken(secondChar)
+                                    throwUnexpectedToken(second)
                                 }
                             }
                         }
@@ -416,7 +426,7 @@ internal class TomlElementParser(
                             parseInlineTableValue()
                         }
                         else -> {
-                            throwUnexpectedToken(currentChar)
+                            throwUnexpectedToken(current)
                         }
                     }
                 }
@@ -430,7 +440,7 @@ internal class TomlElementParser(
      * Start right on 't' or 'f', ends right after the last token.
      */
     private fun parseBooleanValue(): TomlLiteral {
-        return when (val currentChar = getChar()) {
+        return when (val current = getCurrent()) {
             't' -> {
                 expectNext("rue")
                 proceed()
@@ -442,7 +452,7 @@ internal class TomlElementParser(
                 TomlLiteral(false)
             }
             else -> {
-                throwUnexpectedToken(currentChar)
+                throwUnexpectedToken(current)
             }
         }
     }
@@ -451,7 +461,7 @@ internal class TomlElementParser(
      * Start right on 'i' or 'a', end right after the last token.
      */
     private fun parseSpecialNumberValue(sign: Char?): TomlLiteral {
-        return when (val current = getChar()) {
+        return when (val current = getCurrent()) {
             'i' -> {
                 val content = if (sign == null) "inf" else sign.toString() + "inf"
                 expectNext("nf")
@@ -475,13 +485,13 @@ internal class TomlElementParser(
      */
     private fun parseNumberOrDateTimeValue(sign: Char?): TomlLiteral {
         val builder = StringBuilder()
-        if (getChar() == '0') {
+        if (getCurrent() == '0') {
             proceed()
             if (isEof) {
                 val content = if (sign == null) "0" else sign.toString() + "0"
                 return TomlLiteral(content, Type.Integer)
             }
-            when (getChar()) {
+            when (getCurrent()) {
                 'x' -> {
                     proceed()
                     return parseNumberValue(builder, radix = 16, sign)
@@ -501,28 +511,28 @@ internal class TomlElementParser(
         }
         var isNumber = true
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t', '\n', ElementSeparator, Comment, EndArray, EndInlineTable -> {
                     break
                 }
                 '\r' -> {
                     proceed()
-                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                    throwUnexpectedTokenIf(current) { isEof || getCurrent() != '\n' }
                 }
                 in DecimalConstraints -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 '-', '+' -> {
-                    val previousChar = getChar(-1)
-                    if (previousChar != 'e' || previousChar != 'E') {
-                        throwUnexpectedTokenIf(currentChar) { sign != null }
+                    val previous = getPrevious()
+                    if (previous != 'e' || previous != 'E') {
+                        throwUnexpectedTokenIf(current) { sign != null }
                         isNumber = false
                     }
                     break
                 }
                 in DefiniteDateTimeConstraints -> {
-                    throwUnexpectedTokenIf(currentChar) { sign != null }
+                    throwUnexpectedTokenIf(current) { sign != null }
                     isNumber = false
                     break
                 }
@@ -530,7 +540,7 @@ internal class TomlElementParser(
                     break
                 }
                 else -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
             }
         }
@@ -553,82 +563,82 @@ internal class TomlElementParser(
         var isDouble = false
         var isExponent = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t', '\n', ElementSeparator, Comment, EndArray, EndInlineTable -> {
                     break
                 }
                 '\r' -> {
                     proceed()
-                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                    throwUnexpectedTokenIf(current) { isEof || getCurrent() != '\n' }
                 }
                 '0', '1' -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 '2', '3', '4', '5', '6', '7' -> {
-                    throwUnexpectedTokenIf(currentChar) { radix == 2 }
-                    builder.append(currentChar)
+                    throwUnexpectedTokenIf(current) { radix == 2 }
+                    builder.append(current)
                     proceed()
                 }
                 '8', '9' -> {
-                    throwUnexpectedTokenIf(currentChar) { radix <= 8 }
-                    builder.append(currentChar)
+                    throwUnexpectedTokenIf(current) { radix <= 8 }
+                    builder.append(current)
                     proceed()
                 }
                 '.' -> {
-                    throwUnexpectedTokenIf(currentChar) {
-                        isDouble || isExponent || radix != 10 || getChar(-1) !in DecimalConstraints
+                    throwUnexpectedTokenIf(current) {
+                        isDouble || isExponent || radix != 10 || getPrevious() !in DecimalConstraints
                     }
                     proceed()
                     throwIncompleteIf { isEof }
                     // Urge check.
-                    val nextChar = getChar()
-                    throwUnexpectedTokenIf(nextChar) { it !in DecimalConstraints }
-                    builder.append(currentChar).append(nextChar)
+                    val next = getCurrent()
+                    throwUnexpectedTokenIf(next) { it !in DecimalConstraints }
+                    builder.append(current).append(next)
                     isDouble = true
                     proceed()
                 }
                 'e', 'E' -> {
                     when (radix) {
                         10 -> {
-                            throwUnexpectedTokenIf(currentChar) {
-                                isExponent || getChar(-1) !in DecimalConstraints
+                            throwUnexpectedTokenIf(current) {
+                                isExponent || getPrevious() !in DecimalConstraints
                             }
                             proceed()
                             throwIncompleteIf { isEof }
                             // Urge check.
-                            val nextChar = getChar()
-                            throwUnexpectedTokenIf(nextChar) { it !in DecimalOrSignConstraints }
-                            builder.append(currentChar).append(nextChar)
+                            val next = getCurrent()
+                            throwUnexpectedTokenIf(next) { it !in DecimalOrSignConstraints }
+                            builder.append(current).append(next)
                             isExponent = true
-                            if (nextChar == '-') {
+                            if (next == '-') {
                                 isDouble = true
                             }
                         }
                         16 -> {
-                            builder.append(currentChar)
+                            builder.append(current)
                         }
                         else -> {
-                            throwUnexpectedToken(currentChar)
+                            throwUnexpectedToken(current)
                         }
                     }
                     proceed()
                 }
                 'a', 'b', 'c', 'd', 'f', 'A', 'B', 'C', 'D', 'F' -> {
-                    throwUnexpectedTokenIf(currentChar) { radix <= 10 }
-                    builder.append(currentChar)
+                    throwUnexpectedTokenIf(current) { radix <= 10 }
+                    builder.append(current)
                     proceed()
                 }
                 '_' -> {
-                    throwUnexpectedTokenIf(currentChar) { getChar(-1) !in HexadecimalConstraints }
+                    throwUnexpectedTokenIf(current) { getPrevious() !in HexadecimalConstraints }
                     proceed()
                     throwIncompleteIf { isEof }
                     // Urge check.
-                    val nextChar = getChar()
-                    throwUnexpectedTokenIf(nextChar) { it !in HexadecimalConstraints }
+                    val next = getCurrent()
+                    throwUnexpectedTokenIf(next) { it !in HexadecimalConstraints }
                 }
                 else -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
             }
         }
@@ -652,13 +662,13 @@ internal class TomlElementParser(
         var hasOffset = false
         var hasDateTimeSeparator = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 '\t', '\n', ElementSeparator, Comment, EndArray, EndInlineTable -> {
                     break
                 }
                 '\r' -> {
                     proceed()
-                    throwUnexpectedTokenIf(currentChar) { isEof || getChar() != '\n' }
+                    throwUnexpectedTokenIf(current) { isEof || getCurrent() != '\n' }
                 }
                 ' ' -> {
                     if (hasDate && !hasDateTimeSeparator) {
@@ -670,7 +680,7 @@ internal class TomlElementParser(
                     }
                 }
                 in DecimalConstraints -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 '-' -> {
@@ -679,7 +689,7 @@ internal class TomlElementParser(
                     } else {
                         hasOffset = true
                     }
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 'T', 't' -> {
@@ -691,11 +701,11 @@ internal class TomlElementParser(
                     if (!hasOffset) {
                         hasTime = true
                     }
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 '.' -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 'Z', 'z' -> {
@@ -705,11 +715,11 @@ internal class TomlElementParser(
                 }
                 '+' -> {
                     hasOffset = true
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 else -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
             }
         }
@@ -747,24 +757,24 @@ internal class TomlElementParser(
         proceed()
         throwIncompleteIf { isEof }
         val builder = StringBuilder()
-        val initialSecondChar = getChar()
+        val initialSecondChar = getCurrent()
         val multiline: Boolean
         if (initialSecondChar != '\"') {
             multiline = false
         } else {
             proceed()
-            if (!isEof && getChar() == '\"') {
+            if (!isEof && getCurrent() == '\"') {
                 multiline = true
                 proceed()
                 throwIncompleteIf { isEof }
-                if (getChar() == '\r') {
+                if (getCurrent() == '\r') {
                     proceed()
                     throwIncompleteIf { isEof }
-                    if (getChar() != '\n') {
+                    if (getCurrent() != '\n') {
                         builder.append('\r')
                     }
                 }
-                if (getChar() == '\n') {
+                if (getCurrent() == '\n') {
                     // Consumes the initial line feed
                     currentLineNumber++
                     proceed()
@@ -776,17 +786,17 @@ internal class TomlElementParser(
         var trim = false
         var justEnded = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     if (!trim) {
-                        builder.append(currentChar)
+                        builder.append(current)
                     }
                     proceed()
                 }
                 '\n' -> {
                     throwIncompleteIf { !multiline }
                     if (!trim) {
-                        builder.append(currentChar)
+                        builder.append(current)
                     }
                     currentLineNumber++
                     proceed()
@@ -794,8 +804,8 @@ internal class TomlElementParser(
                 '\r' -> {
                     proceed()
                     throwIncompleteIf { isEof }
-                    if (getChar() != '\n') {
-                        builder.append(currentChar)
+                    if (getCurrent() != '\n') {
+                        builder.append(current)
                     }
                 }
                 '\"' -> {
@@ -806,15 +816,15 @@ internal class TomlElementParser(
                     }
                     proceed()
                     throwIncompleteIf { isEof }
-                    val secondChar = getChar()
-                    if (secondChar != '\"') {
-                        builder.append(currentChar)
+                    val second = getCurrent()
+                    if (second != '\"') {
+                        builder.append(current)
                         continue
                     }
                     proceed()
                     throwIncompleteIf { isEof }
-                    if (getChar() != '\"') {
-                        builder.append(currentChar).append(secondChar)
+                    if (getCurrent() != '\"') {
+                        builder.append(current).append(second)
                         continue
                     }
                     justEnded = true
@@ -824,22 +834,22 @@ internal class TomlElementParser(
                 '\\' -> {
                     proceed()
                     throwIncompleteIf { isEof }
-                    when (val nextChar = getChar()) {
+                    when (val next = getCurrent()) {
                         ' ', '\t', '\n' -> {
-                            throwUnexpectedTokenIf(currentChar) { !multiline }
+                            throwUnexpectedTokenIf(current) { !multiline }
                             trim = true
                         }
                         'n', '\"', '\\', 'u', 'U', 't', 'r', 'b', 'f' -> {
-                            builder.append(currentChar).append(nextChar)
+                            builder.append(current).append(next)
                             proceed()
                         }
                         else -> {
-                            throwUnexpectedToken(currentChar)
+                            throwUnexpectedToken(current)
                         }
                     }
                 }
                 else -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     trim = false
                     proceed()
                 }
@@ -858,24 +868,24 @@ internal class TomlElementParser(
         proceed()
         throwIncompleteIf { isEof }
         val builder = StringBuilder()
-        val initialSecondChar = getChar()
+        val initialSecondChar = getCurrent()
         val multiline: Boolean
         if (initialSecondChar != '\'') {
             multiline = false
         } else {
             proceed()
-            if (!isEof && getChar() == '\'') {
+            if (!isEof && getCurrent() == '\'') {
                 multiline = true
                 proceed()
                 throwIncompleteIf { isEof }
-                if (getChar() == '\r') {
+                if (getCurrent() == '\r') {
                     proceed()
                     throwIncompleteIf { isEof }
-                    if (getChar() != '\n') {
+                    if (getCurrent() != '\n') {
                         builder.append('\r')
                     }
                 }
-                if (getChar() == '\n') {
+                if (getCurrent() == '\n') {
                     // Consumes the initial line feed.
                     currentLineNumber++
                     proceed()
@@ -886,22 +896,22 @@ internal class TomlElementParser(
         }
         var justEnded = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
                 '\n' -> {
                     throwIncompleteIf { !multiline }
-                    builder.append(currentChar)
+                    builder.append(current)
                     currentLineNumber++
                     proceed()
                 }
                 '\r' -> {
                     proceed()
                     throwIncompleteIf { isEof }
-                    if (getChar() != '\n') {
-                        builder.append(currentChar)
+                    if (getCurrent() != '\n') {
+                        builder.append(current)
                     }
                 }
                 '\'' -> {
@@ -912,15 +922,15 @@ internal class TomlElementParser(
                     }
                     proceed()
                     throwIncompleteIf { isEof }
-                    val secondChar = getChar()
-                    if (secondChar != '\'') {
-                        builder.append(currentChar)
+                    val second = getCurrent()
+                    if (second != '\'') {
+                        builder.append(current)
                         continue
                     }
                     proceed()
                     throwIncompleteIf { isEof }
-                    if (getChar() != '\'') {
-                        builder.append(currentChar).append(secondChar)
+                    if (getCurrent() != '\'') {
+                        builder.append(current).append(second)
                         continue
                     }
                     justEnded = true
@@ -928,7 +938,7 @@ internal class TomlElementParser(
                     break
                 }
                 else -> {
-                    builder.append(currentChar)
+                    builder.append(current)
                     proceed()
                 }
             }
@@ -947,7 +957,7 @@ internal class TomlElementParser(
         var expectValue = true
         var justEnded = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     proceed()
                 }
@@ -958,7 +968,7 @@ internal class TomlElementParser(
                 '\r' -> {
                     proceed()
                     throwIncompleteIf { isEof }
-                    throwUnexpectedTokenIf(currentChar) { getChar() != '\n' }
+                    throwUnexpectedTokenIf(current) { getCurrent() != '\n' }
                 }
                 EndArray -> {
                     justEnded = true
@@ -966,7 +976,7 @@ internal class TomlElementParser(
                     break
                 }
                 ElementSeparator -> {
-                    throwUnexpectedTokenIf(currentChar) { expectValue }
+                    throwUnexpectedTokenIf(current) { expectValue }
                     expectValue = true
                     proceed()
                 }
@@ -974,7 +984,7 @@ internal class TomlElementParser(
                     parseComment()
                 }
                 else -> {
-                    val value = parseValue(insideStructure = true)
+                    val value = parseValue(isInsideStructure = true)
                     builder.add(value)
                     expectValue = false
                 }
@@ -989,12 +999,12 @@ internal class TomlElementParser(
      */
     private fun parseInlineTableValue(): TomlTable {
         proceed()
-        val builder = KeyNode("")
+        val builder = KeyNode("", isLast = false)
         var expectEntry = true
         var justStarted = true
         var justEnded = false
         while (!isEof) {
-            when (val currentChar = getChar()) {
+            when (val current = getCurrent()) {
                 ' ', '\t' -> {
                     proceed()
                 }
@@ -1002,27 +1012,29 @@ internal class TomlElementParser(
                     throwIncomplete()
                 }
                 EndInlineTable -> {
-                    throwUnexpectedTokenIf(currentChar) { expectEntry && !justStarted }
+                    throwUnexpectedTokenIf(current) { expectEntry && !justStarted }
                     justEnded = true
                     proceed()
                     break
                 }
                 ElementSeparator -> {
-                    throwUnexpectedTokenIf(currentChar) { expectEntry }
+                    throwUnexpectedTokenIf(current) { expectEntry }
                     expectEntry = true
                     proceed()
                 }
                 Comment -> {
-                    throwUnexpectedToken(currentChar)
+                    throwUnexpectedToken(current)
                 }
                 else -> {
                     val localPath = parsePath()
-                    throwUnexpectedTokenIf(getChar()) { it != KeyValueSeparator }
+                    throwUnexpectedTokenIf(getCurrent()) { it != KeyValueSeparator }
                     proceed()
                     val key = localPath.last()
-                    val value = parseValue(insideStructure = true)
+                    val value = parseValue(isInsideStructure = true)
                     val node = ValueNode(key, value)
-                    builder.addByPath(localPath, node, null)
+                    if (builder.addByPath(localPath, node, null).not()) {
+                        throwConflictEntry(localPath)
+                    }
                     expectEntry = false
                     justStarted = false
                 }
@@ -1047,7 +1059,7 @@ internal class TomlElementParser(
     private fun parseComment() {
         proceed()
         while (!isEof) {
-            if (getChar() == '\n') {
+            if (getCurrent() == '\n') {
                 break
             }
             proceed()

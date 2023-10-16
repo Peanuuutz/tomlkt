@@ -88,8 +88,8 @@ internal fun throwIncomplete(line: Int): Nothing {
 
 internal class ConflictEntryException(message: String) : TomlDecodingException(message)
 
-internal fun throwConflictEntry(path: Path): Nothing {
-    val message = path.joinToString(".") { key ->
+internal fun throwConflictEntry(path: Path, line: Int): Nothing {
+    val message = path.joinToString(separator = ".", postfix = " (L$line)") { key ->
         key.escape().doubleQuotedIfNotPure()
     }
     throw ConflictEntryException(message)

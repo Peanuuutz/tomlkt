@@ -22,7 +22,6 @@ import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.peanuuutz.tomlkt.Toml.Default
-import net.peanuuutz.tomlkt.internal.BufferPool
 import net.peanuuutz.tomlkt.internal.NonPrimitiveKeyException
 import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
@@ -181,7 +180,7 @@ public sealed class Toml(
     }
 
     /**
-     * Deserializes the content of the [reader] into a value of type [T] using
+     * Deserializes the content of [reader] into a value of type [T] using
      * [deserializer].
      *
      * @param reader **MUST** contain a TOML file, as this method delegates
@@ -199,9 +198,9 @@ public sealed class Toml(
     }
 
     /**
-     * Parses the content of the [reader] into a [TomlTable] and deserializes
-     * the corresponding element fetched with [keys] into a value of type [T]
-     * using [deserializer].
+     * Parses the content of [reader] into a [TomlTable] and deserializes the
+     * corresponding element fetched with [keys] into a value of type [T] using
+     * [deserializer].
      *
      * @param reader **MUST** contain a TOML file, as this method delegates
      * parsing to [parseToTomlTable].
@@ -242,7 +241,7 @@ public sealed class Toml(
      * Parses [string] into equivalent representation of [TomlTable].
      *
      * @throws TomlDecodingException if `string` cannot be parsed into
-     * [TomlTable].
+     * `TomlTable`.
      */
     public fun parseToTomlTable(string: String): TomlTable {
         val reader = TomlStringReader(string)
@@ -250,19 +249,14 @@ public sealed class Toml(
     }
 
     /**
-     * Parses the content of the [reader] into equivalent representation of
+     * Parses the content of [reader] into equivalent representation of
      * [TomlTable].
      *
      * @throws TomlDecodingException if the content cannot be parsed into
-     * [TomlTable].
+     * `TomlTable`.
      */
     public fun parseToTomlTable(reader: TomlReader): TomlTable {
-        val buffer = BufferPool.take()
-        return try {
-            TomlElementParser(this, reader, buffer).parse()
-        } finally {
-            BufferPool.release(buffer)
-        }
+        return TomlElementParser(this, reader).parse()
     }
 }
 
@@ -328,7 +322,7 @@ public inline fun <reified T> Toml.decodeFromString(
 }
 
 /**
- * Deserializes the content of the [reader] into a value of type [T] using the
+ * Deserializes the content of [reader] into a value of type [T] using the
  * serializer retrieved from reified type parameter.
  *
  * @param reader **MUST** contain a TOML file, as this method delegates parsing
@@ -342,9 +336,9 @@ public inline fun <reified T> Toml.decodeFromReader(reader: TomlReader): T {
 }
 
 /**
- * Parses the content of the [reader] into a [TomlTable] and deserializes
- * the corresponding element fetched with [keys] into a value of type [T]
- * using the serializer retrieved from reified type parameter.
+ * Parses the content of [reader] into a [TomlTable] and deserializes the
+ * corresponding element fetched with [keys] into a value of type [T] using the
+ * serializer retrieved from reified type parameter.
  *
  * @param reader **MUST** contain a TOML file, as this method delegates
  * parsing to [Toml.parseToTomlTable].

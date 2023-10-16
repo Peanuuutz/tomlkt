@@ -37,6 +37,7 @@ import net.peanuuutz.tomlkt.asTomlArray
 import net.peanuuutz.tomlkt.asTomlLiteral
 import net.peanuuutz.tomlkt.asTomlNull
 import net.peanuuutz.tomlkt.asTomlTable
+import net.peanuuutz.tomlkt.internal.isTomlElement
 import net.peanuuutz.tomlkt.internal.isUnsignedInteger
 import net.peanuuutz.tomlkt.internal.throwUnknownKey
 import net.peanuuutz.tomlkt.internal.throwUnsupportedSerialKind
@@ -138,6 +139,15 @@ internal abstract class AbstractTomlElementDecoder(toml: Toml) : AbstractTomlDec
                 )
             }
             else -> throwUnsupportedSerialKind(kind)
+        }
+    }
+
+    final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
+        return if (deserializer.isTomlElement.not()) {
+            super.decodeSerializableValue(deserializer)
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            decodeTomlElement() as T
         }
     }
 }
