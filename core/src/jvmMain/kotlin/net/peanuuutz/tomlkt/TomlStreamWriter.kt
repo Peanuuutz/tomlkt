@@ -18,20 +18,16 @@ package net.peanuuutz.tomlkt
 
 import java.io.OutputStream
 
-/**
- * A [TomlWriter] that writes TOML string to [outputStream].
- *
- * Note that this writer only wraps the stream, so the following requirements
- * should be met:
- * * Pass in a [buffered][OutputStream.buffered] stream. The writer itself won't
- * buffer in any way.
- * * Call [close][OutputStream.close] when finished, or use [AutoCloseable.use]
- * for short.
- *
- * Use with [Toml.encodeToWriter] to encode objects. This is useful for
- * concatenating two TOML streams. However, programmer should prefer
- * [Toml.encodeToStream] if only one object is being encoded.
- */
+@Deprecated(
+    message = "This writer is expensive. Please use TomlNativeWriter instead.",
+    replaceWith = ReplaceWith(
+        expression = "TomlNativeWriter(outputStream.writer())",
+        imports = [
+            "net.peanuuutz.tomlkt.TomlNativeWriter",
+            "kotlin.io.path.writer"
+        ]
+    )
+)
 public class TomlStreamWriter(
     private val outputStream: OutputStream
 ) : AbstractTomlWriter() {

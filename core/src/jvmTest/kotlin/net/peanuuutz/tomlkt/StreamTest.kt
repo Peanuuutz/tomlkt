@@ -2,7 +2,6 @@ package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.Serializable
 import kotlin.io.path.Path
-import kotlin.io.path.outputStream
 import kotlin.io.path.readText
 import kotlin.io.path.reader
 import kotlin.io.path.writeText
@@ -44,15 +43,6 @@ class StreamTest {
     """.trimIndent()
 
     val p1 = Path("build/config.toml")
-
-    @Test
-    fun encodeToStream() {
-        Toml.encodeToStream(M1.serializer(), m11, p1.outputStream())
-
-        val r = p1.readText()
-
-        assertEquals(s11, r)
-    }
 
     @Test
     fun encodeToNativeWriter() {
