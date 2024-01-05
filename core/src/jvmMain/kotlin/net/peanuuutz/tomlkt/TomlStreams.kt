@@ -26,16 +26,16 @@ import java.io.OutputStream
 import java.io.Reader
 import java.io.Writer
 
-/**
- * Serializes [value] into [outputStream] using [serializer].
- *
- * Note that when finished, `outputStream` is automatically
- * [closed][OutputStream.close].
- *
- * @throws TomlEncodingException if `value` cannot be serialized.
- *
- * @see TomlStreamWriter
- */
+@Deprecated(
+    message = "This method is expensive. Please use encodeToNativeWriter instead.",
+    replaceWith = ReplaceWith(
+        expression = "encodeToNativeWriter(serializer, value, outputStream.writer())",
+        imports = [
+            "net.peanuuutz.tomlkt.encodeToNativeWriter",
+            "kotlin.io.path.writer"
+        ]
+    )
+)
 public fun <T> Toml.encodeToStream(
     serializer: SerializationStrategy<T>,
     value: T,
@@ -47,17 +47,16 @@ public fun <T> Toml.encodeToStream(
     }
 }
 
-/**
- * Serializes [value] into [outputStream] using the serializer retrieved from
- * reified type parameter.
- *
- * Note that when finished, `outputStream` is automatically
- * [closed][OutputStream.close].
- *
- * @throws TomlEncodingException if `value` cannot be serialized.
- *
- * @see TomlStreamWriter
- */
+@Deprecated(
+    message = "This method is expensive. Please use encodeToNativeWriter instead.",
+    replaceWith = ReplaceWith(
+        expression = "encodeToNativeWriter(value, outputStream.writer())",
+        imports = [
+            "net.peanuuutz.tomlkt.encodeToNativeWriter",
+            "kotlin.io.path.writer"
+        ]
+    )
+)
 public inline fun <reified T> Toml.encodeToStream(
     value: T,
     outputStream: OutputStream

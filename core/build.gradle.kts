@@ -37,13 +37,17 @@ kotlin {
     mingwX64()
     macosArm64()
     macosX64()
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
     linuxArm64()
     linuxX64()
 
     sourceSets {
         val serializationVersion: String by rootProject
         val datetimeVersion: String by rootProject
+
+        applyDefaultHierarchyTemplate()
 
         all {
             languageSettings {
@@ -107,7 +111,15 @@ kotlin {
             dependsOn(kotlinxMain)
         }
 
-        val iosMain by getting {
+        val iosX64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val iosArm64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val iosSimulatorArm64Main by getting {
             dependsOn(kotlinxMain)
         }
 
@@ -171,7 +183,7 @@ tasks {
 }
 
 detekt {
-    config = files("$rootDir/format/detekt.yml")
+    config.from(files("$rootDir/format/detekt.yml"))
 }
 
 afterEvaluate {
