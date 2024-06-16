@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import java.net.URL
 
+// Plugins
+
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
@@ -15,8 +17,12 @@ plugins {
     signing
 }
 
+// Archives Metadata
+
 val archivesName: String by rootProject
 base.archivesName = archivesName
+
+// Kotlin
 
 kotlin {
     explicitApi()
@@ -133,13 +139,40 @@ kotlin {
     }
 }
 
-val docsDir = rootDir.resolve("docs")
+// Linter
+
+detekt {
+    config.from(files("$rootDir/format/detekt.yml"))
+}
+
+tasks {
+    withType<Detekt> {
+        reports {
+            sarif.required = false
+            xml.required = false
+            html.required = false
+            md.required = false
+        }
+    }
+}
+
+// Tests
 
 tasks {
     withType<KotlinJvmTest> {
         useJUnitPlatform()
     }
 
+    check {
+        dependsOn(getByName("detektMetadataMain"))
+    }
+}
+
+// Documentation
+
+val docsDir = rootDir.resolve("docs")
+
+tasks {
     dokkaHtml {
         moduleName = "tomlkt"
 
@@ -167,33 +200,26 @@ tasks {
         archiveClassifier = "javadoc"
         from(docsDir)
     }
-
-    withType<Detekt> {
-        reports {
-            sarif.required = false
-            xml.required = false
-            html.required = false
-            md.required = false
-        }
-    }
-
-    check {
-        dependsOn(getByName("detektMetadataMain"))
-    }
 }
 
-detekt {
-    config.from(files("$rootDir/format/detekt.yml"))
+// Signing
+
+signing {
+    if (systemUsername != null) {
+        useInMemoryPgpKeys(systemSigningKey, systemSigningPassword)
+    }
+    sign(publishing.publications)
 }
 
-afterEvaluate {
-    configure<PublishingExtension> {
-        publications.withType<MavenPublication> {
-            val classifier = if (name.contains("multiplatform", true)) "" else "-$name"
-            artifactId = "tomlkt$classifier"
-        }
+tasks {
+    val signTasks = withType<Sign>().toTypedArray()
+
+    withType<AbstractPublishToMaven> {
+        dependsOn(*signTasks)
     }
 }
+
+// Publication
 
 val systemUsername = findProperty("mavenCentralUsername")?.toString()
 val systemPassword = findProperty("mavenCentralPassword")?.toString()
@@ -214,6 +240,9 @@ publishing {
 
     publications {
         withType<MavenPublication> {
+            val classifier = if (name.contains("multiplatform", true)) "" else "-$name"
+            artifactId = "tomlkt$classifier"
+
             artifact(tasks["createJavadocByDokka"])
 
             pom {
@@ -246,11 +275,4 @@ publishing {
             }
         }
     }
-}
-
-signing {
-    if (systemUsername != null) {
-        useInMemoryPgpKeys(systemSigningKey, systemSigningPassword)
-    }
-    sign(publishing.publications)
 }
