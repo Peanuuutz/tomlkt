@@ -12,6 +12,7 @@ import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
 import org.openjdk.jmh.annotations.Threads
 import org.openjdk.jmh.annotations.Warmup
+import org.openjdk.jmh.infra.Blackhole
 import java.util.concurrent.TimeUnit
 
 @State(Scope.Thread)
@@ -56,32 +57,32 @@ object TomlObjects {
 @State(Scope.Thread)
 class Benchmark {
     @Benchmark
-    fun tomlkt() {
-        TomlObjects.tomlkt.parseToTomlTable(SmallSampleConfig)
+    fun tomlkt(hole: Blackhole) {
+        hole.consume(TomlObjects.tomlkt.parseToTomlTable(SmallSampleConfig))
     }
 
     @Benchmark
-    fun toml4j() {
-        TomlObjects.toml4j.read(SmallSampleConfig)
+    fun toml4j(hole: Blackhole) {
+        hole.consume(TomlObjects.toml4j.read(SmallSampleConfig))
     }
 
     @Benchmark
-    fun ktoml() {
-        TomlObjects.ktoml.tomlParser.parseString(SmallSampleConfig)
+    fun ktoml(hole: Blackhole) {
+        hole.consume(TomlObjects.ktoml.tomlParser.parseString(SmallSampleConfig))
     }
 
     @Benchmark
-    fun jackson() {
-        TomlObjects.jackson.readTree(SmallSampleConfig)
+    fun jackson(hole: Blackhole) {
+        hole.consume(TomlObjects.jackson.readTree(SmallSampleConfig))
     }
 
     @Benchmark
-    fun night() {
-        TomlObjects.night.parse(SmallSampleConfig)
+    fun night(hole: Blackhole) {
+        hole.consume(TomlObjects.night.parse(SmallSampleConfig))
     }
 
     @Benchmark
-    fun tomlj() {
-        org.tomlj.Toml.parse(SmallSampleConfig)
+    fun tomlj(hole: Blackhole) {
+        hole.consume(org.tomlj.Toml.parse(SmallSampleConfig))
     }
 }

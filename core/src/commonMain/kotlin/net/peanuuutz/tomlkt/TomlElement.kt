@@ -1510,11 +1510,11 @@ internal fun TomlArray(arrayNode: ArrayNode): TomlArray {
         1 -> {
             val node = children[0]
             val content = listOf(element = node.toTomlElement())
-            TomlArray(content)
+            TomlArray(content, arrayNode.annotations)
         }
         else -> {
             val content = children.map(::TomlTable)
-            TomlArray(content)
+            TomlArray(content, arrayNode.annotations)
         }
     }
 }
@@ -1526,7 +1526,7 @@ internal fun TomlTable(keyNode: KeyNode): TomlTable {
         1 -> {
             val (k, n) = children.entries.first()
             val content = mapOf(pair = k to n.toTomlElement())
-            TomlTable(content)
+            TomlTable(content, keyNode.annotations)
         }
         else -> {
             val content = buildMap(size) {
@@ -1534,7 +1534,7 @@ internal fun TomlTable(keyNode: KeyNode): TomlTable {
                     put(k, n.toTomlElement())
                 }
             }
-            return TomlTable(content)
+            return TomlTable(content, keyNode.annotations)
         }
     }
 }
