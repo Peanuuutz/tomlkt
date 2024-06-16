@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import java.net.URL
 
+// Plugins
+
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
@@ -15,8 +17,12 @@ plugins {
     signing
 }
 
+// Archives Metadata
+
 val archivesName: String by rootProject
-base.archivesName.set(archivesName)
+base.archivesName = archivesName
+
+// Kotlin
 
 kotlin {
     explicitApi()
@@ -133,24 +139,51 @@ kotlin {
     }
 }
 
-val docsDir = rootDir.resolve("docs")
+// Linter
+
+detekt {
+    config.from(files("$rootDir/format/detekt.yml"))
+}
+
+tasks {
+    withType<Detekt> {
+        reports {
+            sarif.required = false
+            xml.required = false
+            html.required = false
+            md.required = false
+        }
+    }
+}
+
+// Tests
 
 tasks {
     withType<KotlinJvmTest> {
         useJUnitPlatform()
     }
 
-    dokkaHtml {
-        moduleName.set("tomlkt")
+    check {
+        dependsOn(getByName("detektMetadataMain"))
+    }
+}
 
-        outputDirectory.set(docsDir)
+// Documentation
+
+val docsDir = rootDir.resolve("docs")
+
+tasks {
+    dokkaHtml {
+        moduleName = "tomlkt"
+
+        outputDirectory = docsDir
 
         dokkaSourceSets {
             "commonMain" {
                 sourceLink {
-                    localDirectory.set(file("src/commonMain/kotlin"))
-                    remoteUrl.set(URL("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin"))
-                    remoteLineSuffix.set("#L")
+                    localDirectory = file("src/commonMain/kotlin")
+                    remoteUrl = URL("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin")
+                    remoteLineSuffix = "#L"
                 }
             }
         }
@@ -164,36 +197,29 @@ tasks {
     create<Jar>("createJavadocByDokka") {
         group = "documentation"
         dependsOn("deleteOldDocs", dokkaHtml)
-        archiveClassifier.set("javadoc")
+        archiveClassifier = "javadoc"
         from(docsDir)
     }
-
-    withType<Detekt> {
-        reports {
-            sarif.required.set(false)
-            xml.required.set(false)
-            html.required.set(false)
-            md.required.set(false)
-        }
-    }
-
-    check {
-        dependsOn(getByName("detektMetadataMain"))
-    }
 }
 
-detekt {
-    config.from(files("$rootDir/format/detekt.yml"))
+// Signing
+
+signing {
+    if (systemUsername != null) {
+        useInMemoryPgpKeys(systemSigningKey, systemSigningPassword)
+    }
+    sign(publishing.publications)
 }
 
-afterEvaluate {
-    configure<PublishingExtension> {
-        publications.withType<MavenPublication> {
-            val classifier = if (name.contains("multiplatform", true)) "" else "-$name"
-            artifactId = "tomlkt$classifier"
-        }
+tasks {
+    val signTasks = withType<Sign>().toTypedArray()
+
+    withType<AbstractPublishToMaven> {
+        dependsOn(*signTasks)
     }
 }
+
+// Publication
 
 val systemUsername = findProperty("mavenCentralUsername")?.toString()
 val systemPassword = findProperty("mavenCentralPassword")?.toString()
@@ -214,43 +240,39 @@ publishing {
 
     publications {
         withType<MavenPublication> {
+            val classifier = if (name.contains("multiplatform", true)) "" else "-$name"
+            artifactId = "tomlkt$classifier"
+
             artifact(tasks["createJavadocByDokka"])
 
             pom {
-                name.set("tomlkt")
-                description.set("TOML support for kotlinx.serialization")
-                url.set("https://github.com/Peanuuutz/tomlkt")
+                name = "tomlkt"
+                description = "TOML support for kotlinx.serialization"
+                url = "https://github.com/Peanuuutz/tomlkt"
 
                 licenses {
                     license {
-                        name.set("Apache-2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                        name = "Apache-2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0"
                     }
                 }
 
                 issueManagement {
-                    system.set("Github")
-                    url.set("https://github.com/Peanuuutz/tomlkt/issues")
+                    system = "Github"
+                    url = "https://github.com/Peanuuutz/tomlkt/issues"
                 }
 
                 scm {
-                    connection.set("https://github.com/Peanuuutz/tomlkt.git")
-                    url.set("https://github.com/Peanuuutz/tomlkt")
+                    connection = "https://github.com/Peanuuutz/tomlkt.git"
+                    url = "https://github.com/Peanuuutz/tomlkt"
                 }
 
                 developers {
                     developer {
-                        name.set("Peanuuutz")
+                        name = "Peanuuutz"
                     }
                 }
             }
         }
     }
-}
-
-signing {
-    if (systemUsername != null) {
-        useInMemoryPgpKeys(systemSigningKey, systemSigningPassword)
-    }
-    sign(publishing.publications)
 }
