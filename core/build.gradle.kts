@@ -204,6 +204,11 @@ tasks {
 
 // Signing
 
+val systemUsername = findProperty("mavenCentralUsername")?.toString()
+val systemPassword = findProperty("mavenCentralPassword")?.toString()
+val systemSigningKey = findProperty("inMemorySigningKey")?.toString()
+val systemSigningPassword = findProperty("inMemorySigningKeyPassword")?.toString()
+
 signing {
     if (systemUsername != null) {
         useInMemoryPgpKeys(systemSigningKey, systemSigningPassword)
@@ -220,11 +225,6 @@ tasks {
 }
 
 // Publication
-
-val systemUsername = findProperty("mavenCentralUsername")?.toString()
-val systemPassword = findProperty("mavenCentralPassword")?.toString()
-val systemSigningKey = findProperty("inMemorySigningKey")?.toString()
-val systemSigningPassword = findProperty("inMemorySigningKeyPassword")?.toString()
 
 publishing {
     repositories {
