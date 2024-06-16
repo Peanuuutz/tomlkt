@@ -97,14 +97,6 @@ public abstract class AbstractTomlWriter : TomlWriter {
         writeString(string)
     }
 
-    @Deprecated(
-        message = "Use writeFloatValue(Double) instead.",
-        replaceWith = ReplaceWith("writeFloatValue")
-    )
-    override fun writeFloatValue(float: Float) {
-        writeString(float.toStringModified())
-    }
-
     final override fun writeFloatValue(float: Double) {
         writeString(float.toStringModified())
     }
