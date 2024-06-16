@@ -31,22 +31,22 @@ object TomlObjects {
     SmallSampleConfig:
 
     Benchmark          Mode  Cnt       Score      Error  Units
-    Benchmark.jackson  avgt    5    9151.851 ± 1123.198  ns/op
-    Benchmark.night    avgt    5   11480.495 ± 1424.068  ns/op
-    Benchmark.tomlkt   avgt    5   11555.185 ±  347.118  ns/op
-    Benchmark.toml4j   avgt    5   30508.511 ±  292.352  ns/op
-    Benchmark.ktoml    avgt    5   53619.175 ± 1512.321  ns/op
-    Benchmark.tomlj    avgt    5  146998.024 ± 2384.767  ns/op
+    Benchmark.jackson  avgt    5   5021.622 ±  140.504  ns/op
+    Benchmark.night    avgt    5   7625.834 ±  593.511  ns/op
+    Benchmark.tomlkt   avgt    5   9006.957 ±  158.111  ns/op
+    Benchmark.toml4j   avgt    5   9628.198 ±  362.380  ns/op
+    Benchmark.ktoml    avgt    5  30904.482 ± 2665.325  ns/op
+    Benchmark.tomlj    avgt    5  82332.312 ± 1493.406  ns/op
 
     LargeSampleConfig:
 
     Benchmark          Mode  Cnt        Score       Error  Units
-    Benchmark.jackson  avgt    5   102626.482 ±  1935.074  ns/op
-    Benchmark.night    avgt    5   123354.484 ±  4292.667  ns/op
-    Benchmark.tomlkt   avgt    5   157744.955 ±  5007.944  ns/op
-    Benchmark.tomlj    avgt    5   953882.911 ± 13345.218  ns/op
-    Benchmark.toml4j   avgt    5  1124525.511 ± 62901.746  ns/op
-    Benchmark.ktoml    avgt    5  1193358.164 ± 12310.127  ns/op
+    Benchmark.jackson  avgt    5   48124.930 ±  2675.439  ns/op
+    Benchmark.night    avgt    5   81193.034 ±  1100.800  ns/op
+    Benchmark.tomlkt   avgt    5  134145.378 ± 29334.081  ns/op
+    Benchmark.toml4j   avgt    5  227001.105 ±  1702.516  ns/op
+    Benchmark.tomlj    avgt    5  521451.284 ± 13951.421  ns/op
+    Benchmark.ktoml    avgt    5  640967.592 ±  9486.035  ns/op
  */
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 4)
