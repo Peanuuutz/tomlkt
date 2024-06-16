@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>TomlNativeWriter</title>
     <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
     <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
     if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -18,12 +19,13 @@
         }
     }
     </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
-<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
@@ -32,28 +34,33 @@
 <script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
 </head>
 <body>
-<div class="navigation-wrapper" id="navigation-wrapper">
-    <div id="leftToggler"><span class="icon-toggler"></span></div>
-    <div class="library-name">
-            <a href="../../../index.html">
-                    <span>tomlkt</span>
-            </a>
-    </div>
-    <div>
-0.3.7    </div>
-    <div class="pull-right d-flex">
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            tomlkt
+                    </a>
+            </div>
+            <div class="library-version">
+0.4.0            </div>
+        </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":core:dokkaHtml/jvmMain">jvm</button>
         </div>
-        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
-        <div id="searchBar"></div>
     </div>
-</div>
-<div id="container">
-    <div id="leftColumn">
-        <div id="sideMenu"></div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
     </div>
-    <div id="main">
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
 <div class="main-content" data-page-type="classlike" id="content" pageIds="tomlkt::net.peanuuutz.tomlkt/TomlNativeWriter///PointingToDeclaration//957248005">
   <div class="breadcrumbs"><a href="../../../index.html">tomlkt</a><span class="delimiter">/</span><a href="../index.html">net.peanuuutz.tomlkt</a><span class="delimiter">/</span><span class="current">TomlNativeWriter</span></div>
   <div class="cover ">
@@ -241,23 +248,6 @@
               </div>
             </div>
           </div>
-<a data-name="421133469%2FFunctions%2F957248005" anchor-label="writeBoolean" id="421133469%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-boolean.html"><span>write</span><wbr></wbr><span><span>Boolean</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="421133469%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-boolean.html"><span class="token function"><strike>writeBoolean</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boolean<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 <a data-name="779687124%2FFunctions%2F957248005" anchor-label="writeBooleanValue" id="779687124%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
             <div class="main-subrow keyValue ">
@@ -271,40 +261,6 @@
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-boolean-value.html"><span class="token function">writeBooleanValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boolean<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-boolean-value.html">boolean</a> as value.</p></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1771807717%2FFunctions%2F957248005" anchor-label="writeByte" id="-1771807717%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-byte.html"><span>write</span><wbr></wbr><span><span>Byte</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1771807717%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-byte.html"><span class="token function"><strike>writeByte</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">byte<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="542349408%2FFunctions%2F957248005" anchor-label="writeByteValue" id="542349408%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-byte-value.html"><span>write</span><wbr></wbr><span>Byte</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="542349408%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-byte-value.html"><span class="token function"><strike>writeByteValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">byte<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html">Byte</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token operator"> = </span>Dec<span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -326,57 +282,6 @@
               </div>
             </div>
           </div>
-<a data-name="-142034534%2FFunctions%2F957248005" anchor-label="writeCharValue" id="-142034534%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-char-value.html"><span>write</span><wbr></wbr><span>Char</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-142034534%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-char-value.html"><span class="token function"><strike>writeCharValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">char<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html">Char</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1902708229%2FFunctions%2F957248005" anchor-label="writeDouble" id="-1902708229%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-double.html"><span>write</span><wbr></wbr><span><span>Double</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1902708229%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-double.html"><span class="token function"><strike>writeDouble</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">double<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-572391324%2FFunctions%2F957248005" anchor-label="writeDoubleValue" id="-572391324%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-double-value.html"><span>write</span><wbr></wbr><span>Double</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-572391324%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-double-value.html"><span class="token function"><strike>writeDoubleValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">double<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 <a data-name="1449857327%2FFunctions%2F957248005" anchor-label="writeElementSeparator" id="1449857327%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
             <div class="main-subrow keyValue ">
@@ -394,36 +299,19 @@
               </div>
             </div>
           </div>
-<a data-name="583989237%2FFunctions%2F957248005" anchor-label="writeFloat" id="583989237%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-float.html"><span>write</span><wbr></wbr><span><span>Float</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="583989237%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-float.html"><span class="token function"><strike>writeFloat</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="919079657%2FFunctions%2F957248005" anchor-label="writeFloatValue" id="919079657%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
+<a data-name="1721352289%2FFunctions%2F957248005" anchor-label="writeFloatValue" id="1721352289%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="../-abstract-toml-writer/write-float-value.html"><span>write</span><wbr></wbr><span>Float</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="919079657%2FFunctions%2F957248005"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1721352289%2FFunctions%2F957248005"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-float-value.html"><span class="token function">writeFloatValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-float-value.html">float</a> as value.</p></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-float-value.html"><span class="token function"><strike>writeFloatValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-float-value.html"><span class="token function">writeFloatValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">float<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-float-value.html">float</a> as value.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -445,23 +333,6 @@
               </div>
             </div>
           </div>
-<a data-name="-303875249%2FFunctions%2F957248005" anchor-label="writeInt" id="-303875249%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-int.html"><span>write</span><wbr></wbr><span><span>Int</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-303875249%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-int.html"><span class="token function"><strike>writeInt</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">int<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 <a data-name="1675103710%2FFunctions%2F957248005" anchor-label="writeIntegerValue" id="1675103710%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
             <div class="main-subrow keyValue ">
@@ -475,23 +346,6 @@
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-integer-value.html"><span class="token function">writeIntegerValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">integer<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="../-abstract-toml-writer/write-integer-value.html">integer</a> as value.</p></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-867174752%2FFunctions%2F957248005" anchor-label="writeIntValue" id="-867174752%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-int-value.html"><span>write</span><wbr></wbr><span>Int</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-867174752%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-int-value.html"><span class="token function"><strike>writeIntValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">int<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token operator"> = </span>Dec<span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -564,57 +418,6 @@
               </div>
             </div>
           </div>
-<a data-name="208981915%2FFunctions%2F957248005" anchor-label="writeLong" id="208981915%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-long.html"><span>write</span><wbr></wbr><span><span>Long</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="208981915%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-long.html"><span class="token function"><strike>writeLong</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">long<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1836768632%2FFunctions%2F957248005" anchor-label="writeLongValue" id="1836768632%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-long-value.html"><span>write</span><wbr></wbr><span>Long</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1836768632%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-long-value.html"><span class="token function"><strike>writeLongValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">long<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token operator"> = </span>Dec<span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1495930829%2FFunctions%2F957248005" anchor-label="writeNull" id="-1495930829%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-null.html"><span>write</span><wbr></wbr><span><span>Null</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1495930829%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-null.html"><span class="token function"><strike>writeNull</strike></span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 <a data-name="583327384%2FFunctions%2F957248005" anchor-label="writeNullValue" id="583327384%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
           <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
             <div class="main-subrow keyValue ">
@@ -628,40 +431,6 @@
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../-abstract-toml-writer/write-null-value.html"><span class="token function">writeNullValue</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <code class="lang-kotlin">null</code> as value.</p></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-971988043%2FFunctions%2F957248005" anchor-label="writeShort" id="-971988043%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-short.html"><span>write</span><wbr></wbr><span><span>Short</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-971988043%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-short.html"><span class="token function"><strike>writeShort</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">short<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-881551488%2FFunctions%2F957248005" anchor-label="writeShortValue" id="-881551488%2FFunctions%2F957248005" data-filterable-set=":core:dokkaHtml/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-toml-writer/write-short-value.html"><span>write</span><wbr></wbr><span>Short</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-881551488%2FFunctions%2F957248005"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":core:dokkaHtml/jvmMain" data-filterable-set=":core:dokkaHtml/jvmMain" data-active="" data-toggle=":core:dokkaHtml/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":core:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../-toml-writer/write-short-value.html"><span class="token function"><strike>writeShortValue</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">short<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html">Short</a><span class="token punctuation">, </span></span><span class="parameter ">base<span class="token operator">: </span><a href="../-toml-integer/-base/index.html">TomlInteger.Base</a><span class="token operator"> = </span>Dec<span class="token punctuation">, </span></span><span class="parameter ">group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">uppercase<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -723,11 +492,12 @@
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
                 class="pull-right"><span>Generated by </span><a
                 href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>
+            </div>
+        </div>
     </div>
-</div>
 </body>
 </html>
