@@ -22,47 +22,8 @@ import kotlinx.serialization.serializer
 import net.peanuuutz.tomlkt.internal.NonPrimitiveKeyException
 import net.peanuuutz.tomlkt.internal.TomlDecodingException
 import net.peanuuutz.tomlkt.internal.TomlEncodingException
-import java.io.OutputStream
 import java.io.Reader
 import java.io.Writer
-
-@Deprecated(
-    message = "This method is expensive. Please use encodeToNativeWriter instead.",
-    replaceWith = ReplaceWith(
-        expression = "encodeToNativeWriter(serializer, value, outputStream.writer())",
-        imports = [
-            "net.peanuuutz.tomlkt.encodeToNativeWriter",
-            "kotlin.io.path.writer"
-        ]
-    )
-)
-public fun <T> Toml.encodeToStream(
-    serializer: SerializationStrategy<T>,
-    value: T,
-    outputStream: OutputStream
-) {
-    outputStream.buffered().use { buffered ->
-        val writer = TomlStreamWriter(buffered)
-        encodeToWriter(serializer, value, writer)
-    }
-}
-
-@Deprecated(
-    message = "This method is expensive. Please use encodeToNativeWriter instead.",
-    replaceWith = ReplaceWith(
-        expression = "encodeToNativeWriter(value, outputStream.writer())",
-        imports = [
-            "net.peanuuutz.tomlkt.encodeToNativeWriter",
-            "kotlin.io.path.writer"
-        ]
-    )
-)
-public inline fun <reified T> Toml.encodeToStream(
-    value: T,
-    outputStream: OutputStream
-) {
-    encodeToStream(serializersModule.serializer(), value, outputStream)
-}
 
 /**
  * Serializes [value] into [nativeWriter] using [serializer].

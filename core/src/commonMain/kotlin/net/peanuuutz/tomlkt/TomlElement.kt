@@ -88,19 +88,6 @@ public fun TomlElement.asTomlNull(): TomlNull {
     return requireNotNull(this as? TomlNull) { failConversion("TomlNull") }
 }
 
-@Deprecated(
-    message = "Use asTomlNull() instead to better reflect the intent.",
-    replaceWith = ReplaceWith(
-        expression = "asTomlNull()",
-        imports = [
-            "net.peanuuutz.tomlkt.asTomlNull"
-        ]
-    )
-)
-public fun TomlElement.toTomlNull(): TomlNull {
-    return asTomlNull()
-}
-
 // -------- TomlLiteral --------
 
 /**
@@ -194,19 +181,6 @@ public fun TomlElement.asTomlLiteral(): TomlLiteral {
     contract { returns() implies (this@asTomlLiteral is TomlLiteral) }
 
     return requireNotNull(this as? TomlLiteral) { failConversion("TomlLiteral") }
-}
-
-@Deprecated(
-    message = "Use asTomlLiteral() instead to better reflect the intent.",
-    replaceWith = ReplaceWith(
-        expression = "asTomlLiteral()",
-        imports = [
-            "net.peanuuutz.tomlkt.asTomlLiteral"
-        ]
-    )
-)
-public fun TomlElement.toTomlLiteral(): TomlLiteral {
-    return asTomlLiteral()
 }
 
 /**
@@ -348,22 +322,6 @@ public inline fun <reified E : Enum<E>> TomlLiteral(
         .descriptor
         .getElementName(enum.ordinal)
     return TomlLiteral(stringRepresentation)
-}
-
-@Deprecated(
-    message = "Use overloads with specific type.",
-    replaceWith = ReplaceWith("TomlLiteral")
-)
-public fun TomlLiteral(number: Number): TomlLiteral {
-    return when (number) {
-        is Byte -> TomlLiteral(number.toLong())
-        is Short -> TomlLiteral(number.toLong())
-        is Int -> TomlLiteral(number.toLong())
-        is Long -> TomlLiteral(number)
-        is Float -> TomlLiteral(number.toDouble())
-        is Double -> TomlLiteral(number)
-        else -> error("Cannot convert $number to TomlLiteral")
-    }
 }
 
 // ---- From TomlLiteral ----
@@ -765,19 +723,6 @@ public fun TomlElement.asTomlArray(): TomlArray {
     return requireNotNull(this as? TomlArray) { failConversion("TomlArray") }
 }
 
-@Deprecated(
-    message = "Use asTomlArray() instead to better reflect the intent.",
-    replaceWith = ReplaceWith(
-        expression = "asTomlArray()",
-        imports = [
-            "net.peanuuutz.tomlkt.asTomlArray"
-        ]
-    )
-)
-public fun TomlElement.toTomlArray(): TomlArray {
-    return asTomlArray()
-}
-
 /**
  * Creates a [TomlArray] from [iterable].
  */
@@ -1125,19 +1070,6 @@ public fun TomlElement.asTomlTable(): TomlTable {
     contract { returns() implies (this@asTomlTable is TomlTable) }
 
     return requireNotNull(this as? TomlTable) { failConversion("TomlTable") }
-}
-
-@Deprecated(
-    message = "Use asTomlTable() instead to better reflect the intent.",
-    replaceWith = ReplaceWith(
-        expression = "asTomlTable()",
-        imports = [
-            "net.peanuuutz.tomlkt.asTomlTable"
-        ]
-    )
-)
-public fun TomlElement.toTomlTable(): TomlTable {
-    return asTomlTable()
 }
 
 /**
@@ -1510,11 +1442,11 @@ internal fun TomlArray(arrayNode: ArrayNode): TomlArray {
         1 -> {
             val node = children[0]
             val content = listOf(element = node.toTomlElement())
-            TomlArray(content)
+            TomlArray(content, arrayNode.annotations)
         }
         else -> {
             val content = children.map(::TomlTable)
-            TomlArray(content)
+            TomlArray(content, arrayNode.annotations)
         }
     }
 }
@@ -1526,7 +1458,7 @@ internal fun TomlTable(keyNode: KeyNode): TomlTable {
         1 -> {
             val (k, n) = children.entries.first()
             val content = mapOf(pair = k to n.toTomlElement())
-            TomlTable(content)
+            TomlTable(content, keyNode.annotations)
         }
         else -> {
             val content = buildMap(size) {
@@ -1534,7 +1466,7 @@ internal fun TomlTable(keyNode: KeyNode): TomlTable {
                     put(k, n.toTomlElement())
                 }
             }
-            return TomlTable(content)
+            return TomlTable(content, keyNode.annotations)
         }
     }
 }

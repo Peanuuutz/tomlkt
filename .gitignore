@@ -6,3 +6,4 @@ build/
 .gradle/
 
 kotlin-js-store/
+.kotlin/

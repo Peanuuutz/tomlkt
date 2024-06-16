@@ -234,31 +234,7 @@ public annotation class TomlInteger(
         /**
          * Hexadecimal base.
          */
-        Hex(16, "0x"),
-
-        @Deprecated(
-            message = "Unify singleton style.",
-            replaceWith = ReplaceWith("Bin")
-        )
-        BIN(2, "0b"),
-
-        @Deprecated(
-            message = "Unify singleton style.",
-            replaceWith = ReplaceWith("Oct")
-        )
-        OCT(8, "0o"),
-
-        @Deprecated(
-            message = "Unify singleton style.",
-            replaceWith = ReplaceWith("Dec")
-        )
-        DEC(10, ""),
-
-        @Deprecated(
-            message = "Unify singleton style.",
-            replaceWith = ReplaceWith("Hex")
-        )
-        HEX(16, "0x")
+        Hex(16, "0x");
     }
 }
 

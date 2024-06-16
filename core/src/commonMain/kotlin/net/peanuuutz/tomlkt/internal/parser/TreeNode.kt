@@ -38,8 +38,11 @@ internal class KeyNode(
 ) : TreeNode(key) {
     val children: MutableMap<String, TreeNode> = mutableMapOf()
 
-    fun add(node: TreeNode) {
-        children[node.key] = node
+    val annotations: MutableMap<String, List<Annotation>> = mutableMapOf()
+
+    fun add(child: TreeNode, childAnnotations: List<Annotation> = emptyList()) {
+        children[child.key] = child
+        annotations[child.key] = childAnnotations
     }
 
     operator fun get(key: String): TreeNode? {
@@ -50,8 +53,11 @@ internal class KeyNode(
 internal class ArrayNode(key: String) : TreeNode(key) {
     val children: MutableList<KeyNode> = mutableListOf()
 
-    fun add(node: KeyNode) {
-        children.add(node)
+    val annotations: MutableList<List<Annotation>> = mutableListOf()
+
+    fun add(child: KeyNode, childAnnotations: List<Annotation> = emptyList()) {
+        children.add(child)
+        annotations.add(childAnnotations)
     }
 
     operator fun get(index: Int): KeyNode {
