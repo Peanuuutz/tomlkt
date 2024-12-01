@@ -1172,6 +1172,9 @@ public fun TomlTable.allAnnotated(vararg annotations: Annotation): TomlTable {
  * @throws NonPrimitiveKeyException if provided non-primitive keys.
  */
 public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
+    if (keys.isEmpty()) {
+        return this
+    }
     return getByPathRecursively(keys, 0)
 }
 
