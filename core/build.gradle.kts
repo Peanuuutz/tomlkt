@@ -47,6 +47,10 @@ kotlin {
     iosSimulatorArm64()
     linuxArm64()
     linuxX64()
+    wasmJs {
+        browser()
+        nodejs()
+    }
 
     sourceSets {
         val serializationVersion: String by rootProject
@@ -134,6 +138,10 @@ kotlin {
         }
 
         val linuxX64Main by getting {
+            dependsOn(kotlinxMain)
+        }
+
+        val wasmJsMain by getting {
             dependsOn(kotlinxMain)
         }
     }
