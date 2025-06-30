@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.SerialName
@@ -6,6 +8,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.ExperimentalTime
 
 class TomlLiteralTest {
     val m01: Boolean = true

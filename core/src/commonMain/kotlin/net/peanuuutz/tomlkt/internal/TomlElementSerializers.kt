@@ -14,12 +14,13 @@
     limitations under the License.
  */
 
-@file:OptIn(InternalSerializationApi::class)
+@file:OptIn(InternalSerializationApi::class, SealedSerializationApi::class)
 
 package net.peanuuutz.tomlkt.internal
 
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SealedSerializationApi
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
