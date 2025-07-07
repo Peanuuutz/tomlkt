@@ -702,6 +702,7 @@ public class TomlArray internal constructor(
         return content.joinToString(prefix = "[ ", postfix = " ]")
     }
 
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * An empty [TomlArray].
@@ -1051,6 +1052,7 @@ public class TomlTable internal constructor(
         }
     }
 
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * An empty [TomlTable].
@@ -1172,6 +1174,9 @@ public fun TomlTable.allAnnotated(vararg annotations: Annotation): TomlTable {
  * @throws NonPrimitiveKeyException if provided non-primitive keys.
  */
 public operator fun TomlTable.get(vararg keys: Any?): TomlElement? {
+    if (keys.isEmpty()) {
+        return this
+    }
     return getByPathRecursively(keys, 0)
 }
 

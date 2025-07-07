@@ -77,6 +77,7 @@ public annotation class TomlComment(val text: String)
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlInline {
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * Shared [TomlInline] instance for [TomlArray.annotations] and
@@ -141,6 +142,7 @@ public annotation class TomlBlockArray(val itemsPerLine: Int = 1)
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlMultilineString {
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * Shared [TomlMultilineString] instance for [TomlArray.annotations] and
@@ -170,6 +172,7 @@ public annotation class TomlMultilineString {
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 public annotation class TomlLiteralString {
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * Shared [TomlLiteralString] instance for [TomlArray.annotations] and

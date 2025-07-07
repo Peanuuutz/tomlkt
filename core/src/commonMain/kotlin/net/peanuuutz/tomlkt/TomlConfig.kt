@@ -123,6 +123,7 @@ public value class TomlIndentation(public val representation: String) {
         return representation
     }
 
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * An indentation with 4 spaces.
