@@ -16,7 +16,8 @@
 
 package net.peanuuutz.tomlkt
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate as KotlinLocalDate
 import kotlinx.datetime.LocalDateTime as KotlinLocalDateTime
 import kotlinx.datetime.LocalTime as KotlinLocalTime
@@ -31,8 +32,10 @@ public actual fun NativeLocalDateTime(text: String): NativeLocalDateTime {
 
 // -------- NativeOffsetDateTime --------
 
+@ExperimentalTime
 public actual typealias NativeOffsetDateTime = Instant
 
+@ExperimentalTime
 public actual fun NativeOffsetDateTime(text: String): NativeOffsetDateTime {
     return Instant.parse(text)
 }
