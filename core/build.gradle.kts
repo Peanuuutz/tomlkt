@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
-import java.net.URL
+import java.net.URI
 
 // Plugins
 
@@ -180,23 +183,27 @@ tasks {
 
 val docsDir = rootDir.resolve("docs")
 
-tasks {
-    dokkaHtml {
-        moduleName = "tomlkt"
+dokka {
+    moduleName = "tomlkt"
 
-        outputDirectory = docsDir
-
-        dokkaSourceSets {
-            "commonMain" {
-                sourceLink {
-                    localDirectory = file("src/commonMain/kotlin")
-                    remoteUrl = URL("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin")
-                    remoteLineSuffix = "#L"
-                }
+    dokkaSourceSets {
+        commonMain {
+            sourceLink {
+                localDirectory = file("src/commonMain/kotlin")
+                remoteUrl = URI("https://github.com/Peanuuutz/tomlkt/blob/master/src/commonMain/kotlin")
+                remoteLineSuffix = "#L"
             }
         }
     }
 
+    dokkaPublications {
+        html {
+            outputDirectory = docsDir
+        }
+    }
+}
+
+tasks {
     create<Delete>("deleteOldDocs") {
         group = "documentation"
         delete(docsDir)
@@ -204,7 +211,7 @@ tasks {
 
     create<Jar>("createJavadocByDokka") {
         group = "documentation"
-        dependsOn("deleteOldDocs", dokkaHtml)
+        dependsOn("deleteOldDocs", "dokkaGenerate")
         archiveClassifier = "javadoc"
         from(docsDir)
     }
