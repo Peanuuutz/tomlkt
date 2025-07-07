@@ -1,7 +1,10 @@
+@file:OptIn(ExperimentalTime::class)
+
 package net.peanuuutz.tomlkt
 
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
+import kotlin.time.ExperimentalTime
 
 class DateTimeTest {
     @Serializable
