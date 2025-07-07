@@ -702,6 +702,7 @@ public class TomlArray internal constructor(
         return content.joinToString(prefix = "[ ", postfix = " ]")
     }
 
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * An empty [TomlArray].
@@ -1051,6 +1052,7 @@ public class TomlTable internal constructor(
         }
     }
 
+    @Suppress("UndocumentedPublicClass")
     public companion object {
         /**
          * An empty [TomlTable].

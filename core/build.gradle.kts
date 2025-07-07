@@ -147,6 +147,12 @@ kotlin {
         val wasmJsMain by getting {
             dependsOn(kotlinxMain)
         }
+
+        val wasmJsTest by getting {
+            dependencies {
+                implementation(kotlin("test-wasm-js"))
+            }
+        }
     }
 }
 
