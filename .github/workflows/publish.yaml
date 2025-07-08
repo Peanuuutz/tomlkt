@@ -6,8 +6,8 @@ on:
 env:
   ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_USERNAME }}
   ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_PASSWORD }}
-  ORG_GRADLE_PROJECT_inMemorySigningKey: ${{ secrets.SIGNING_KEY }}
-  ORG_GRADLE_PROJECT_inMemorySigningKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
 jobs:
   publish:
