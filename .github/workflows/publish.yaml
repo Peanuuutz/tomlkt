@@ -23,4 +23,4 @@ jobs:
       - name: Grant Gradle Wrapper Permission
         run: chmod +x gradlew
       - name: Publish
-        run: ./gradlew core:publish --stacktrace
+        run: ./gradlew core:publishToMavenCentral --stacktrace
