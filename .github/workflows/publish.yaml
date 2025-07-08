@@ -18,7 +18,7 @@ jobs:
       - name: Configure JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 8
+          java-version: 17
           distribution: corretto
       - name: Grant Gradle Wrapper Permission
         run: chmod +x gradlew
