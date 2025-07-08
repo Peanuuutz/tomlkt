@@ -9,7 +9,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") apply false
     id("me.champeau.jmh") apply false
 
-    id("io.deepmedia.tools.deployer") apply false
+    id("com.vanniktech.maven.publish") apply false
 }
 
 allprojects {
