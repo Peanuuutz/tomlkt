@@ -20,6 +20,9 @@ pluginManagement {
         id("io.gitlab.arturbosch.detekt") version detektVersion
         val jmhVersion: String by settings
         id("me.champeau.jmh") version jmhVersion
+
+        val deployerVersion: String by settings
+        id("io.deepmedia.tools.deployer") version deployerVersion
     }
 }
 

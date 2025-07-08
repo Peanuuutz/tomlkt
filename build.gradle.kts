@@ -8,6 +8,8 @@ plugins {
 
     id("io.gitlab.arturbosch.detekt") apply false
     id("me.champeau.jmh") apply false
+
+    id("io.deepmedia.tools.deployer") apply false
 }
 
 allprojects {
