@@ -1,5 +1,7 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -16,7 +18,7 @@ plugins {
 
     id("io.gitlab.arturbosch.detekt")
 
-    id("io.deepmedia.tools.deployer")
+    id("com.vanniktech.maven.publish")
 }
 
 // Archives Metadata
@@ -224,52 +226,44 @@ tasks {
 
 // Deployment
 
-deployer {
-    centralPortalSpec {
-        content {
-            kotlinComponents {
-                docs(tasks["createJavadocByDokka"])
+mavenPublishing {
+    coordinates(project.group.toString(), project.rootProject.name, project.version.toString())
 
-                projectInfo {
-                    name = "tomlkt"
-                    description = "TOML support for kotlinx.serialization"
-                    url = "https://github.com/Peanuuutz/tomlkt"
+    val platform = KotlinMultiplatform(
+        javadocJar = JavadocJar.Dokka("dokkaGenerate")
+    )
+    configure(platform)
 
-                    license {
-                        name = "Apache-2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0"
-                    }
+    pom {
+        name = "tomlkt"
+        description = "TOML support for kotlinx.serialization"
+        url = "https://github.com/Peanuuutz/tomlkt"
 
-                    scm {
-                        fromGithub("Peanuuutz", "tomlkt")
-                    }
-
-                    developer {
-                        name = "Peanuuutz"
-                    }
-                }
+        licenses {
+            license {
+                name = "Apache-2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0"
             }
         }
 
-        auth {
-            user = secret("mavenCentralUsername")
-            password = secret("mavenCentralPassword")
+        issueManagement {
+            system = "Github"
+            url = "https://github.com/Peanuuutz/tomlkt/issues"
         }
 
-        signing {
-            key = secret("inMemorySigningKey")
-            password = secret("inMemorySigningKeyPassword")
+        scm {
+            connection = "https://github.com/Peanuuutz/tomlkt.git"
+            url = "https://github.com/Peanuuutz/tomlkt"
         }
 
-        allowMavenCentralSync = false
+        developers {
+            developer {
+                name = "Peanuuutz"
+            }
+        }
     }
-}
 
-//publishing {
-//    publications {
-//        withType<MavenPublication> {
-//            val classifier = if (name.contains("multiplatform", true)) "" else "-$name"
-//            artifactId = "tomlkt$classifier"
-//        }
-//    }
-//}
+    publishToMavenCentral()
+
+    signAllPublications()
+}

@@ -22,7 +22,7 @@ pluginManagement {
         id("me.champeau.jmh") version jmhVersion
 
         val deployerVersion: String by settings
-        id("io.deepmedia.tools.deployer") version deployerVersion
+        id("com.vanniktech.maven.publish") version deployerVersion
     }
 }
 
